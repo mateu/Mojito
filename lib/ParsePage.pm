@@ -24,8 +24,7 @@ has 'section_close_regex' => (
 	default  => sub { qr(</sx>) },
 );
 
-sub has_nested_section
-{
+sub has_nested_section {
 	my ($self) = @_;
 
 	my $section_open_regex  = $self->section_open_regex;
@@ -38,29 +37,25 @@ sub has_nested_section
 	# opening section tags then we know first section has been closed and thus
 	# does NOT contain a nested section.
 	my $has_nested_section = 0;
-	foreach my $tweener (@stuff_between_section_opens)
-	{
+	foreach my $tweener (@stuff_between_section_opens) {
 
 		#say "match tween: $tweener";
-		if ($tweener =~ m/<\/sx>/)
-		{
+		if ( $tweener =~ m/<\/sx>/ ) {
 
-			# The tweener section could cause us to think we're not nested
-			# due to an nested section of the general type (not the class=mc_ type)
-			# In this case we need to count the number of open and closed sections
-			# If they are the same then we dont' have </sec> left over to close the first
-			# and thus we have a nest.
+   # The tweener section could cause us to think we're not nested
+   # due to an nested section of the general type (not the class=mc_ type)
+   # In this case we need to count the number of open and closed sections
+   # If they are the same then we dont' have </sec> left over to close the first
+   # and thus we have a nest.
 			my @opens  = $tweener =~ m/(<sx[^>]*>)/sg;
 			my @closes = $tweener =~ m/(<\/sx>)/sg;
-			if (scalar @opens == scalar @closes)
-			{
+			if ( scalar @opens == scalar @closes ) {
 
 				#warn "has nested section with content: $tweener";
 				return 1;
 			}
 		}
-		else
-		{
+		else {
 
 			#warn "has nested section with content: $tweener";
 			return 1;
@@ -70,8 +65,7 @@ sub has_nested_section
 	return 0;
 }
 
-sub add_implicit_sections
-{
+sub add_implicit_sections {
 	my ($self) = @_;
 
 	my $page                = $self->page;
@@ -84,7 +78,7 @@ sub add_implicit_sections
 
 	# Add implicit sections in between explicit sections (if needed)
 	$page =~
-	  s/($section_close_regex)(.*?\S.*?)($section_open_regex)/$1\n<sx c=Implicit>$2<\/sx>\n$3/sig;
+s/($section_close_regex)(.*?\S.*?)($section_open_regex)/$1\n<sx c=Implicit>$2<\/sx>\n$3/sig;
 
 	# Add implicit section at the beginning (if needed)
 	$page =~ s/(?<!<sx c=)(<sx c=)/<\/sx>\n$1/si;
@@ -105,40 +99,49 @@ sub add_implicit_sections
 	return $page;
 }
 
-sub parse_html5
-{
-	my ($self, $html5) = @_;
+=head2 parse_html5
+
+Parse the HTML5ish creation after we've added implicit sections
+	
+	Args: sectioned HTMLish stuff (after adding implicit sections to raw/source content)
+	Returns: Data structure of sections - ArrayRef[HashRef]
+	         [{content => $some, class => 'Implicit'}]
+	         
+=cut
+
+sub parse_html5 {
+	my ( $self, $html5 ) = @_;
 
 	my $parser         = HTML::HTML5::Parser->new;
 	my $doc            = $parser->parse_string($html5);
 	my $tagname        = 'sx';
 	my $attribute_name = 'c';
 	my $nodelist       = $doc->getElementsByTagName('sx');
-	while (my $node = $nodelist->shift)
-	{
-		if ($node->hasChildNodes())
-		{
-			my $first_child = $node->firstChild;
-			print "Child node toString: ", $node->toString;
-		}
+	my $sections;
+	while ( my $node = $nodelist->shift ) {
 
-		if ($node->nodeName eq 'sx')
-		{
-			print "\n\nnode name: ", Dumper $node->nodeName;
-			if ($node->getAttribute($attribute_name))
-			{
-				print "node class attribute value: ",
-				  $node->getAttribute($attribute_name), "\n";
-			}
-			else
-			{
-				say "Resotring to document default format";
-			}
+		#		if ($node->hasChildNodes())
+		#		{
+		#			my $first_child = $node->firstChild;
+		#			print "Child node toString: ", $node->toString;
+		#		}
 
-			#print "node text content: ", $node->textContent;
-			#print "node toString: ", $node->toString;
+		my $section;
+		if ( $node->getAttribute($attribute_name) ) {
+			$section->{class} = $node->getAttribute($attribute_name);
 		}
+		else {
+			$section->{class} = 'Implicit';
+		}
+		my $content = $node->toString;
+
+		# Remove inclosing tags
+		$content =~ s/<sx c=[^>]>(.*)<\sx>/$1/si;
+		$section->{content} = $content;
+		push @{$sections}, $section;
 	}
+	
+	print Dumper $sections;
 }
 
 __PACKAGE__->meta->make_immutable;
