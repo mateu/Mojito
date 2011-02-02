@@ -77,29 +77,30 @@ sub add_implicit_sections
 	my $page                = $self->page;
 	my $section_open_regex  = $self->section_open_regex;
 	my $section_close_regex = $self->section_close_regex;
-	
-	# look behinds need a fixed distance.  Let's provide them one by collapsing 
-    # whitespace in just the right spot, betweeen <sx  and c=
-    $page  =~ s/(<sx\s+c=)/<sx c=/sgi;
+
+	# look behinds need a fixed distance.  Let's provide them one by collapsing
+	# whitespace in just the right spot, betweeen <sx  and c=
+	$page =~ s/(<sx\s+c=)/<sx c=/sgi;
 
 	# Add implicit sections in between explicit sections (if needed)
 	$page =~
 	  s/($section_close_regex)(.*?\S.*?)($section_open_regex)/$1\n<sx c=Implicit>$2<\/sx>\n$3/sig;
 
 	# Add implicit section at the beginning (if needed)
-    $page  =~ s/(?<!<sx c=)(<sx c=)/<\/sx>\n$1/si;
-    $page  = "\n<sx c=Implicit>\n${page}";
+	$page =~ s/(?<!<sx c=)(<sx c=)/<\/sx>\n$1/si;
+	$page = "\n<sx c=Implicit>\n${page}";
 
 	# Add implicit section at the end (if needed)
-    $page =~ s/(<\/sx>)(?!.*<\/sx>)/$1\n<sx c=Implicit>/si;
-    $page .= '</sx>';
-    
-    # cut empty implicits
-    $page =~ s/<sx c=Implicit>\s*<\/sx>//sig;
-#			say "PREMATCH: ", ${^PREMATCH};
-#	    	say "MATCH:  ${^MATCH}";
-#	    	say "POSTMATCH: ", ${^POSTMATCH};
-#	    	say "page: $page";
+	$page =~ s/(<\/sx>)(?!.*<\/sx>)/$1\n<sx c=Implicit>/si;
+	$page .= '</sx>';
+
+	# cut empty implicits
+	$page =~ s/<sx c=Implicit>\s*<\/sx>//sig;
+
+	#			say "PREMATCH: ", ${^PREMATCH};
+	#	    	say "MATCH:  ${^MATCH}";
+	#	    	say "POSTMATCH: ", ${^POSTMATCH};
+	#	    	say "page: $page";
 
 	return $page;
 }
@@ -110,29 +111,32 @@ sub parse_html5
 
 	my $parser         = HTML::HTML5::Parser->new;
 	my $doc            = $parser->parse_string($html5);
-	my $tagname        = 'section';
-	my $attribute_name = 'class';
-	my ($body_node)    = $doc->getElementsByTagName('body');
-#	my $nodelist = $body_node->getChildrenByTagName('section');
-	my $nodelist = $doc->getElementsByTagName('section');
+	my $tagname        = 'sx';
+	my $attribute_name = 'c';
+	my $nodelist       = $doc->getElementsByTagName('sx');
 	while (my $node = $nodelist->shift)
 	{
-
-		if ($node->nodeName eq 'section')
+		if ($node->hasChildNodes())
 		{
-#			print "\n\nnode name: ",         Dumper $node->nodeName;
-#			print "node type: ",         Dumper $node->nodeType;
-#			print "node value: ",        Dumper $node->nodeValue;
+			my $first_child = $node->firstChild;
+			print "Child node toString: ", $node->toString;
+		}
+
+		if ($node->nodeName eq 'sx')
+		{
+			print "\n\nnode name: ", Dumper $node->nodeName;
 			if ($node->getAttribute($attribute_name))
 			{
-#				print "node class attribute value: ",
-#				  $node->getAttribute($attribute_name), "\n";
+				print "node class attribute value: ",
+				  $node->getAttribute($attribute_name), "\n";
 			}
 			else
 			{
 				say "Resotring to document default format";
 			}
-#			print "node text content: ", $node->textContent;
+
+			#print "node text content: ", $node->textContent;
+			#print "node toString: ", $node->toString;
 		}
 	}
 }
