@@ -5,9 +5,9 @@ use Test::Differences;
 use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
-use ParsePage;
+use PageParse;
 
-my $parser = ParsePage->new(page => $Fixture::nested_section);
+my $parser = PageParse->new(page => $Fixture::nested_section);
 ok($parser->has_nested_section, 'nested section');
 
 # Change content to not be nested

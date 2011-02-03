@@ -5,10 +5,10 @@ use Test::Differences;
 use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
-use ParsePage;
+use PageParse;
 use Data::Dumper::Concise;
 
-my $parser = ParsePage->new(page => $Fixture::implicit_normal_starting_section);
+my $parser = PageParse->new(page => $Fixture::implicit_normal_starting_section);
 my $sections = $parser->sections;
 is_deeply($sections, $Fixture::sections, 'build sections');
 

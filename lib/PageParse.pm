@@ -1,8 +1,7 @@
-package ParsePage;
-use Moo;
+package PageParse;
 use strictures;
 use 5.010;
-use namespace::autoclean;
+use Moo;
 use Types;
 #use HTML::HTML5::Parser;
 use Sub::Quote qw/ quote_sub /;
@@ -200,14 +199,15 @@ sub build_sections {
 
     if ( $self->has_nested_section ) {
 
+        die "Damn: Haz Nested Sections.  Nested sections are not supported";
         # return Array[]HashRef] with error when we have a nested <sx>
-        return [
-            {
-                status => 'ERROR',
-                error_message =>
-                  'We have at least one nested section which is not supported.'
-            }
-        ];
+#        return [
+#            {
+#                status => 'ERROR',
+#                error_message =>
+#                  'We have at least one nested section which is not supported.'
+#            }
+#        ];
     }
     else {
         my $page = $self->add_implicit_sections;
@@ -222,8 +222,8 @@ sub build_page_structure {
         sections       => $self->sections,
         title          => $self->title,
         default_format => $self->default_format,
-        created        => '1234567890',
-        last_modified  => time(),
+#        created        => '1234567890',
+#        last_modified  => time(),
     };
 }
 

@@ -11,7 +11,7 @@ say 'something';
 
 Implicit Section
 
-<sx c="mc_JS">
+<sx c="JavaScript">
 function () { var one = 1 }
 </sx>
 
@@ -71,7 +71,7 @@ say 'something';
 Implicit Section
 
 </sx>
-<sx c="mc_JS">
+<sx c="JavaScipt">
 function () { var one = 1 }
 </sx>
 <sx c=Implicit>
