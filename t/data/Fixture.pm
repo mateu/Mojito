@@ -1,7 +1,7 @@
 package Fixture;
 use 5.010;
-{
-	$implicit_section = <<'END';
+
+$implicit_section = <<'END';
 h1. Greetings
 
 <sx c=Perl>
@@ -19,15 +19,15 @@ Stuff After
 
 END
 
-	$nested_section = <<'END';
+$nested_section = <<'END';
 	   <sx c=SQL>Bon dia<section>heya</section><section>otra</section><sx c=squared>I'm nested</sx></sx>
 END
 
-	$not_nested_section = <<'END';
+$not_nested_section = <<'END';
        <sx c=SQL>Hola</sx><sx c=SQL>Not Nested</sx>
 END
 
-	$explicit_section = <<'END';
+$explicit_section = <<'END';
 
 
     
@@ -40,10 +40,10 @@ END
     
     
 END
-	$implicit_normal_section = <<'END';
+$implicit_normal_section = <<'END';
 <sx c=Python>def: init</sx><section>What happens here?</section><sx c=PHP>a[3]</sx>
 END
-	$implicit_normal_starting_section = <<'END';
+$implicit_normal_starting_section = <<'END';
     Yeah
 <section>Heya</section>
 OK
@@ -56,7 +56,7 @@ Dirty
 Nasty test
 END
 
-	$parsed_implicit_section = <<'END';
+$parsed_implicit_section = <<'END';
 
 <sx c=Implicit>
 h1. Greetings
@@ -79,9 +79,9 @@ function () { var one = 1 }
 Stuff After
 
 END
-	$parsed_implicit_section .= '</sx>';
+$parsed_implicit_section .= '</sx>';
 
-	$parsed_implicit_normal_section = <<'END';
+$parsed_implicit_normal_section = <<'END';
 
 
 <sx c=Python>def: init</sx>
@@ -89,7 +89,7 @@ END
 <sx c=PHP>a[3]</sx>
 END
 
-	$parsed_implicit_normal_starting_section = <<'END';
+$parsed_implicit_normal_starting_section = <<'END';
 
 <sx c=Implicit>
     Yeah
@@ -107,28 +107,82 @@ Dirty
 <section>The End</section>
 Nasty test
 END
-	$parsed_implicit_normal_starting_section .= '</sx>';
+$parsed_implicit_normal_starting_section .= '</sx>';
 
-	$simple_implicit_section = <<'END';
+$simple_implicit_section = <<'END';
 Hola Mon.
 END
 
-	$parsed_simple_implicit_section = <<'END';
+$parsed_simple_implicit_section = <<'END';
 
 <sx c=Implicit>
 Hola Mon.
 END
-	$parsed_simple_implicit_section .= '</sx>';
+$parsed_simple_implicit_section .= '</sx>';
 
-	$simple_non_implicit_section = <<'END';
+$simple_non_implicit_section = <<'END';
 <sx c=Perl>say "Bom dia";</sx>
 END
 
-	$parsed_simple_non_implicit_section = <<'END';
+$parsed_simple_non_implicit_section = <<'END';
 
 
 <sx c=Perl>say "Bom dia";</sx>
 END
-}
+
+$sections = [
+    {
+        class => "Implicit",
+        content =>
+          "<sx c=\"Implicit\">\n    Yeah\n<section>Heya</section>\nOK\n</sx>"
+    },
+    {
+        class   => "Python",
+        content => "<sx c=\"Python\">def: init</sx>"
+    },
+    {
+        class => "Implicit",
+        content =>
+"<sx c=\"Implicit\">\n<section>What happens here?</section>\nHow about here?\n</sx>"
+    },
+    {
+        class   => "PHP",
+        content => "<sx c=\"PHP\">a[3]</sx>"
+    },
+    {
+        class => "Implicit",
+        content =>
+"<sx c=\"Implicit\">\nDirty\n<section>The End</section>\nNasty test\n</sx>"
+    }
+];
+
+$page_structure = {
+    created        => "1234567890",
+    default_format => "HTML",
+    sections       => [
+        {
+            class   => "Implicit",
+            content => "\n    Yeah\n<section>Heya</section>\nOK\n"
+        },
+        {
+            class   => "Python",
+            content => "def: init"
+        },
+        {
+            class => "Implicit",
+            content =>
+              "\n<section>What happens here?</section>\nHow about here?\n"
+        },
+        {
+            class   => "PHP",
+            content => "a[3]"
+        },
+        {
+            class   => "Implicit",
+            content => "\nDirty\n<section>The End</section>\nNasty test\n"
+        }
+    ],
+    title => "    Yeah\n<sectio"
+};
 
 1;

@@ -6,12 +6,10 @@ use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
 use ParsePage;
-
+use Data::Dumper::Concise;
 
 my $parser = ParsePage->new(page => $Fixture::implicit_normal_starting_section);
-my $sectioned_page = $parser->add_implicit_sections;
-$parser->parse_html5($sectioned_page);
+my $sections = $parser->sections;
+is_deeply($sections, $Fixture::sections, 'build sections');
 
-
-ok(1);
 done_testing();
