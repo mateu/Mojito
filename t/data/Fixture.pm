@@ -185,4 +185,33 @@ $page_structure = {
     title => "    Yeah\n<sectio"
 };
 
+$prettyprint =<<'END_WIKI';
+h1. Indiana
+
+h2. Bloomington
+
+A rocking town, home of the Hoosiers.
+
+<sx c=h>
+my $house = 'nice';
+use Me;
+
+sub func () {
+    my $self = shift;
+    return 1;
+}
+</sx>
+
+<pre class="prettyprint linenums">
+my $house = 'nice';
+use Me;
+
+sub func () {
+    my $self = shift;
+    return 1;
+}
+</pre>
+END_WIKI
+
+
 1;

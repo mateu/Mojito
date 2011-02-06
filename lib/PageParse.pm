@@ -1,10 +1,14 @@
 package PageParse;
-use strictures;
+
+#use strictures 1;
 use 5.010;
 use Moo;
 use Types;
+
 #use HTML::HTML5::Parser;
 use Sub::Quote qw/ quote_sub /;
+use HTML::Strip;
+
 use Data::Dumper::Concise;
 
 has 'page' => (
@@ -27,7 +31,9 @@ has 'title' => (
     is => 'ro',
 
     #    isa     => 'Str',
-    default => sub { return substr( $_[0]->page, 0, 16 ); },
+    lazy => 1,
+    default =>
+      sub { return substr( $_[0]->stripper->parse( $_[0]->page ), 0, 16 ); },
 );
 has 'default_format' => (
     is => 'ro',
@@ -58,6 +64,12 @@ has 'debug' => (
     is      => 'rw',
     isa     => Types::Bool,
     default => sub { 0 },
+);
+has 'stripper' => (
+    is   => 'ro',
+    # isa  => 'HTML::Strip';
+    lazy => 1,
+    builder => '_build_stripper',
 );
 
 sub has_nested_section {
@@ -182,7 +194,7 @@ sub parse_sections {
         # Extract class and content
         my ( $class, $content ) =
           $sx =~ m/<sx c=(?:'|")?(\w+)?(?:'|")?>(.*)?<\/sx>/si;
-        push @{$sections}, {class => $class, content => $content};
+        push @{$sections}, { class => $class, content => $content };
     }
 
     return $sections;
@@ -200,7 +212,8 @@ sub build_sections {
     if ( $self->has_nested_section ) {
 
         die "Damn: Haz Nested Sections.  Nested sections are not supported";
-        # return Array[]HashRef] with error when we have a nested <sx>
+
+# return Array[]HashRef] with error when we have a nested <sx>
 #        return [
 #            {
 #                status => 'ERROR',
@@ -222,9 +235,16 @@ sub build_page_structure {
         sections       => $self->sections,
         title          => $self->title,
         default_format => $self->default_format,
-#        created        => '1234567890',
-#        last_modified  => time(),
+
+        #        created        => '1234567890',
+        #        last_modified  => time(),
     };
+}
+
+sub _build_stripper {
+    my $self = shift;
+    
+    return HTML::Strip->new();
 }
 
 1

@@ -1,5 +1,5 @@
 package PageEdit;
-use strictures;
+use strictures 1;
 use 5.010;
 use Moo;
 
@@ -10,7 +10,7 @@ sub page_save {
     my ($self, $page_struct) = @_;
     # add save time as last_modified
     $page_struct->{last_modified} = time();
-    my $id = $self->documents->insert($page_struct);
+    my $id = $self->documents->insert($page_struct);;
     return $id;
 }
 
