@@ -35,9 +35,7 @@ var fetchPreview = function() {
 
 	var ajaxOptions = {
 		type : 'POST',
-		// url : "http://localhost/cgi-bin/render_page.cgi",
-		url : "http://10.0.0.2:5000/page",
-		// url : "http://localhost/cgi-bin/hola.cgi/page",
+		url  : "http://10.0.0.2:5000/page/4d50e8092d4a8a4019000000/edit",
 		data : {
 			content : content
 		},
