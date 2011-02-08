@@ -1,10 +1,7 @@
 package DBRole;
 use Moo::Role;
 use strictures 1;
-use 5.010;
 use MongoDB;
-use MongoDB::OID;
-use Data::Dumper::Concise;
 
 # Create a database and get a handle on a users collection.
 has 'conn' => (

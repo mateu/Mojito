@@ -53,7 +53,7 @@ has 'last_modified' => (
 has 'section_open_regex' => (
     is      => 'ro',
     isa     => Types::RegexpRef,
-    default => sub { qr/<sx c=(?:'|")?\w+(?:'|")?/ },
+    default => sub { qr/<sx c=(?:'|")?\w+(?:'|")?[^>]*?>/ },
 );
 has 'section_close_regex' => (
     is      => 'ro',
@@ -210,7 +210,7 @@ sub build_sections {
     my $self = shift;
 
     if ( $self->has_nested_section ) {
-
+        warn "page: ", $self->page;
         die "Damn: Haz Nested Sections.  Nested sections are not supported";
 
 # return Array[]HashRef] with error when we have a nested <sx>
@@ -228,6 +228,12 @@ sub build_sections {
     }
 }
 
+=head build_page_structure
+
+It's just an href that we'll persist as a Mongo document.
+
+=cut
+
 sub build_page_structure {
     my $self = shift;
 
@@ -238,6 +244,7 @@ sub build_page_structure {
 
         #        created        => '1234567890',
         #        last_modified  => time(),
+        page_source    => $self->page,
     };
 }
 

@@ -35,8 +35,7 @@ sub render_sections {
 sub render_page {
     my ( $self, $doc ) = @_;
 
-    my $rendered_sections = $self->render_sections($doc);
-    my $rendered_body = join "\n", @{$rendered_sections};
+    my $rendered_body =  $self->render_body($doc);
 
     my $header = <<'END_HTML';
 <!DOCTYPE html>
