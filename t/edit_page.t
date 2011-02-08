@@ -16,11 +16,11 @@ my $parser = PageParse->new(page => $Fixture::implicit_section);
 my $page_struct = $parser->page_structure;
 
 my $editer = PageEdit->new;
-#my $oid = $editer->page_save($page_struct);
-#say "oid: $oid";
-my $id = MongoDB::OID->new(value => '4d4a3e6769f174de44000000');
+my $oid = $editer->page_save($page_struct);
+say "oid: $oid";
+my $id = MongoDB::OID->new(value => '4d50e8092d4a8a4019000000');
 my $doc = $editer->page_get($id);
-#say Dumper $doc;
+say Dumper $doc;
 say "title: ", $doc->{title};
 
 #my $render = PageRender->new;

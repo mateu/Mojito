@@ -46,7 +46,7 @@ var fetchPreview = function() {
 		// response.state);
 		// console.log("Success response status: " + status + " state: " +
 		// response.state);
-		$('#preview_area').html(response.rendered_content);
+		$('#view_area').html(response.rendered_content);
 		prettyPrint();
 	},
 	error : function(XMLHttpRequest, textStatus, errorThrown) {
