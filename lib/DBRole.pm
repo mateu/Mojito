@@ -9,15 +9,15 @@ has 'conn' => (
     lazy => 1,
     builder => 'build_conn',
 );
-has 'notes' => (
+has 'db' => (
     is => 'ro',
     lazy => 1,
-    default => sub { $_[0]->conn->notes },
+    default => sub { $_[0]->conn->docs },
 );
-has 'documents' => (
+has 'collection' => (
     is => 'ro',
     lazy => 1,
-    default => sub { $_[0]->notes->documents },
+    default => sub { $_[0]->db->notes },
 );
 
 

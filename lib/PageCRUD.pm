@@ -15,7 +15,7 @@ sub create
 	# add save time as last_modified and created
 	$page_struct->{last_modified} = $page_struct->{created} = time();
 	say "creating page at: ", time();
-	my $id = $self->documents->insert($page_struct);
+	my $id = $self->collection->insert($page_struct);
 	return $id;
 }
 
@@ -25,7 +25,7 @@ sub read
 	my ($self, $id) = @_;
 
 	my $oid = MongoDB::OID->new(value => $id);
-	return $self->documents->find_one({ _id => $oid });
+	return $self->collection->find_one({ _id => $oid });
 }
 
 # modify a page
@@ -36,7 +36,7 @@ sub update
 	my $oid = MongoDB::OID->new(value => $id);
 	$page_struct->{last_modified} = time();
 	say "updating page at: ", time();
-	$self->documents->update({ '_id' => $oid }, $page_struct);
+	$self->collection->update({ '_id' => $oid }, $page_struct);
 }
 
 # delete a page
@@ -45,20 +45,20 @@ sub delete
 	my ($self, $id) = @_;
 
 	my $oid = MongoDB::OID->new(value => $id);
-	$self->documents->remove({ '_id' => $oid });
+	$self->collection->remove({ '_id' => $oid });
 }
 
 # returns a MongoDB cursor one can iterate over.
 sub get_all
 {
 	my $self = shift;
-	return $self->documents->find;
+	return $self->collection->find;
 }
 
 sub get_most_recent_docs
 {
 	my $self = shift;
-	return $self->documents->find->sort({ last_modified => -1 });
+	return $self->collection->find->sort({ last_modified => -1 });
 }
 
 sub get_most_recent_ids

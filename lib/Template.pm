@@ -37,9 +37,11 @@ $js_css
 </head>
 <body>  
 <section id="edit_area" style="float:left;">
-<form id="editForm" action="" accept-charset="UTF-8" method="post"> 
+<form id="editForm" action="" accept-charset="UTF-8" method="post">
+    <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <textarea id="content" name="content" cols="72" rows="24" /></textarea><br />
-    <input id="submit" type="submit" value="Submit content" /> 
+    <input id="submit_save" name="submit" type="submit" value="Save" /> 
+    <input id="submit_view" name="submit" type="submit" value="View" /> 
 </form>
 </section>
 <section id="view_area" style="float:left; margin-left:1em;"></section>

@@ -8,9 +8,9 @@ $(document).ready(function() {
 			oneshot_preview(fetchPreview, oneshot_pause);
 		});
 
-		$('#editForm').submit(function() {
-			//fetchPreview();
-			return true;
+		$('#submit_save').click(function() {
+			fetchPreview('save');
+			return false;
 		});
 	});
 
@@ -26,9 +26,14 @@ Function.prototype.only_every = function(millisecond_delay) {
 	}
 };
 
-var fetchPreview = function() {
+var fetchPreview = function(extra_action) {
 	var content = $('textarea#content').val();
-	var oid = $('#oid').val();
+	var mongo_id = $('#mongo_id').val();
+	data = { 
+			 content: content,
+			 mongo_id: mongo_id,
+			 extra_action: extra_action
+		   };
 	// Don't submit ajax request if we have trivial content
 	if (!content || content.match(/^\s+$/)) {
 		return false;
@@ -37,9 +42,7 @@ var fetchPreview = function() {
 	var ajaxOptions = {
 		type : 'POST',
 		url  : "http://10.0.0.2:5000/preview",
-		data : {
-			content: content
-		},
+		data : data,
 		success : function(response, status) {
 			// alert("Success response status: " + status + " state: " +
 		// response.state);
@@ -49,7 +52,7 @@ var fetchPreview = function() {
 		prettyPrint();
 	},
 	error : function(XMLHttpRequest, textStatus, errorThrown) {
-		alert("Error: " + textStatus + " thrown: " + errorThrown);
+		alert("Error: " + textStatus + " thrown: " + errorThrown + " while " + type + 'ing to URL: ' + url);
 	},
 	type : 'POST',
 	dataType : 'json'

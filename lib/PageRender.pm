@@ -45,9 +45,10 @@ sub render_page {
 END_HTML
 
     my $title  = "<title>$doc->{title}</title></head>";
+    my $edit_link = '<a href="/page/' . $doc->{'_id'} . '/edit">Edit</a>';
     my $footer = '</body></html>';
 
-    my $rendered_page = join "\n", $header, $title, $rendered_body, $footer;
+    my $rendered_page = join "\n", $header, $title, $rendered_body, $edit_link, $footer;
     return $rendered_page;
 }
 
