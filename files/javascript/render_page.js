@@ -44,18 +44,13 @@ var fetchPreview = function(extra_action) {
 		url  : "http://10.0.0.2:5000/preview",
 		data : data,
 		success : function(response, status) {
-			// alert("Success response status: " + status + " state: " +
-		// response.state);
-		// console.log("Success response status: " + status + " state: " +
-		// response.state);
-		$('#view_area').html(response.rendered_content);
-		prettyPrint();
-	},
-	error : function(XMLHttpRequest, textStatus, errorThrown) {
-		alert("Error: " + textStatus + " thrown: " + errorThrown + " while " + type + 'ing to URL: ' + url);
-	},
-	type : 'POST',
-	dataType : 'json'
+			$('#view_area').html(response.rendered_content);
+			prettyPrint();
+	    },
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("Error: " + textStatus + " thrown: " + errorThrown); 
+		},
+		dataType : 'json'
 	};
 
 	$.ajax(ajaxOptions);
