@@ -2,7 +2,7 @@ package PageRender;
 #use strictures 1;
 use 5.010;
 use Moo;
-use Formatter::HTML::Textile;
+#use Formatter::HTML::Textile;
 use Text::Textile qw(textile);
 #use Text::MultiMarkdown 'markdown';
 use Text::Markdown;
