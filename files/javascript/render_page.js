@@ -9,8 +9,8 @@ $(document).ready(function() {
 		});
 
 		$('#editForm').submit(function() {
-			fetchPreview();
-			return false;
+			//fetchPreview();
+			return true;
 		});
 	});
 
@@ -28,6 +28,7 @@ Function.prototype.only_every = function(millisecond_delay) {
 
 var fetchPreview = function() {
 	var content = $('textarea#content').val();
+	var oid = $('#oid').val();
 	// Don't submit ajax request if we have trivial content
 	if (!content || content.match(/^\s+$/)) {
 		return false;
@@ -35,9 +36,9 @@ var fetchPreview = function() {
 
 	var ajaxOptions = {
 		type : 'POST',
-		url  : "http://10.0.0.2:5000/page/4d50e8092d4a8a4019000000/edit",
+		url  : "http://10.0.0.2:5000/preview",
 		data : {
-			content : content
+			content: content
 		},
 		success : function(response, status) {
 			// alert("Success response status: " + status + " state: " +

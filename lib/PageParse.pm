@@ -78,6 +78,7 @@ sub has_nested_section {
     my $section_open_regex  = $self->section_open_regex;
     my $section_close_regex = $self->section_close_regex;
 
+    die "Got no page" if !$self->page;
     my @stuff_between_section_opens =
       $self->page =~ m/${section_open_regex}(.*?)${section_open_regex}/sg;
 

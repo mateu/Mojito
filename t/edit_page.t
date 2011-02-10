@@ -6,22 +6,30 @@ use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
 use PageParse;
-use PageEdit;
+use PageCRUD;
 use PageRender;
 use Data::Dumper::Concise;
 use Time::HiRes qw/ time /;
 
 my $start = time;
-my $parser = PageParse->new(page => $Fixture::implicit_section);
-my $page_struct = $parser->page_structure;
+#my $parser = PageParse->new(page => $Fixture::implicit_section);
+#my $page_struct = $parser->page_structure;
+#
+my $editer = PageCRUD->new;
+#my $id = $editer->create($page_struct);
+##say "id: $id";
+#$id = '4d532f9651683bd673000000';
+#my $doc = $editer->read($id);
+#say Dumper $doc;
+#say "title: ", $doc->{title};
 
-my $editer = PageEdit->new;
-my $oid = $editer->page_save($page_struct);
-say "oid: $oid";
-my $id = MongoDB::OID->new(value => '4d50e8092d4a8a4019000000');
-my $doc = $editer->page_get($id);
-say Dumper $doc;
-say "title: ", $doc->{title};
+my $cursor = $editer->get_most_recent_docs;
+while (my $doc = $cursor->next) {
+    say "title: ", $doc->{title}, "id: ", $doc->{_id}, " last_modified: ", $doc->{last_modified};
+}
+my $links = $editer->get_most_recent_links;
+say "Links: ", Dumper $links;
+
 
 #my $render = PageRender->new;
 #my $page = $render->render_page($page_struct);

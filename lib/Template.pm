@@ -1,8 +1,14 @@
-package Template;
-use HTML::Zoom;
 use strictures 1;
+package Template;
+use Moo;
 
 use Data::Dumper::Concise;
+
+has 'template' => (
+    is => 'rw',
+    lazy => 1,
+    builder => 'build_template',
+);
 
 my $base_URL = 'http://10.0.0.2/mojito/';
 
@@ -18,40 +24,31 @@ my @css =
   
 my $js_css = join "\n", @javascripts, @css;
 
- my $edit_page = <<'END_HTML';
+sub build_template {
+    my $self = shift;
+     
+    my $edit_page = <<"END_HTML";
 <!doctype html>
 <html> 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Mojito page</title> 
+  <title>Mojito page</title>
+$js_css
 </head>
 <body>  
 <section id="edit_area" style="float:left;">
+<form id="editForm" action="" accept-charset="UTF-8" method="post"> 
+    <textarea id="content" name="content" cols="72" rows="24" /></textarea><br />
+    <input id="submit" type="submit" value="Submit content" /> 
+</form>
 </section>
-<section id="view_area" style="float:left; margin-left:1em;">
-</section>
+<section id="view_area" style="float:left; margin-left:1em;"></section>
 </body>
 </html>
 END_HTML
 
-my $edit_form = <<'END_HTML';
-<form id="editForm" action="http://localhost:5000/page" accept-charset="UTF-8" method="post"> 
-    <textarea name="content" id="content" cols="72" rows="24" /></textarea><br />
-    <input type="submit" id="submit" value="Submit content" /> 
-</form>
-END_HTML
-
-sub edit_page () {
- return HTML::Zoom
-   ->from_html($edit_page)
-   ->select('head')
-   ->append_content([{ type => 'TEXT', raw => "${js_css}\n" }, ])
-   ->select('#edit_area')
-   ->replace_content(\$edit_form)
-  ->to_html;
+    return $edit_page;
 }
-
-
 
 
 1
