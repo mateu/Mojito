@@ -1,3 +1,6 @@
+// A place to store variables
+var mojito = {};
+
 $(document).ready(function() {
 	// $('#content').each(function() {
 		// this.focus();
@@ -10,6 +13,10 @@ $(document).ready(function() {
 
 		$('#submit_save').click(function() {
 			fetchPreview('save');
+			return false;
+		});
+		$('#page_delete').click(function() {
+			alert("Are you sure?");
 			return false;
 		});
 	});
@@ -41,7 +48,7 @@ var fetchPreview = function(extra_action) {
 
 	var ajaxOptions = {
 		type : 'POST',
-		url  : "http://10.0.0.2:5000/preview",
+		url  : mojito.preview_url,
 		data : data,
 		success : function(response, status) {
 			$('#view_area').html(response.rendered_content);

@@ -73,14 +73,17 @@ sub get_most_recent_ids
 	return \@ids;
 }
 
+# TODO: There's HTML in here, omg.
 sub get_most_recent_links
 {
     my ($self) = @_;
     my $cursor = $self->get_most_recent_docs;
     my $links;
     while (my $doc = $cursor->next) {
-        my $link= '<a href="/page/' . $doc->{'_id'} . '">' . $doc->{title} . '</a>';
-        $links .= "$link<br />"; 
+        my $link= '<a href="/page/' . $doc->{'_id'} . '">' . $doc->{title} . '</a> | ';
+        $links .= $link; 
+        $link = '<a id="page_delete" href="/page/' . $doc->{'_id'} . '/delete"> delete</a><br />';
+        $links .= $link; 
     }
     return $links;
 }

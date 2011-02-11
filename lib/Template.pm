@@ -4,13 +4,14 @@ use Moo;
 
 use Data::Dumper::Concise;
 
+# TODO: Make this alias where Mojito/files ends up.
+my $base_URL = 'http://10.0.0.2/mojito/';
+
 has 'template' => (
     is => 'rw',
     lazy => 1,
     builder => 'build_template',
 );
-
-my $base_URL = 'http://10.0.0.2/mojito/';
 
 my $javascripts = [
     'jquery/jquery-1.5.min.js', 'javascript/render_page.js',
@@ -34,6 +35,7 @@ sub build_template {
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Mojito page</title>
 $js_css
+<script></script>
 </head>
 <body>  
 <section id="edit_area" style="float:left;">
