@@ -200,7 +200,7 @@ use JSON;
 		my ($page_source, $page_view, $mongo_id, $base_url) = @_;
 
 		my $output = $tmpl->template;
-		$output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/s;
+		$output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
 		$output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
 		$output =~
 		  s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;

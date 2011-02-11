@@ -1,28 +1,46 @@
-// A place to store variables
+// A central place to store variables
 var mojito = {};
-
+	
 $(document).ready(function() {
 	// $('#content').each(function() {
-		// this.focus();
-		// })
-		prettyPrint();
-		$('#content').keyup(function() {
-			fetchPreview.only_every(on_change_refresh_rate);
-			oneshot_preview(fetchPreview, oneshot_pause);
-		});
-		$('#submit_create').click(function() {
-			//fetchPreview('create');
-			return true;
-		});
-		$('#submit_save').click(function() {
-			fetchPreview('save');
-			return false;
-		});
-		$('#page_delete').click(function() {
-			alert("Are you sure?");
-			return false;
-		});
+	// this.focus();
+	// })
+	prettyPrint();
+	$('#content').keyup(function() {
+		fetchPreview.only_every(on_change_refresh_rate);
+		oneshot_preview(fetchPreview, oneshot_pause);
 	});
+	$('#submit_create').click(function() {
+		// if no content : no submit
+		return got_content();
+//		 if(got_content()) {
+//			 return true;
+//		 }
+//		 else {
+//			 return false;
+//		 }
+//		// });
+//		return true;
+	});
+	$('#submit_save').click(function() {
+		fetchPreview('save');
+		return false;
+	});
+	$('#page_delete').click(function() {
+		alert("Are you sure?");
+		return false;
+	});
+});
+
+function got_content() {
+	var content = $('textarea#content').val();
+	if (!content || content.match(/^\s+$/)) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
 
 // Based on
 // http://www.germanforblack.com/javascript-sleeping-keypress-delays-and-bashing-bad-articles

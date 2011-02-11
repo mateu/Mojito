@@ -7,7 +7,7 @@ use Data::Dumper::Concise;
 
 with('DBRole');
 
-# create a new page
+# Create
 sub create
 {
 	my ($self, $page_struct) = @_;
@@ -19,7 +19,7 @@ sub create
 	return $id;
 }
 
-# get a page (from the DB)
+# Retrieve
 sub read
 {
 	my ($self, $id) = @_;
@@ -28,7 +28,7 @@ sub read
 	return $self->collection->find_one({ _id => $oid });
 }
 
-# modify a page
+# Update
 sub update
 {
 	my ($self, $id, $page_struct) = @_;
@@ -39,7 +39,7 @@ sub update
 	$self->collection->update({ '_id' => $oid }, $page_struct);
 }
 
-# delete a page
+# Delete
 sub delete
 {
 	my ($self, $id) = @_;
