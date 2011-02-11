@@ -38,25 +38,33 @@ use JSON;
 			[ 200, [ 'Content-type', 'text/plain' ], ["Hola $name"] ];
 		  },
 
-		  # Form to create a new page
+		  # Present CREATE Page Form
 		  sub (GET + /page ) {
 			my ($self) = @_;
 			
+			warn "Create Form";
 		    my $output = $tmpl->template;
+		    
+		    # Set mojito preiview_url variable
 		    my ${base_url} = $_[PSGI_ENV]->{SCRIPT_NAME}||'/';
-            $output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/s;
+            $output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
+            # Take out view button and change save to create.
+            $output =~ s/<input id="submit_view".*?>//;
+            $output =~ s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
+            $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
             
 			[ 200, [ 'Content-type', 'text/html' ], [ $output ] ];
 		  },
 
-		  # Handle submission of a new page
+		  # CREATE New Page, redirect to Edit Page mode
 		  sub (POST + /page + %* ) {
 			my ($self, $params) = @_;
 
-			warn "content: ", $params->{content};
-			my $parser = PageParse->new(page => $params->{content});
-
+			warn "Create Page";
+#			warn "content: ", $params->{content};
 			warn "submit type: ", $params->{submit};
+			
+			my $parser = PageParse->new(page => $params->{content});
 			my $page_struct  = $parser->page_structure;
 			my $id           = $editer->create($page_struct);
 			my $redirect_url = "/page/${id}/edit";
@@ -64,33 +72,45 @@ use JSON;
 			[ 301, [ Location => $redirect_url ], [] ];
 		  },
 
-		  # View a page
+		  # VIEW a Page
 		  sub (GET + /page/* ) {
 			my ($self, $id) = @_;
+			
+		    warn 'View Page $id';
 			my $page          = $editer->read($id);
 			my $rendered_page = $render->render_page($page);
+			
 			[ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
 		  },
 
-		  # List pages in chrono order
+		  # LIST Pages in chrono order
 		  sub (GET + /recent ) {
 			my ($self) = @_;
+			
 			my $links = $editer->get_most_recent_links();
+			
 			[ 200, [ 'Content-type', 'text/html' ], [$links] ];
 		  },
 
-		  # Handler for previews (and will save if save button is pushed).
+		  # PREVIEW Handler (and will save if save button is pushed).
 		  sub (POST + /preview + %*) {
 			my ($self, $params) = @_;
 
 			#warn "posted content: ", $params->{content};
+			warn "Preview..";
 			warn "extra action: ", $params->{extra_action};
 			my $parser = PageParse->new(page => $params->{content});
 			my $page_struct = $parser->page_structure;
 			if (   ($params->{extra_action} eq 'save')
 				&& ($params->{'mongo_id'}))
 			{
+			    
 				$editer->update($params->{'mongo_id'}, $page_struct);
+			}
+			elsif ($params->{extra_action} eq 'save') {
+			    # We don't an id and we want to save, must mean a new page.
+			    warn "Redispath to CREATE";
+			    redispatch_to '/';
 			}
 
 			my $render           = PageRender->new;
@@ -100,10 +120,11 @@ use JSON;
 			[ 200, [ 'Content-type', 'application/json' ], [$JSON_response] ];
 		  },
 
-		  # Load a page to edit
+		  # Present UPDATE Page Form
 		  sub (GET + /page/*/edit ) {
 			my ($self, $id, $other) = @_;
-			warn "GETing page $id to edit";
+			
+			warn "Update Form for Page $id";
 			my $page             = $editer->read($id);
 			my $rendered_content = $render->render_body($page);
 			my $source           = $page->{page_source};
@@ -114,10 +135,11 @@ use JSON;
 			[ 200, [ 'Content-type', 'text/html' ], [$output] ];
 		  },
 
-		  # Update a page
+		  # UPDATE a Page
 		  sub (POST + /page/*/edit + %*) {
 			my ($self, $id, $params) = @_;
-			warn "Saving page $id to DB";
+			
+			warn "Update Page $id";
 			warn "submit value: ", $params->{submit};
 			my $parser = PageParse->new(page => $params->{content});
 			my $page = $parser->page_structure;
@@ -141,10 +163,13 @@ use JSON;
 			return [ 200, [ 'Content-type', 'text/html' ], [$output] ];
 		  },
 
-		  # Delete a page
+		  # DELETE a Page
 		  sub (GET + /page/*/delete ) {
 			my ($self, $id, $other) = @_;
+			
+			warn "Delete page $id";
 			$editer->delete($id);
+			
 			return [ 301, [ Location => '/recent' ], [] ];
 		  },
 

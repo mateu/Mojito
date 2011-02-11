@@ -10,7 +10,10 @@ $(document).ready(function() {
 			fetchPreview.only_every(on_change_refresh_rate);
 			oneshot_preview(fetchPreview, oneshot_pause);
 		});
-
+		$('#submit_create').click(function() {
+			//fetchPreview('create');
+			return true;
+		});
 		$('#submit_save').click(function() {
 			fetchPreview('save');
 			return false;
