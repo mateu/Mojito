@@ -13,14 +13,6 @@ $(document).ready(function() {
 	$('#submit_create').click(function() {
 		// if no content : no submit
 		return got_content();
-//		 if(got_content()) {
-//			 return true;
-//		 }
-//		 else {
-//			 return false;
-//		 }
-//		// });
-//		return true;
 	});
 	$('#submit_save').click(function() {
 		fetchPreview('save');

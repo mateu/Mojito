@@ -1,26 +1,21 @@
 package PageRender;
-#use strictures 1;
+use strictures 1;
 use 5.010;
 use Moo;
-#use Formatter::HTML::Textile;
 use Text::Textile qw(textile);
-#use Text::MultiMarkdown 'markdown';
 use Text::Markdown;
-
 use Pod::Simple::XHTML;
+use Data::Dumper::Concise;
 
 my $textile = new Text::Textile;
 my $markdown = Text::Markdown->new;
 
-#use Data::Dumper::Concise;
 sub render_sections {
     my ( $self, $doc ) = @_;
 
-    #say "Getting sections for document with title: ", $doc->{title};
     my ( @raw_document_sections, @formatted_document_sections );
     foreach my $section ( @{ $doc->{sections} } ) {
 
-        #say "Section title: ", $section->{title};
         my $from_format = $section->{class} || $doc->{default_format};
         my $to_format = 'HTML';
         my ( $raw_section, $formatted_section ) =
@@ -29,6 +24,7 @@ sub render_sections {
         push @raw_document_sections,       $raw_section;
         push @formatted_document_sections, $formatted_section;
     }
+    
     return ( \@raw_document_sections, \@formatted_document_sections );
 }
 
@@ -45,17 +41,23 @@ sub render_page {
 END_HTML
 
     my $title  = "<title>$doc->{title}</title></head>";
-    my $edit_link = '<a href="/page/' . $doc->{'_id'} . '/edit">Edit</a>';
-    my $footer = '</body></html>';
-
-    my $rendered_page = join "\n", $header, $title, $rendered_body, $edit_link, $footer;
+    my @page_pieces = ($header, $title, $rendered_body);
+    if ( $doc->{'_id'} ) {
+       my $edit_link = '<a href="/page/' . $doc->{'_id'} . '/edit">Edit</a>';
+       push @page_pieces, $edit_link;
+    }
+    my $footer = "</body>\n</html>";
+    push @page_pieces, $footer;
+    
+    # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
+    my $rendered_page = join "\n", @page_pieces;
     return $rendered_page;
 }
 
 sub render_body {
     my ( $self, $doc ) = @_;
 
-    my $rendered_sections = $self->render_sections($doc);
+    my ($raw_sections, $rendered_sections) = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
     return $rendered_body;

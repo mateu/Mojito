@@ -14,10 +14,9 @@ use JSON;
 {
 
 	package Mojito;
-
-	my $tmpl   = Template->new;
-	my $editer = PageCRUD->new;
 	my $render = PageRender->new;
+    my $editer = PageCRUD->new;
+    my $tmpl   = Template->new;
 	use Data::Dumper::Concise;
 	use FindBin qw/$Bin/;
 
@@ -38,7 +37,7 @@ use JSON;
 			[ 200, [ 'Content-type', 'text/plain' ], ["Hola $name"] ];
 		  },
 
-		  # Present CREATE Page Form
+		  # PRESENT CREATE Page Form
 		  sub (GET + /page ) {
 			my ($self) = @_;
 			
@@ -66,6 +65,8 @@ use JSON;
 			
 			my $parser = PageParse->new(page => $params->{content});
 			my $page_struct  = $parser->page_structure;
+			my $page_html = $render->render_page($page_struct);
+			my $body_html = $render->render_body($page_struct);
 			my $id           = $editer->create($page_struct);
 			my $redirect_url = "/page/${id}/edit";
 
