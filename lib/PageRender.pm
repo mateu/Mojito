@@ -6,9 +6,18 @@ use Text::Textile qw(textile);
 use Text::Markdown;
 use Pod::Simple::XHTML;
 use Data::Dumper::Concise;
+use HTML::Strip;
 
-my $textile = new Text::Textile;
+my $textile  = Text::Textile->new;
 my $markdown = Text::Markdown->new;
+
+has 'stripper' => (
+    is => 'ro',
+
+    # isa  => 'HTML::Strip';
+    lazy    => 1,
+    builder => '_build_stripper',
+);
 
 sub render_sections {
     my ( $self, $doc ) = @_;
@@ -24,14 +33,12 @@ sub render_sections {
         push @raw_document_sections,       $raw_section;
         push @formatted_document_sections, $formatted_section;
     }
-    
+
     return ( \@raw_document_sections, \@formatted_document_sections );
 }
 
 sub render_page {
     my ( $self, $doc ) = @_;
-
-    my $rendered_body =  $self->render_body($doc);
 
     my $header = <<'END_HTML';
 <!DOCTYPE html>
@@ -40,15 +47,24 @@ sub render_page {
     <meta charset="utf-8" />
 END_HTML
 
-    my $title  = "<title>$doc->{title}</title></head>";
-    my @page_pieces = ($header, $title, $rendered_body);
-    if ( $doc->{'_id'} ) {
-       my $edit_link = '<a href="/page/' . $doc->{'_id'} . '/edit">Edit</a>';
-       push @page_pieces, $edit_link;
+    my @page_pieces = ($header);
+    
+    if ($doc->{title}) {
+       my $title = "<title>$doc->{title}</title></head>";
+       push @page_pieces, $title;
     }
+    
+    my $rendered_body = $self->render_body($doc);
+    push @page_pieces, $rendered_body;
+    
+    if ( $doc->{'_id'} ) {
+        my $edit_link = '<a href="/page/' . $doc->{'_id'} . '/edit">Edit</a>';
+        push @page_pieces, $edit_link;
+    }
+    
     my $footer = "</body>\n</html>";
     push @page_pieces, $footer;
-    
+
     # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
     my $rendered_page = join "\n", @page_pieces;
     return $rendered_page;
@@ -57,7 +73,7 @@ END_HTML
 sub render_body {
     my ( $self, $doc ) = @_;
 
-    my ($raw_sections, $rendered_sections) = $self->render_sections($doc);
+    my ( $raw_sections, $rendered_sections ) = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
     return $rendered_body;
@@ -93,9 +109,9 @@ NOTE: We return both the non modified content, and the converted content.
 sub format_for_web {
     my ( $self, $content, $from_language ) = @_;
 
-    # TODO: we have language highlighters and wiki languages.
-    # The highlighters are to be handled by javascript.  
-    # We could provide a shortcut syntax such: <sx c=h> to represent <pre class="prettyprint">
+# TODO: we have language highlighters and wiki languages.
+# The highlighters are to be handled by javascript.
+# We could provide a shortcut syntax such: <sx c=h> to represent <pre class="prettyprint">
     my $formatted_content = $content;
     given ($from_language) {
         when (/^Implicit$/i) {
@@ -103,10 +119,10 @@ sub format_for_web {
             # Use default format for the page.
             # Pretend it's just Textile for now
             # my $formatter = Formatter::HTML::Textile->format($content);
-#            $formatted_content = $formatter->fragment;
+            #            $formatted_content = $formatter->fragment;
             $formatted_content = $textile->process($content);
+
             #$formatted_content = $markdown->markdown($content);
-            
 
         }
         when (/^HTML$/i) {
@@ -141,6 +157,18 @@ sub pod2html {
     $converter->parse_string_document($content);
 
     return $html;
+}
+
+sub intro_text {
+    my ( $self, $html ) = @_;
+    my ($first_line) = $html =~ m/(.*?)\n/;
+    return substr( $self->stripper->parse($first_line), 0, 24 );
+}
+
+sub _build_stripper {
+    my $self = shift;
+    
+    return HTML::Strip->new();
 }
 
 1;

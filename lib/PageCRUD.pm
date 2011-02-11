@@ -35,7 +35,7 @@ sub update
 
 	my $oid = MongoDB::OID->new(value => $id);
 	$page_struct->{last_modified} = time();
-	say "updating page at: ", time();
+	say "CRUD updating page at: ", time();
 	$self->collection->update({ '_id' => $oid }, $page_struct);
 }
 
@@ -80,7 +80,8 @@ sub get_most_recent_links
     my $cursor = $self->get_most_recent_docs;
     my $links;
     while (my $doc = $cursor->next) {
-        my $link= '<a href="/page/' . $doc->{'_id'} . '">' . $doc->{title} . '</a> | ';
+        my $title = $doc->{title}||'no title';
+        my $link= '<a href="/page/' . $doc->{'_id'} . '">' . $title . '</a> | ';
         $links .= $link; 
         $link = '<a id="page_delete" href="/page/' . $doc->{'_id'} . '/delete"> delete</a><br />';
         $links .= $link; 

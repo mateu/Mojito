@@ -65,8 +65,10 @@ use JSON;
 			
 			my $parser = PageParse->new(page => $params->{content});
 			my $page_struct  = $parser->page_structure;
-			my $page_html = $render->render_page($page_struct);
-			my $body_html = $render->render_body($page_struct);
+			$page_struct->{page_html} = $render->render_page($page_struct);
+			$page_struct->{body_html} = $render->render_body($page_struct);
+			$page_struct->{title}     = $render->intro_text($page_struct->{body_html});
+			warn "title: ", $page_struct->{title};
 			my $id           = $editer->create($page_struct);
 			my $redirect_url = "/page/${id}/edit";
 
@@ -77,7 +79,7 @@ use JSON;
 		  sub (GET + /page/* ) {
 			my ($self, $id) = @_;
 			
-		    warn 'View Page $id';
+		    warn "View Page $id";
 			my $page          = $editer->read($id);
 			my $rendered_page = $render->render_page($page);
 			
@@ -105,13 +107,11 @@ use JSON;
 			if (   ($params->{extra_action} eq 'save')
 				&& ($params->{'mongo_id'}))
 			{
-			    
+			    $page_struct->{page_html} = $render->render_page($page_struct);
+                $page_struct->{body_html} = $render->render_body($page_struct);
+                $page_struct->{title}     = $render->intro_text($page_struct->{body_html});
+                warn "*** TITLE: ", $page_struct->{title};
 				$editer->update($params->{'mongo_id'}, $page_struct);
-			}
-			elsif ($params->{extra_action} eq 'save') {
-			    # We don't an id and we want to save, must mean a new page.
-			    warn "Redispath to CREATE";
-			    redispatch_to '/';
 			}
 
 			my $render           = PageRender->new;
@@ -140,11 +140,15 @@ use JSON;
 		  sub (POST + /page/*/edit + %*) {
 			my ($self, $id, $params) = @_;
 			
-			warn "Update Page $id";
+			warn "UPDATE Page $id";
 			warn "submit value: ", $params->{submit};
 			my $parser = PageParse->new(page => $params->{content});
 			my $page = $parser->page_structure;
-
+			# Store rendered parts as well.  May as well until proven wrong.
+			$page->{page_html} = $render->render_page($page);
+			$page->{body_html} = $render->render_body($page);
+			$page->{title}     = $render->intro_text($page->{body_html});
+			warn "title is: ", $page->{title};
 			# Save page
 			$editer->update($id, $page);
 

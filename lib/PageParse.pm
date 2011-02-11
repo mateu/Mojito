@@ -7,7 +7,6 @@ use Types;
 
 #use HTML::HTML5::Parser;
 use Sub::Quote qw/ quote_sub /;
-use HTML::Strip;
 
 use Data::Dumper::Concise;
 
@@ -27,14 +26,14 @@ has 'page_structure' => (
     lazy    => 1,
     builder => 'build_page_structure',
 );
-has 'title' => (
-    is => 'ro',
-
-    #    isa     => 'Str',
-    lazy => 1,
-    default =>
-      sub { return substr( $_[0]->stripper->parse( $_[0]->page ), 0, 16 ); },
-);
+#has 'title' => (
+#    is => 'ro',
+#
+#    #    isa     => 'Str',
+#    lazy => 1,
+#    default =>
+#      sub { return substr( $_[0]->stripper->parse( $_[0]->page ), 0, 24 ); },
+#);
 has 'default_format' => (
     is => 'ro',
 
@@ -64,12 +63,6 @@ has 'debug' => (
     is      => 'rw',
     isa     => Types::Bool,
     default => sub { 0 },
-);
-has 'stripper' => (
-    is   => 'ro',
-    # isa  => 'HTML::Strip';
-    lazy => 1,
-    builder => '_build_stripper',
 );
 
 sub has_nested_section {
@@ -240,19 +233,13 @@ sub build_page_structure {
 
     return {
         sections       => $self->sections,
-        title          => $self->title,
+#        title          => $self->title,
         default_format => $self->default_format,
 
         #        created        => '1234567890',
         #        last_modified  => time(),
         page_source    => $self->page,
     };
-}
-
-sub _build_stripper {
-    my $self = shift;
-    
-    return HTML::Strip->new();
 }
 
 1
