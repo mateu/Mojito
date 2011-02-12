@@ -67,21 +67,31 @@ sub get_most_recent_ids {
 }
 
 # TODO: There's HTML in here, omg.
-sub get_most_recent_links {
+sub get_most_recent_link_data {
     my ($self) = @_;
+
     my $cursor = $self->get_most_recent_docs;
-    my $links;
+    my $link_data;
     while ( my $doc = $cursor->next ) {
         my $title = $doc->{title} || 'no title';
-        my $link =
-          '<a href="/page/' . $doc->{'_id'} . '">' . $title . '</a> | ';
-        $links .= $link;
-        $link =
-            '<a id="page_delete" href="/page/'
-          . $doc->{'_id'}
-          . '/delete"> delete</a><br />';
-        $links .= $link;
+        push @{$link_data}, { id => $doc->{'_id'}->value, title => $title };
+    }
+
+    return $link_data;
+}
+
+sub get_most_recent_links {
+    my ($self, $want_delete_link) = @_;
+    
+    my $link_data = $self->get_most_recent_link_data;
+    my $links;
+    foreach my $datum (@{$link_data}) {
+        $links .= '<a href="/page/' . $datum->{id} . '">' . $datum->{title} . "</a>";
+        if ($want_delete_link) {
+            $links .=  ' | <a id="page_delete" href="/page/'   . $datum->{id} . '/delete"> delete</a><br />' . "\n";
+        }
     }
     return $links;
 }
+
 1

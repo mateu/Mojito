@@ -56,8 +56,7 @@ use JSON;
 
             # Set mojito preiview_url variable
             my ${base_url} = $_[PSGI_ENV]->{SCRIPT_NAME} || '/';
-            $output =~
-s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
+            $output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
 
             # Take out view button and change save to create.
             $output =~ s/<input id="submit_view".*?>//;
@@ -97,6 +96,8 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
             warn "View Page $id";
             my $page          = $editer->read($id);
             my $rendered_page = $render->render_page($page);
+            my $links = $editer->get_most_recent_links;
+            $rendered_page =~ s/(<section\s+id="recent_area">)<\/section>/$1${links}<\/section>/si;
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
@@ -105,7 +106,8 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
           sub (GET + /recent ) {
             my ($self) = @_;
 
-            my $links = $editer->get_most_recent_links();
+            my $want_delete_link = 1;
+            my $links = $editer->get_most_recent_links($want_delete_link);
 
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
@@ -219,10 +221,12 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
         $output =~
 s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
-
         return $output;
     }
 
+    sub fillin_view_page {
+    }
+    
     sub base_url {
         my $env = shift;
 

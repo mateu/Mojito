@@ -38,7 +38,9 @@ $js_css
 <script></script>
 </head>
 <body>
-<table width="85%" style="margin:auto;"><tr><td width="50%> 
+<table width="85%" style="margin:auto;">
+<tr>
+<td width="50%> 
 <section id="edit_area" style="float:left;">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
@@ -49,7 +51,12 @@ $js_css
 </section>
 </td><td width="50%" valign="top"> 
 <section id="view_area" style="float:left; margin-left:1em;"></section>
-</td></tr></table>
+</td>
+<td valign="top">
+<section id="recent_area"></section>
+</td>
+</tr>
+</table>
 <nav id="edit_link" style="clear:both;"></nav>
 </body>
 </html>
