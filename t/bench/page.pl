@@ -5,13 +5,13 @@ use Fixture;
 use PageParse;
 use PageRender;
 use PageCRUD;
-use MongoDB::OID;
+use Data::Dumper::Concise;
 
 my $page = $Fixture::implicit_section;
 my $page_struct = PageParse->new( page => $page )->page_structure;
-my $editer = PageCRUD->new;
+my $editer = PageCRUD->new( db_name => 'bench' );
 
-my $count = 10000;
+my $count = $ARGV[0] || 1000;
 
 my $result = cmpthese(
     $count,
@@ -22,7 +22,6 @@ my $result = cmpthese(
         'render' => sub { PageRender->new->render_page($page_struct) },
         'edit'   => sub {
             my $id = $editer->create($page_struct);
-            my $id   = MongoDB::OID->new( value => '4d4a3e6769f174de44000000' );
             my $page = $editer->read($id);
         },
     }

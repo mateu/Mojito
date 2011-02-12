@@ -1,5 +1,4 @@
 #!/usr/bin/env perl
-use Dancer;
 use Dancer ':syntax';
 use Dancer::Plugin::Ajax;
 #use Simple;
@@ -24,6 +23,19 @@ my $tmpl = Template->new;
 
 
 our $VERSION = '0.1';
+
+get '/bench' => sub {
+
+    my $parser      = PageParse->new( page => $Fixture::implicit_section );
+    my $page_struct = $parser->page_structure;
+    my $editer      = PageCRUD->new;
+    my $id = '4d56c014fbb0bcf24e000000';
+    my $page        = $editer->read($id);
+    my $render      = PageRender->new;
+    my $rendered_content = $render->render_page($page_struct);
+
+    return $rendered_content;
+};
 
 get '/' => sub {
     template 'index';
@@ -69,30 +81,5 @@ post '/page_org' => sub {
     }
 };
 
-
-get '/bench' => sub {
-
-    my $parser      = PageParse->new( page => $Fixture::prettyprint );
-    my $page_struct = $parser->page_structure;
-    my $editer      = PageCRUD->new;
-    my $id = '4d4a3e6769f174de44000000';
-    my $page        = $editer->read($id);
-    my $render      = PageRender->new;
-    my $rendered_content = $render->render_body($page_struct);
-
-    #    if ( request->is_ajax ) {
-    #        # create xml, set headers to text/xml, blablabla
-    #        header( 'Content-Type'  => 'application/json' );
-    #        header( 'Cache-Control' => 'no-store, no-cache, must-revalidate' );
-    #        my $response_href = { rendered_content => $rendered_content };
-    #        my $JSON_response = JSON::encode_json($response_href);
-    #        #to_json($response_href);
-    #        return $JSON_response;
-    #    }
-    #    else {
-    return $rendered_content;
-
-    #    }
-};
 
 dance;

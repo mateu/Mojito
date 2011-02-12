@@ -7,12 +7,17 @@ use MongoDB;
 has 'conn' => (
     is => 'ro',
     lazy => 1,
-    builder => 'build_conn',
+    builder => '_build_conn',
+);
+has 'db_name' => (
+    is => 'rw',
+    lazy => 1,
+    default => sub { 'docs' },
 );
 has 'db' => (
     is => 'ro',
     lazy => 1,
-    default => sub { $_[0]->conn->docs },
+    builder => '_build_db',
 );
 has 'collection' => (
     is => 'ro',
@@ -21,8 +26,14 @@ has 'collection' => (
 );
 
 
-sub build_conn {
+sub _build_conn {
     MongoDB::Connection->new;
+}
+
+sub _build_db  {
+    my $self = shift;
+    my $db_name = $self->db_name; 
+    $self->conn->${db_name};
 }
 
 1;

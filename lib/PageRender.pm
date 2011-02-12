@@ -2,14 +2,17 @@ package PageRender;
 use strictures 1;
 use 5.010;
 use Moo;
+use Template;
 use Text::Textile qw(textile);
 use Text::Markdown;
 use Pod::Simple::XHTML;
 use Data::Dumper::Concise;
 use HTML::Strip;
+use Shortcuts;
 
 my $textile  = Text::Textile->new;
 my $markdown = Text::Markdown->new;
+my $tmpl     = Template->new;
 
 has 'stripper' => (
     is => 'ro',
@@ -40,6 +43,27 @@ sub render_sections {
 sub render_page {
     my ( $self, $doc ) = @_;
 
+    my $page = $tmpl->template;
+    
+    if (my $title = $doc->{title}) {
+       $page =~ s/<title>.*?<\/title>/<title>${title}<\/title>/si;
+    }
+    
+    my $rendered_body = $self->render_body($doc);
+    $page =~ s/(<section id="edit_area"[^>]*>).*?(<\/section>)//si;
+    $page =~ s/(<section id="view_area"[^>]*>).*?(<\/section>)/$1${rendered_body}$2/si;
+    
+    if ( my $id = $doc->{'_id'} ) {
+        $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="\/page\/${id}\/edit">Edit<\/a>$2/si;
+    }
+    
+    # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
+    return $page;
+}
+
+sub render_page_org {
+    my ( $self, $doc ) = @_;
+
     my $header = <<'END_HTML';
 <!DOCTYPE html>
 <html lang="en">
@@ -67,6 +91,7 @@ END_HTML
 
     # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
     my $rendered_page = join "\n", @page_pieces;
+    
     return $rendered_page;
 }
 
@@ -76,6 +101,7 @@ sub render_body {
     my ( $raw_sections, $rendered_sections ) = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
+    $rendered_body = Shortcuts::expand_shortcuts($rendered_body);
     return $rendered_body;
 }
 

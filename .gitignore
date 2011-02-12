@@ -2,3 +2,4 @@
 .includepath
 .build
 Mojito
+bin/logs/

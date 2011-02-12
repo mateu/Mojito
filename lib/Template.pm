@@ -15,7 +15,7 @@ has 'template' => (
 
 my $javascripts = [
     'jquery/jquery-1.5.min.js', 'javascript/render_page.js',
-    'syntax_highlight/prettify.js',
+    'syntax_highlight/prettify.js', 'jquery/autoresize.jquery.min.js',
 ];
 my @javascripts = map { "<script src=${base_URL}$_></script>" } @{$javascripts};
 
@@ -37,16 +37,20 @@ sub build_template {
 $js_css
 <script></script>
 </head>
-<body>  
+<body>
+<table width="85%" style="margin:auto;"><tr><td width="50%> 
 <section id="edit_area" style="float:left;">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
-    <textarea id="content" name="content" cols="72" rows="24" /></textarea><br />
+    <textarea id="content" name="content" cols="60"/></textarea><br />
     <input id="submit_save" name="submit" type="submit" value="Save" /> 
     <input id="submit_view" name="submit" type="submit" value="View" /> 
 </form>
 </section>
+</td><td width="50%" valign="top"> 
 <section id="view_area" style="float:left; margin-left:1em;"></section>
+</td></tr></table>
+<nav id="edit_link" style="clear:both;"></nav>
 </body>
 </html>
 END_HTML
