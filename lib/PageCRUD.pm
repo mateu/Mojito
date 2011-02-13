@@ -84,12 +84,13 @@ sub get_most_recent_links {
     my ($self, $want_delete_link) = @_;
     
     my $link_data = $self->get_most_recent_link_data;
-    my $links;
+    my $links = '<b>Recent Articles</b><br />';
     foreach my $datum (@{$link_data}) {
         $links .= '<a href="/page/' . $datum->{id} . '">' . $datum->{title} . "</a>";
         if ($want_delete_link) {
-            $links .=  ' | <a id="page_delete" href="/page/'   . $datum->{id} . '/delete"> delete</a><br />' . "\n";
+            $links .=  ' | <a id="page_delete" href="/page/'   . $datum->{id} . '/delete"> delete</a>';
         }
+        $links .= "<br />\n";
     }
     return $links;
 }

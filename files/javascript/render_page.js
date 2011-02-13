@@ -1,25 +1,32 @@
 // A central place to store variables
 var mojito = {};
+
+function resizeEditArea() {
+	// Check that we have an edit_area first.
+	if ( $('#edit_area').length ) {
+		mojito.edit_area_fraction = 0.40;
+		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_fraction);
+		console.log('resizing edit area to: ' + mojito.edit_width);
+		$('textarea#content').css('width', mojito.edit_width + 'px')
+	}
+};
+
+var resizeTimer;
+$(window).resize(function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resizeEditArea, 100);
+});
 	
 $(document).ready(function() {
-	// $('#content').each(function() {
-	// this.focus();
-	// })
-	//$('textarea#yourID').autoResize({/*options*/}).trigger('change');
-	$('textarea#content').autoResize({
-	    // On resize:
-//	    onResize : function() {
-//	        $(this).css({opacity:0.8});
-//	    },
-//	    // After resize:
-//	    animateCallback : function() {
-//	        $(this).css({opacity:1});
-//	    },
-//	    // Quite slow animation:
-//	    animateDuration : 300,
-	    // More extra space:
+
+	resizeEditArea();
+	$('#content').each(function() {
+		this.focus();
+	});
+
+	$('textarea#content').autoResize({ 
 	    extraSpace : 60
-	}).trigger('change');
+    }).trigger('change');
 	
 	prettyPrint();
 	$('#content').keyup(function() {

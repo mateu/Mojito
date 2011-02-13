@@ -63,7 +63,13 @@ use JSON;
             $output =~
               s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
             $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
-
+            # Remove recent area
+            $output =~ s/<section id="recent_area".*?><\/section>//si;
+            # Remove edit linka
+            $output =~ s/<nav id="edit_link".*?><\/nav>//si;
+            # body with no style
+            $output =~ s/<body.*?>/<body>/si;
+            
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 
@@ -97,7 +103,9 @@ use JSON;
             my $page          = $editer->read($id);
             my $rendered_page = $render->render_page($page);
             my $links = $editer->get_most_recent_links;
-            $rendered_page =~ s/(<section\s+id="recent_area">)<\/section>/$1${links}<\/section>/si;
+            # Change class on view_area when we're in view mode.
+            $rendered_page =~ s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+            $rendered_page =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
@@ -221,6 +229,13 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
         $output =~
 s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
+        # Remove recent area
+        $output =~ s/<section id="recent_area".*?><\/section>//si;
+        # Remove edit linka
+        $output =~ s/<nav id="edit_link".*?><\/nav>//si;
+        # body with no style
+        $output =~ s/<body.*?>/<body>/si;
+
         return $output;
     }
 
