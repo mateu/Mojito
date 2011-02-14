@@ -69,6 +69,27 @@ END_HTML
     return $edit_page;
 }
 
+sub fillin_edit_page {
+    my ( $self, $page_source, $page_view, $mongo_id, $base_url ) = @_;
+
+    my $output = $self->template;
+    $output =~
+s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
+    $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
+    $output =~
+s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
+    $output =~
+s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
+    # Remove recent area
+    $output =~ s/<section id="recent_area".*?><\/section>//si;
+    # Remove edit linka
+    $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
+    # body with no style
+    $output =~ s/<body.*?>/<body>/si;
+
+    return $output;
+}
+    
     my $edit_page_table = <<"END_HTML";
 <!doctype html>
 <html> 

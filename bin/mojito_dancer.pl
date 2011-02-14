@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use Dancer ':syntax';
 use Dancer::Plugin::Ajax;
+
 #use Simple;
 use 5.010;
 use Dir::Self;
@@ -10,29 +11,28 @@ use Fixture;
 use Mojito::Page::Parse;
 use Mojito::Page::CRUD;
 use Mojito::Page::Render;
+use Mojito::Page;
 use Template;
 use JSON;
 
 my $tmpl = Template->new;
+my $pager = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
 
-#set 'logger' => 'console';
-#set 'log' => 'debug';
-#set 'show_errors' => 1;
-#set 'access_log' => 1;
+set 'logger' => 'console';
+set 'log' => 'debug';
+set 'show_errors' => 1;
+set 'access_log' => 1;
 #set 'warnings' => 1;
-
 
 our $VERSION = '0.1';
 
 get '/bench' => sub {
 
-    my $parser      = Mojito::Page::Parse->new( page => $Fixture::implicit_section );
-    my $page_struct = $parser->page_structure;
-    my $editer      = Mojito::Page::CRUD->new;
-    my $id = '4d56c014fbb0bcf24e000000';
-    my $page        = $editer->read($id);
-    my $render      = Mojito::Page::Render->new;
-    my $rendered_content = $render->render_page($page_struct);
+    my $pager       = Mojito::Page->new( page => $Fixture::implicit_section );
+    my $page_struct = $pager->page_structure;
+    my $id          = '4d586981bd851b7c2a000000';
+    my $page        = $pager->read($id);
+    my $rendered_content = $pager->render_page($page_struct);
 
     return $rendered_content;
 };
@@ -46,40 +46,107 @@ get '/hola/:name' => sub {
 };
 
 get '/page' => sub {
-    return $tmpl->template;
+    warn "Create Form";
+    my $output = $tmpl->template;
+
+    # Set mojito preiview_url variable
+    my ${base_url} = request->base || '/';
+    $output =~
+s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
+
+    # Take out view button and change save to create.
+    $output =~ s/<input id="submit_view".*?>//;
+    $output =~ s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
+    $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
+
+    # Remove recent area
+    $output =~ s/<section id="recent_area".*?><\/section>//si;
+
+    # Remove edit linka
+    $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
+
+    # body with no style
+    $output =~ s/<body.*?>/<body>/si;
+
+    return $output;
 };
 
-ajax '/page' => sub {
+ajax '/preview' => sub {
+    my $pager = Mojito::Page->new( page => params->{content} );
+    my $page_struct = $pager->page_structure;
+    if (   ( params->{extra_action} eq 'save' )
+        && ( params->{'mongo_id'} ) )
+    {
+        $page_struct->{page_html} = $pager->render_page($page_struct);
+        $page_struct->{body_html} = $pager->render_body($page_struct);
+        $page_struct->{title} = $pager->intro_text( $page_struct->{body_html} );
+        $pager->update( params->{'mongo_id'}, $page_struct );
+    }
 
-    my $parser           = Mojito::Page::Parse->new( page => params->{content} );
-    my $page_struct      = $parser->page_structure;
-    my $render           = Mojito::Page::Render->new;
-    my $rendered_content = $render->render_body($page_struct);
+    my $rendered_content = $pager->render_body($page_struct);
     my $response_href    = { rendered_content => $rendered_content };
     to_json($response_href);
 };
 
-post '/page_org' => sub {
+get '/page/:id' => sub {
 
-    my $parser           = Mojito::Page::Parse->new( page => params->{content} );
-    my $page_struct      = $parser->page_structure;
-    my $render           = Mojito::Page::Render->new;
-    my $rendered_content = $render->render_body($page_struct);
-    my $response_href    = { rendered_content => $rendered_content };
-    my $JSON_response    = JSON::encode_json($response_href);
-    if ( request->is_ajax ) {
+    my $page          = $pager->read( params->{id} );
+    my $rendered_page = $pager->render_page($page);
+    my $links         = $pager->get_most_recent_links;
 
-        # create xml, set headers to text/xml, blablabla
-        header( 'Content-Type'  => 'application/json' );
-        header( 'Cache-Control' => 'no-store, no-cache, must-revalidate' );
+    # Change class on view_area when we're in view mode.
+    $rendered_page =~
+      s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+    $rendered_page =~
+      s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
-        #to_json($response_href);
-        return $JSON_response;
-    }
-    else {
-        return $rendered_content;
-    }
+    return $rendered_page;
 };
 
+get '/page/:id/edit' => sub {
+
+    my $page             = $pager->read( params->{id} );
+    my $rendered_content = $pager->render_body($page);
+    my $source           = $page->{page_source};
+
+    # write source and rendered content into their tags
+    my $output =
+      $tmpl->fillin_edit_page( $source, $rendered_content, params->{id},
+        request->base );
+};
+
+post '/page/:id/edit' => sub {
+
+    #warn "submit value: ", params->{submit};
+    my $id = params->{id};
+    my $pager = Mojito::Page->new( page => params->{content} );
+    my $page = $pager->page_structure;
+
+    # Store rendered parts as well.  May as well until proven wrong.
+    $page->{page_html} = $pager->render_page($page);
+    $page->{body_html} = $pager->render_body($page);
+    $page->{title}     = $pager->intro_text( $page->{body_html} );
+
+    # Save page
+    $pager->update($id, $page);
+
+    # If view button was pushed let's go to view
+    if ( params->{submit} eq 'View' ) {
+        my $redirect_url = "/page/${id}";
+        redirect $redirect_url;
+    }
+
+    my $source           = $page->{page_source};
+    my $rendered_content = $pager->render_body($page);
+    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
+};
+
+
+get '/recent' => sub {
+
+    my $want_delete_link = 1;
+    my $links            = $pager->get_most_recent_links($want_delete_link);
+
+};
 
 dance;
