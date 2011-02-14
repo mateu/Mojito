@@ -7,6 +7,7 @@ use lib __DIR__ . "/../../../dev/Mojito/lib";
 use lib __DIR__ . "/../../../dev/Mojito/t/data";
 use Fixture;
 use Mojito::Page;
+use Mojito::Page::CRUD;
 use Template;
 
 my $tmpl = Template->new;
@@ -22,10 +23,12 @@ our $VERSION = '0.1';
 
 get '/bench' => sub {
 
-    my $pager       = Mojito::Page->new( page => $Fixture::implicit_section );
+    my $pager = Mojito::Page->new( page => $Fixture::implicit_section );
     my $page_struct = $pager->page_structure;
-    my $id          = '4d586981bd851b7c2a000000';
-    my $page        = $pager->read($id);
+    my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
+    my $id          = $editer->create($page_struct);
+
+    #my $page             = $editer->read($id);
     my $rendered_content = $pager->render_page($page_struct);
 
     return $rendered_content;

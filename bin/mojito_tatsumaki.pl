@@ -35,13 +35,13 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $name ) = @_;
-    my $parser           = Mojito::Page::Parse->new( page => $Fixture::implicit_section );
-    my $page_struct      = $parser->page_structure;
-    my $editer           = Mojito::Page::CRUD->new;
-    my $id               = '4d56c014fbb0bcf24e000000';
-    my $page             = $editer->read($id);
-    my $render           = Mojito::Page::Render->new;
-    my $rendered_content = $render->render_page($page_struct);
+    my $pager = Mojito::Page->new( page => $Fixture::implicit_section );
+    my $page_struct = $pager->page_structure;
+    my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
+    my $id          = $editer->create($page_struct);
+
+    #my $page             = $editer->read($id);
+    my $rendered_content = $pager->render_page($page_struct);
     $self->write($rendered_content);
 }
 

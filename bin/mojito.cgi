@@ -6,6 +6,7 @@ use lib __DIR__ . "/../lib";
 use lib __DIR__ . "/../t/data";
 use Fixture;
 use Mojito::Page;
+use Mojito::Page::CRUD;
 use Template;
 use JSON;
 
@@ -14,22 +15,24 @@ use JSON;
     package Mojito;
     my $render = Mojito::Page::Render->new;
     my $editer = Mojito::Page::CRUD->new;
-    my $pager  = Mojito::Page->new( page => '<sx>Mojito page</sx>');
+    my $pager  = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
     my $tmpl   = Template->new;
-#    use Data::Dumper::Concise;
+
+    #    use Data::Dumper::Concise;
 
     sub dispatch_request {
-        
-                  # A Benchmark URI
-          sub (GET + /bench ) {
+
+        # A Benchmark URI
+        sub (GET + /bench ) {
             my ($self) = @_;
-            my $parser = Mojito::Page->new( page => $Fixture::implicit_section );
-            my $page_struct      = $parser->page_structure;
-            my $editer           = Mojito::Page::CRUD->new;
-            my $id               = '4d56c014fbb0bcf24e000000';
-            my $page             = $editer->read($id);
-            my $render           = Mojito::Page::Render->new;
-            my $rendered_content = $render->render_page($page_struct);
+            my $pager = Mojito::Page->new( page => $Fixture::implicit_section );
+            my $page_struct = $pager->page_structure;
+            my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
+            my $id          = $editer->create($page_struct);
+
+            #my $page             = $editer->read($id);
+            my $rendered_content = $pager->render_page($page_struct);
+            
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
           },
 
@@ -42,20 +45,24 @@ use JSON;
 
             # Set mojito preiview_url variable
             my ${base_url} = $_[PSGI_ENV]->{SCRIPT_NAME} || '/';
-            $output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
+            $output =~
+s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
 
             # Take out view button and change save to create.
             $output =~ s/<input id="submit_view".*?>//;
             $output =~
               s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
             $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
+
             # Remove recent area
             $output =~ s/<section id="recent_area".*?><\/section>//si;
+
             # Remove edit linka
             $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
+
             # body with no style
             $output =~ s/<body.*?>/<body>/si;
-            
+
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 
@@ -88,10 +95,13 @@ use JSON;
             warn "View Page $id";
             my $page          = $pager->read($id);
             my $rendered_page = $pager->render_page($page);
-            my $links = $editer->get_most_recent_links;
+            my $links         = $editer->get_most_recent_links;
+
             # Change class on view_area when we're in view mode.
-            $rendered_page =~ s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-            $rendered_page =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+            $rendered_page =~
+s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+            $rendered_page =~
+s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
@@ -162,7 +172,8 @@ use JSON;
             $page->{page_html} = $pager->render_page($page);
             $page->{body_html} = $pager->render_body($page);
             $page->{title}     = $pager->intro_text( $page->{body_html} );
-#            warn "title is: ", $page->{title};
+
+            #            warn "title is: ", $page->{title};
 
             # Save page
             $pager->update( $id, $page );
@@ -193,12 +204,11 @@ use JSON;
 
             return [ 301, [ Location => '/recent' ], [] ];
           },
-          
+
           sub (GET + /hola/* ) {
             my ( $self, $name ) = @_;
             [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];
           },
-
 
           sub (GET) {
             [ 200, [ 'Content-type', 'text/plain' ], ['Hello world!'] ];
@@ -220,10 +230,13 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
         $output =~
 s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
+
         # Remove recent area
         $output =~ s/<section id="recent_area".*?><\/section>//si;
+
         # Remove edit linka
         $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
+
         # body with no style
         $output =~ s/<body.*?>/<body>/si;
 
@@ -232,7 +245,7 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
 
     sub fillin_view_page {
     }
-    
+
     sub base_url {
         my $env = shift;
 
