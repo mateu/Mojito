@@ -18,10 +18,11 @@ use JSON;
 my $tmpl = Template->new;
 my $pager = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
 
-set 'logger' => 'console';
-set 'log' => 'debug';
+set 'logger'      => 'console';
+set 'log'         => 'debug';
 set 'show_errors' => 1;
-set 'access_log' => 1;
+set 'access_log'  => 1;
+
 #set 'warnings' => 1;
 
 our $VERSION = '0.1';
@@ -71,6 +72,17 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
     return $output;
 };
 
+post '/page' => sub {
+    my $pager = Mojito::Page->new( page => params->{content} );
+    my $page_struct = $pager->page_structure;
+    $page_struct->{page_html} = $pager->render_page($page_struct);
+    $page_struct->{body_html} = $pager->render_body($page_struct);
+    $page_struct->{title}     = $pager->intro_text( $page_struct->{body_html} );
+    my $id           = $pager->create($page_struct);
+    my $redirect_url = "/page/${id}/edit";
+    redirect $redirect_url;
+};
+
 ajax '/preview' => sub {
     my $pager = Mojito::Page->new( page => params->{content} );
     my $page_struct = $pager->page_structure;
@@ -84,7 +96,7 @@ ajax '/preview' => sub {
     }
 
     my $rendered_content = $pager->render_body($page_struct);
-    my $response_href    = { rendered_content => $rendered_content };
+    my $response_href = { rendered_content => $rendered_content };
     to_json($response_href);
 };
 
@@ -118,9 +130,9 @@ get '/page/:id/edit' => sub {
 post '/page/:id/edit' => sub {
 
     #warn "submit value: ", params->{submit};
-    my $id = params->{id};
+    my $id    = params->{id};
     my $pager = Mojito::Page->new( page => params->{content} );
-    my $page = $pager->page_structure;
+    my $page  = $pager->page_structure;
 
     # Store rendered parts as well.  May as well until proven wrong.
     $page->{page_html} = $pager->render_page($page);
@@ -128,7 +140,7 @@ post '/page/:id/edit' => sub {
     $page->{title}     = $pager->intro_text( $page->{body_html} );
 
     # Save page
-    $pager->update($id, $page);
+    $pager->update( $id, $page );
 
     # If view button was pushed let's go to view
     if ( params->{submit} eq 'View' ) {
@@ -138,9 +150,15 @@ post '/page/:id/edit' => sub {
 
     my $source           = $page->{page_source};
     my $rendered_content = $pager->render_body($page);
-    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
+    my $output =
+      $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
 };
 
+get '/page/:id/delete' => sub {
+    my $id = params->{id};
+    $pager->delete($id);
+    redirect request->base . 'recent';
+};
 
 get '/recent' => sub {
 
