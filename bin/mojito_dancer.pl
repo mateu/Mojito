@@ -1,19 +1,13 @@
 #!/usr/bin/env perl
-use Dancer ':syntax';
+use Dancer;
 use Dancer::Plugin::Ajax;
-
-#use Simple;
 use 5.010;
 use Dir::Self;
 use lib __DIR__ . "/../../../dev/Mojito/lib";
 use lib __DIR__ . "/../../../dev/Mojito/t/data";
 use Fixture;
-use Mojito::Page::Parse;
-use Mojito::Page::CRUD;
-use Mojito::Page::Render;
 use Mojito::Page;
 use Template;
-use JSON;
 
 my $tmpl = Template->new;
 my $pager = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
@@ -22,7 +16,6 @@ set 'logger'      => 'console';
 set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log'  => 1;
-
 #set 'warnings' => 1;
 
 our $VERSION = '0.1';
@@ -38,9 +31,9 @@ get '/bench' => sub {
     return $rendered_content;
 };
 
-get '/' => sub {
-    template 'index';
-};
+#get '/' => sub {
+#    template 'index';
+#};
 
 get '/hola/:name' => sub {
     return "Hola " . params->{name};
