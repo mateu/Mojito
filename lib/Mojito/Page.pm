@@ -34,7 +34,7 @@ has parser => (
           page_structure
           )
     ],
-    writer => '_can_has_parse',
+    writer => '_build_parse',
 );
 
 has render => (
@@ -47,7 +47,7 @@ has render => (
           intro_text
           )
     ],
-    writer => '_can_has_render',
+    writer => '_build_render',
 );
 
 has editer => (
@@ -62,7 +62,7 @@ has editer => (
             get_most_recent_links
           )
     ],
-    writer => '_can_has_edit',
+    writer => '_build_edit',
 );
 
 # Create the handler objects
@@ -71,9 +71,9 @@ sub BUILD {
     my $constructor_args_href = shift;
 
     # pass the options into the subclasses
-    $self->_can_has_parse(PageParse->new($constructor_args_href));
-    $self->_can_has_render(PageRender->new($constructor_args_href));
-    $self->_can_has_edit(PageEdit->new( $constructor_args_href));
+    $self->_build_parse(PageParse->new($constructor_args_href));
+    $self->_build_render(PageRender->new($constructor_args_href));
+    $self->_build_edit(PageEdit->new( $constructor_args_href));
 
 }
 
