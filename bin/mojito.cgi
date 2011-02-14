@@ -5,9 +5,7 @@ use Dir::Self;
 use lib __DIR__ . "/../lib";
 use lib __DIR__ . "/../t/data";
 use Fixture;
-use Mojito::Page::Parse;
-use Mojito::Page::CRUD;
-use Mojito::Page::Render;
+use Mojito::Page;
 use Template;
 use JSON;
 
@@ -16,6 +14,7 @@ use JSON;
     package Mojito;
     my $render = Mojito::Page::Render->new;
     my $editer = Mojito::Page::CRUD->new;
+    my $pager  = Mojito::Page->new( page => '<sx>Mojito page</sx>');
     my $tmpl   = Template->new;
 #    use Data::Dumper::Concise;
 
@@ -24,7 +23,7 @@ use JSON;
                   # A Benchmark URI
           sub (GET + /bench ) {
             my ($self) = @_;
-            my $parser = Mojito::Page::Parse->new( page => $Fixture::implicit_section );
+            my $parser = Mojito::Page->new( page => $Fixture::implicit_section );
             my $page_struct      = $parser->page_structure;
             my $editer           = Mojito::Page::CRUD->new;
             my $id               = '4d56c014fbb0bcf24e000000';
@@ -32,19 +31,6 @@ use JSON;
             my $render           = Mojito::Page::Render->new;
             my $rendered_content = $render->render_page($page_struct);
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
-          },
-
-#          sub (GET + /deploy/*) {
-#            my ( $self, $deploy_location ) = @_;
-#            warn "Deploying to location: $deploy_location";
-#            my $env = $_[PSGI_ENV];
-#
-#            [ 200, [ 'Content-type', 'text/plain' ], ["Raison d'etre"] ];
-#          },
-
-          sub (GET + /hola/* ) {
-            my ( $self, $name ) = @_;
-            [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];
           },
 
           # PRESENT CREATE Page Form
@@ -66,7 +52,7 @@ use JSON;
             # Remove recent area
             $output =~ s/<section id="recent_area".*?><\/section>//si;
             # Remove edit linka
-            $output =~ s/<nav id="edit_link".*?><\/nav>//si;
+            $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
             # body with no style
             $output =~ s/<body.*?>/<body>/si;
             
@@ -80,16 +66,16 @@ use JSON;
             warn "Create Page";
 
             #			warn "content: ", $params->{content};
-            warn "submit type: ", $params->{submit};
+            #warn "submit type: ", $params->{submit};
 
-            my $parser = Mojito::Page::Parse->new( page => $params->{content} );
-            my $page_struct = $parser->page_structure;
+            my $pager = Mojito::Page->new( page => $params->{content} );
+            my $page_struct = $pager->page_structure;
             $page_struct->{page_html} = $render->render_page($page_struct);
             $page_struct->{body_html} = $render->render_body($page_struct);
             $page_struct->{title} =
-              $render->intro_text( $page_struct->{body_html} );
+              $pager->intro_text( $page_struct->{body_html} );
             warn "title: ", $page_struct->{title};
-            my $id           = $editer->create($page_struct);
+            my $id           = $pager->create($page_struct);
             my $redirect_url = "/page/${id}/edit";
 
             [ 301, [ Location => $redirect_url ], [] ];
@@ -100,8 +86,8 @@ use JSON;
             my ( $self, $id ) = @_;
 
             warn "View Page $id";
-            my $page          = $editer->read($id);
-            my $rendered_page = $render->render_page($page);
+            my $page          = $pager->read($id);
+            my $rendered_page = $pager->render_page($page);
             my $links = $editer->get_most_recent_links;
             # Change class on view_area when we're in view mode.
             $rendered_page =~ s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
@@ -115,7 +101,7 @@ use JSON;
             my ($self) = @_;
 
             my $want_delete_link = 1;
-            my $links = $editer->get_most_recent_links($want_delete_link);
+            my $links = $pager->get_most_recent_links($want_delete_link);
 
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
@@ -127,21 +113,20 @@ use JSON;
             #warn "posted content: ", $params->{content};
             warn "Preview..";
             warn "extra action: ", $params->{extra_action};
-            my $parser = Mojito::Page::Parse->new( page => $params->{content} );
-            my $page_struct = $parser->page_structure;
+            my $pager = Mojito::Page->new( page => $params->{content} );
+            my $page_struct = $pager->page_structure;
             if (   ( $params->{extra_action} eq 'save' )
                 && ( $params->{'mongo_id'} ) )
             {
-                $page_struct->{page_html} = $render->render_page($page_struct);
-                $page_struct->{body_html} = $render->render_body($page_struct);
+                $page_struct->{page_html} = $pager->render_page($page_struct);
+                $page_struct->{body_html} = $pager->render_body($page_struct);
                 $page_struct->{title} =
                   $render->intro_text( $page_struct->{body_html} );
                 warn "*** TITLE: ", $page_struct->{title};
-                $editer->update( $params->{'mongo_id'}, $page_struct );
+                $pager->update( $params->{'mongo_id'}, $page_struct );
             }
 
-            my $render           = Mojito::Page::Render->new;
-            my $rendered_content = $render->render_body($page_struct);
+            my $rendered_content = $pager->render_body($page_struct);
             my $response_href    = { rendered_content => $rendered_content };
             my $JSON_response    = JSON::encode_json($response_href);
             [ 200, [ 'Content-type', 'application/json' ], [$JSON_response] ];
@@ -152,8 +137,8 @@ use JSON;
             my ( $self, $id, $other ) = @_;
 
             warn "Update Form for Page $id";
-            my $page             = $editer->read($id);
-            my $rendered_content = $render->render_body($page);
+            my $page             = $pager->read($id);
+            my $rendered_content = $pager->render_body($page);
             my $source           = $page->{page_source};
 
             # write source and rendered content into their tags
@@ -170,17 +155,17 @@ use JSON;
 
             warn "UPDATE Page $id";
             warn "submit value: ", $params->{submit};
-            my $parser = Mojito::Page::Parse->new( page => $params->{content} );
-            my $page = $parser->page_structure;
+            my $pager = Mojito::Page->new( page => $params->{content} );
+            my $page = $pager->page_structure;
 
             # Store rendered parts as well.  May as well until proven wrong.
-            $page->{page_html} = $render->render_page($page);
-            $page->{body_html} = $render->render_body($page);
-            $page->{title}     = $render->intro_text( $page->{body_html} );
-            warn "title is: ", $page->{title};
+            $page->{page_html} = $pager->render_page($page);
+            $page->{body_html} = $pager->render_body($page);
+            $page->{title}     = $pager->intro_text( $page->{body_html} );
+#            warn "title is: ", $page->{title};
 
             # Save page
-            $editer->update( $id, $page );
+            $pager->update( $id, $page );
 
             # If view button was pushed let's go to view
             if ( $params->{submit} eq 'View' ) {
@@ -191,7 +176,7 @@ use JSON;
             }
 
             my $source           = $page->{page_source};
-            my $rendered_content = $render->render_body($page);
+            my $rendered_content = $pager->render_body($page);
             my $output =
               fillin_edit_page( $source, $rendered_content, $id,
                 base_url( $_[PSGI_ENV] ) );
@@ -204,10 +189,16 @@ use JSON;
             my ( $self, $id, $other ) = @_;
 
             warn "Delete page $id";
-            $editer->delete($id);
+            $pager->delete($id);
 
             return [ 301, [ Location => '/recent' ], [] ];
           },
+          
+          sub (GET + /hola/* ) {
+            my ( $self, $name ) = @_;
+            [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];
+          },
+
 
           sub (GET) {
             [ 200, [ 'Content-type', 'text/plain' ], ['Hello world!'] ];
@@ -232,7 +223,7 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
         # Remove recent area
         $output =~ s/<section id="recent_area".*?><\/section>//si;
         # Remove edit linka
-        $output =~ s/<nav id="edit_link".*?><\/nav>//si;
+        $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
         # body with no style
         $output =~ s/<body.*?>/<body>/si;
 

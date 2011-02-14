@@ -54,7 +54,7 @@ sub render_page {
     $page =~ s/(<section id="view_area"[^>]*>).*?(<\/section>)/$1${rendered_body}$2/si;
     
     if ( my $id = $doc->{'_id'} ) {
-        $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="\/page\/${id}\/edit">Edit<\/a>$2/si;
+        $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="\/page\/${id}\/edit">Edit<\/a>$2/sig;
     }
     
     # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
@@ -146,10 +146,18 @@ sub format_for_web {
             # Pretend it's just Textile for now
             # my $formatter = Formatter::HTML::Textile->format($content);
             #            $formatted_content = $formatter->fragment;
-            #$formatted_content = $textile->process($content);
-
-            #$formatted_content = $markdown->markdown($content);
-
+            my $default_format = 'textile';
+            given ($default_format) {
+                when (/textile/) {
+                    $formatted_content = $textile->process($content);
+                }
+                when (/markdown/) {
+                    $formatted_content = $markdown->markdown($content);
+                }
+                default {
+                    # Let it ride (HTML)
+                }        
+            }
         }
         when (/^HTML$/i) {
 

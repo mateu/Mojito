@@ -21,7 +21,10 @@ my $javascripts = [
 ];
 my @javascripts = map { "<script src=${base_URL}$_></script>" } @{$javascripts};
 
-my $css = [ 'syntax_highlight/prettify.css', ];
+my $css = [ 
+    'syntax_highlight/prettify.css', 
+    'css/mojito.css',    
+];
 my @css =
   map { "<link href=${base_URL}$_ type=text/css rel=stylesheet />" } @{$css};
   
@@ -34,50 +37,17 @@ sub build_template {
 <!doctype html>
 <html> 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset=utf-8>
   <title>Mojito page</title>
 $js_css
 <script></script>
-<style> 
-.html_body {background-color: #87a865; margin: 5px;}
-h1 {margin-top: 0em; padding-top: 0em;} 
-#body_wrapper { 
-    float:left; 
-    width:98%;
-    margin:auto;
-    padding-left: 1em;
-    background-color:white; 
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-}
-#edit_area {float:left; width:46%;}
-.view_area_edit_mode {float:left; margin-left:2em; width:46%;}
-.view_area_view_mode {
-    float:left; 
-    margin-left: 2em;
-    width: 62%;
-    background-color: white;
-}
-#recent_area {
-    float: right;
-    margin-top: 2em;
-    margin-left: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
-    width: 22%;
-    border: 1px solid #888; 
-    background-color: #cafc97;  
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-}
-#edit_link {
-    float: left;
-    clear: both;
-}
-</style>
+<style></style>
 </head>
 <body class="html_body">
-<div id="body_wrapper">
+<header>
+<nav id="edit_link" class="edit_link"></nav>
+</header>
+<article id="body_wrapper">
 <section id="edit_area">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
@@ -88,8 +58,10 @@ h1 {margin-top: 0em; padding-top: 0em;}
 </section>
 <section id="view_area" class="view_area_edit_mode"></section>
 <section id="recent_area"></section>
-</div>
+</article>
+<footer>
 <nav id="edit_link" class="edit_link"></nav>
+</footer>
 </body>
 </html>
 END_HTML
