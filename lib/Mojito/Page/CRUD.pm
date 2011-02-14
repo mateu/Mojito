@@ -1,4 +1,4 @@
-package PageCRUD;
+package Mojito::Page::CRUD;
 use MongoDB::OID;
 use strictures 1;
 use 5.010;

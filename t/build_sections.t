@@ -5,10 +5,10 @@ use Test::Differences;
 use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
-use PageParse;
+use Mojito::Page::Parse;
 use Data::Dumper::Concise;
 
-my $parser = PageParse->new(page => $Fixture::implicit_normal_starting_section);
+my $parser = Mojito::Page::Parse->new(page => $Fixture::implicit_normal_starting_section);
 my $sections = $parser->sections;
 is_deeply($sections, $Fixture::sections, 'build sections');
 

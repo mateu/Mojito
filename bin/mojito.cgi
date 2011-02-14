@@ -5,17 +5,17 @@ use Dir::Self;
 use lib __DIR__ . "/../lib";
 use lib __DIR__ . "/../t/data";
 use Fixture;
-use PageParse;
-use PageCRUD;
-use PageRender;
+use Mojito::Page::Parse;
+use Mojito::Page::CRUD;
+use Mojito::Page::Render;
 use Template;
 use JSON;
 
 {
 
     package Mojito;
-    my $render = PageRender->new;
-    my $editer = PageCRUD->new;
+    my $render = Mojito::Page::Render->new;
+    my $editer = Mojito::Page::CRUD->new;
     my $tmpl   = Template->new;
 #    use Data::Dumper::Concise;
 
@@ -24,12 +24,12 @@ use JSON;
                   # A Benchmark URI
           sub (GET + /bench ) {
             my ($self) = @_;
-            my $parser = PageParse->new( page => $Fixture::implicit_section );
+            my $parser = Mojito::Page::Parse->new( page => $Fixture::implicit_section );
             my $page_struct      = $parser->page_structure;
-            my $editer           = PageCRUD->new;
+            my $editer           = Mojito::Page::CRUD->new;
             my $id               = '4d56c014fbb0bcf24e000000';
             my $page             = $editer->read($id);
-            my $render           = PageRender->new;
+            my $render           = Mojito::Page::Render->new;
             my $rendered_content = $render->render_page($page_struct);
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
           },
@@ -82,7 +82,7 @@ use JSON;
             #			warn "content: ", $params->{content};
             warn "submit type: ", $params->{submit};
 
-            my $parser = PageParse->new( page => $params->{content} );
+            my $parser = Mojito::Page::Parse->new( page => $params->{content} );
             my $page_struct = $parser->page_structure;
             $page_struct->{page_html} = $render->render_page($page_struct);
             $page_struct->{body_html} = $render->render_body($page_struct);
@@ -127,7 +127,7 @@ use JSON;
             #warn "posted content: ", $params->{content};
             warn "Preview..";
             warn "extra action: ", $params->{extra_action};
-            my $parser = PageParse->new( page => $params->{content} );
+            my $parser = Mojito::Page::Parse->new( page => $params->{content} );
             my $page_struct = $parser->page_structure;
             if (   ( $params->{extra_action} eq 'save' )
                 && ( $params->{'mongo_id'} ) )
@@ -140,7 +140,7 @@ use JSON;
                 $editer->update( $params->{'mongo_id'}, $page_struct );
             }
 
-            my $render           = PageRender->new;
+            my $render           = Mojito::Page::Render->new;
             my $rendered_content = $render->render_body($page_struct);
             my $response_href    = { rendered_content => $rendered_content };
             my $JSON_response    = JSON::encode_json($response_href);
@@ -170,7 +170,7 @@ use JSON;
 
             warn "UPDATE Page $id";
             warn "submit value: ", $params->{submit};
-            my $parser = PageParse->new( page => $params->{content} );
+            my $parser = Mojito::Page::Parse->new( page => $params->{content} );
             my $page = $parser->page_structure;
 
             # Store rendered parts as well.  May as well until proven wrong.

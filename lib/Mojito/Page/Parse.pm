@@ -1,12 +1,8 @@
-package PageParse;
-
-#use strictures 1;
+package Mojito::Page::Parse;
+use strictures 1;
 use 5.010;
 use Moo;
 use Types;
-
-#use HTML::HTML5::Parser;
-use Sub::Quote qw/ quote_sub /;
 
 use Data::Dumper::Concise;
 
@@ -135,47 +131,6 @@ s/(<\/sx>)(.*?\S.*?)($section_open_regex)/$1\n<sx c=Implicit>$2<\/sx>\n$3/sig;
     }
 
     return $page;
-}
-
-=head2 parse_sections
-
-Parse the HTML5ish creation after we've added implicit sections
-	
-	Args: sectioned HTMLish stuff (after adding implicit sections to raw/source content)
-	Returns: Data structure of sections - ArrayRef[HashRef]
-	         [{content => $some, class => 'Implicit'}]
-	         
-=cut
-
-sub parse_html5 {
-    my ( $self, $html5 ) = @_;
-
-    #    my $parser         = HTML::HTML5::Parser->new;
-    #    my $doc            = $parser->parse_string($html5);
-    #    my $tagname        = 'sx';
-    #    my $attribute_name = 'c';
-    #    my $nodelist       = $doc->getElementsByTagName('sx');
-    #    my $sections;
-    #    while ( my $node = $nodelist->shift ) {
-    #        my $section;
-    #        if ( $node->getAttribute($attribute_name) ) {
-    #            $section->{class} = $node->getAttribute('c');
-    #        }
-    #        else {
-    #            $section->{class} = 'Implicit';
-    #        }
-    #        my $content = $node->toString;
-    #
-    #        # Remove inclosing tags
-    #        $content =~ s/<sx c=[^>]>(.*)<\sx>/$1/si;
-    #
-    #        # Store it
-    #        $section->{content} = $content;
-    #        push @{$sections}, $section;
-    #    }
-    #
-    #    return $sections;
-    return [ {} ];
 }
 
 sub parse_sections {

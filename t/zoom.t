@@ -1,17 +1,17 @@
 use lib '../lib';
 use Fixture;
-use PageParse;
-use PageCRUD;
-use PageRender;
+use Mojito::Page::Parse;
+use Mojito::Page::CRUD;
+use Mojito::Page::Render;
 use Template;
 use MongoDB::OID;
 use JSON;
 use HTML::Zoom;
 
-my $editer           = PageCRUD->new;
+my $editer           = Mojito::Page::CRUD->new;
 my $id               = MongoDB::OID->new( value => '4d4a3e6769f174de44000000' );
 my $page             = $editer->read($id);
-my $render           = PageRender->new;
+my $render           = Mojito::Page::Render->new;
 my $rendered_content = $render->render_body($page);
 warn '*** rendered content: ', $rendered_content;
 my $output =

@@ -5,17 +5,17 @@ use 5.010;
 use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
-use PageParse;
-use PageCRUD;
-use PageRender;
+use Mojito::Page::Parse;
+use Mojito::Page::CRUD;
+use Mojito::Page::Render;
 use Data::Dumper::Concise;
 use Time::HiRes qw/ time /;
 
 my $start = time;
-#my $parser = PageParse->new(page => $Fixture::implicit_section);
+#my $parser = Mojito::Page::Parse->new(page => $Fixture::implicit_section);
 #my $page_struct = $parser->page_structure;
 #
-my $editer = PageCRUD->new;
+my $editer = Mojito::Page::CRUD->new;
 #my $id = $editer->create($page_struct);
 ##say "id: $id";
 #$id = '4d532f9651683bd673000000';
@@ -31,7 +31,7 @@ my $links = $editer->get_most_recent_links;
 say "Links: ", Dumper $links;
 
 
-#my $render = PageRender->new;
+#my $render = Mojito::Page::Render->new;
 #my $page = $render->render_page($page_struct);
 ##print 'raw: ', Dumper $raw;
 ##print 'rendered: ', Dumper $rendered;

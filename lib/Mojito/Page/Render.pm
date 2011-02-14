@@ -1,4 +1,4 @@
-package PageRender;
+package Mojito::Page::Render;
 use strictures 1;
 use 5.010;
 use Moo;
@@ -146,7 +146,7 @@ sub format_for_web {
             # Pretend it's just Textile for now
             # my $formatter = Formatter::HTML::Textile->format($content);
             #            $formatted_content = $formatter->fragment;
-            $formatted_content = $textile->process($content);
+            #$formatted_content = $textile->process($content);
 
             #$formatted_content = $markdown->markdown($content);
 
