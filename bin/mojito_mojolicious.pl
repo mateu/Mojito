@@ -9,10 +9,10 @@ use Mojito::Page;
 use Mojito::Page::Parse;
 use Mojito::Page::CRUD;
 use Mojito::Page::Render;
-use Template;
+use Mojito::Template;
 #use Data::Dumper::Concise;
 
-my $tmpl = Template->new;
+my $tmpl = Mojito::Template->new;
 
 get '/bench' => sub {
     my $self        = shift;

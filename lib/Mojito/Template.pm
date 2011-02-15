@@ -1,5 +1,5 @@
 use strictures 1;
-package Template;
+package Mojito::Template;
 use Moo;
 
 use Data::Dumper::Concise;

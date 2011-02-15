@@ -2,23 +2,23 @@ package Mojito::Page::Parse;
 use strictures 1;
 use 5.010;
 use Moo;
-use Types;
+use Mojito::Types;
 
 use Data::Dumper::Concise;
 
 has 'page' => (
     is       => 'rw',
-    isa      => Types::NoRef,
+    isa      => Mojito::Types::NoRef,
     required => 1,
 );
 has 'sections' => (
     is      => 'ro',
-    isa     => Types::AHRef,
+    isa     => Mojito::Types::AHRef,
     builder => 'build_sections',
 );
 has 'page_structure' => (
     is      => 'rw',
-    isa     => Types::HashRef,
+    isa     => Mojito::Types::HashRef,
     lazy    => 1,
     builder => 'build_page_structure',
 );
@@ -38,26 +38,26 @@ has 'default_format' => (
 );
 has 'created' => (
     is  => 'ro',
-    isa => Types::Int,
+    isa => Mojito::Types::Int,
 );
 has 'last_modified' => (
     is      => 'ro',
-    isa     => Types::Int,
+    isa     => Mojito::Types::Int,
     default => sub { time() },
 );
 has 'section_open_regex' => (
     is      => 'ro',
-    isa     => Types::RegexpRef,
+    isa     => Mojito::Types::RegexpRef,
     default => sub { qr/<sx c=(?:'|")?\w+(?:'|")?[^>]*?>/ },
 );
 has 'section_close_regex' => (
     is      => 'ro',
-    isa     => Types::RegexpRef,
+    isa     => Mojito::Types::RegexpRef,
     default => sub { qr(</sx>) },
 );
 has 'debug' => (
     is      => 'rw',
-    isa     => Types::Bool,
+    isa     => Mojito::Types::Bool,
     default => sub { 0 },
 );
 

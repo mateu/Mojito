@@ -2,7 +2,7 @@ use Benchmark qw(:all);
 use FindBin qw($Bin);
 use lib "$Bin/../data";
 use 5.010;
-use TemplateRole;
+use Mojito::TemplateRole;
 my $zoom = TemplateRole->new;
 
 my $count = $ARGV[0] || 1000;

@@ -3,7 +3,7 @@ use Fixture;
 use Mojito::Page::Parse;
 use Mojito::Page::CRUD;
 use Mojito::Page::Render;
-use Template;
+use Mojito::Template;
 use MongoDB::OID;
 use JSON;
 use HTML::Zoom;

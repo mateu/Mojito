@@ -1,6 +1,6 @@
 use strictures 1;
+package Mojito::Filter::Shortcuts;
 use 5.010;
-package Shortcuts;
 
 my @shortcuts = (\&cpan_URL);
 

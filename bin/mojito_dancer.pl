@@ -8,9 +8,9 @@ use lib __DIR__ . "/../../../dev/Mojito/t/data";
 use Fixture;
 use Mojito::Page;
 use Mojito::Page::CRUD;
-use Template;
+use Mojito::Template;
 
-my $tmpl = Template->new;
+my $tmpl = Mojito::Template->new;
 my $pager = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
 
 set 'logger'      => 'console';

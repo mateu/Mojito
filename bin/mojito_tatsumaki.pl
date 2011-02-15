@@ -12,7 +12,7 @@ use Mojito::Page::Parse;
 use Mojito::Page::CRUD;
 use Mojito::Page::Render;
 use Mojito::Page;
-use Template;
+use Mojito::Template;
 
 package MainHandler;
 use parent qw(Tatsumaki::Handler);

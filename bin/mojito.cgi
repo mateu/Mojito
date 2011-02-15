@@ -7,7 +7,7 @@ use lib __DIR__ . "/../t/data";
 use Fixture;
 use Mojito::Page;
 use Mojito::Page::CRUD;
-use Template;
+use Mojito::Template;
 use JSON;
 
 {
@@ -16,7 +16,7 @@ use JSON;
     my $render = Mojito::Page::Render->new;
     my $editer = Mojito::Page::CRUD->new;
     my $pager  = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
-    my $tmpl   = Template->new;
+    my $tmpl   = Mojito::Template->new;
 
     #    use Data::Dumper::Concise;
 

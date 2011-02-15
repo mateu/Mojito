@@ -5,7 +5,7 @@ use 5.010;
 use Moo;
 use Data::Dumper::Concise;
 
-with('DBRole');
+with('Mojito::Role::DB');
 
 # Create
 sub create {

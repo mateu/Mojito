@@ -1,4 +1,4 @@
-package DBRole;
+package Mojito::Role::DB;
 use Moo::Role;
 use strictures 1;
 use MongoDB;

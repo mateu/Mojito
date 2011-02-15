@@ -3,7 +3,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../data";
 use 5.010;
 
-#use Template;
+#use Mojito::Template;
 use HTML::Zoom;
 my $html_frag = '<section id=view_area></section>';
 my $doc;

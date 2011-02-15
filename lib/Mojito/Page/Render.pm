@@ -2,17 +2,17 @@ package Mojito::Page::Render;
 use strictures 1;
 use 5.010;
 use Moo;
-use Template;
+use Mojito::Template;
 use Text::Textile qw(textile);
 use Text::Markdown;
 use Pod::Simple::XHTML;
 use Data::Dumper::Concise;
 use HTML::Strip;
-use Shortcuts;
+use Mojito::Filter::Shortcuts;
 
 my $textile  = Text::Textile->new;
 my $markdown = Text::Markdown->new;
-my $tmpl     = Template->new;
+my $tmpl     = Mojito::Template->new;
 
 has 'stripper' => (
     is => 'ro',
@@ -102,7 +102,7 @@ sub render_body {
     my ( $raw_sections, $rendered_sections ) = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
-    $rendered_body = Shortcuts::expand_shortcuts($rendered_body);
+    $rendered_body = Mojito::Filter::Shortcuts::expand_shortcuts($rendered_body);
     return $rendered_body;
 }
 

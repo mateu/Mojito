@@ -1,4 +1,4 @@
-package Types;
+package Mojito::Types;
 use Sub::Quote qw(quote_sub);
 use Scalar::Util;
 use List::Util;

@@ -1,8 +1,8 @@
 use Test::More;
-use Template;
+use Mojito::Template;
 use 5.010;
 
-my $temple = Template->new;
+my $temple = Mojito::Template->new;
 say "template: ", $temple->template;
 
 ok(1);
