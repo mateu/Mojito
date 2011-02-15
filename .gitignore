@@ -2,3 +2,4 @@
 .includepath
 .build
 bin/logs/
+Mojito-*
