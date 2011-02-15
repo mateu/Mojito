@@ -1,13 +1,20 @@
+use strictures 1;
 package Mojito::Page::CRUD;
 use MongoDB::OID;
-use strictures 1;
 use 5.010;
 use Moo;
 use Data::Dumper::Concise;
 
 with('Mojito::Role::DB');
 
-# Create
+=head1 Methods
+
+=head2 create
+
+Create a page in the database.
+
+=cut
+
 sub create {
     my ( $self, $page_struct ) = @_;
 
@@ -19,14 +26,24 @@ sub create {
     return $id->value;
 }
 
-# Retrieve
+=head2 read
+
+Read a page from the database.
+
+=cut
+
 sub read {
     my ( $self, $id ) = @_;
     my $oid = MongoDB::OID->new( value => $id );
     return $self->collection->find_one( { _id => $oid } );
 }
 
-# Update
+=head2 update
+
+Update a page in the database.
+
+=cut
+
 sub update {
     my ( $self, $id, $page_struct ) = @_;
 
@@ -37,7 +54,12 @@ sub update {
     $self->collection->update( { '_id' => $oid }, $page_struct );
 }
 
-# Delete
+=head2 delete
+
+Delete a page from the database.
+
+=cut
+
 sub delete {
     my ( $self, $id ) = @_;
 
@@ -45,16 +67,34 @@ sub delete {
     $self->collection->remove( { '_id' => $oid } );
 }
 
-# returns a MongoDB cursor one can iterate over.
+=head2 get_all
+
+Get all pages in the notes collection.
+Returns a MongoDB cursor one can iterate over.
+
+=cut
+
 sub get_all {
     my $self = shift;
     return $self->collection->find;
 }
 
+=head2 get_most_recent_docs
+
+Get the documents sorted by date in reverse chrono order.
+
+=cut
+
 sub get_most_recent_docs {
     my $self = shift;
     return $self->collection->find->sort( { last_modified => -1 } );
 }
+
+=head2 get_most_recent_ids
+
+Get just the ids of the documents sorted by date in reverse chrono order.
+
+=cut
 
 sub get_most_recent_ids {
     my ($self) = @_;
@@ -66,7 +106,14 @@ sub get_most_recent_ids {
     return \@ids;
 }
 
-# TODO: There's HTML in here, omg.
+=head2 get_most_recent_link_data
+
+Get the recent links data structure - ArrayRef[HashRef]
+
+TODO: There's HTML in here, omg.
+
+=cut
+
 sub get_most_recent_link_data {
     my ($self) = @_;
 
@@ -79,6 +126,12 @@ sub get_most_recent_link_data {
 
     return $link_data;
 }
+
+=head2 get_most_recent_links
+
+Turn the data into HTML
+
+=cut
 
 sub get_most_recent_links {
     my ($self, $want_delete_link) = @_;

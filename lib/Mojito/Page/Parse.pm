@@ -1,5 +1,5 @@
-package Mojito::Page::Parse;
 use strictures 1;
+package Mojito::Page::Parse;
 use 5.010;
 use Moo;
 use Mojito::Types;
@@ -61,6 +61,12 @@ has 'debug' => (
     default => sub { 0 },
 );
 
+=head2 has_nested_section
+
+Test if we have nested sections.
+
+=cut
+
 sub has_nested_section {
     my ($self) = @_;
 
@@ -96,6 +102,12 @@ sub has_nested_section {
 
     return 0;
 }
+
+=head2 add_implicit_sections
+
+Add implicit sections to assist the building of the page_struct.
+
+=cut
 
 sub add_implicit_sections {
     my ($self) = @_;
@@ -133,6 +145,12 @@ s/(<\/sx>)(.*?\S.*?)($section_open_regex)/$1\n<sx c=Implicit>$2<\/sx>\n$3/sig;
     return $page;
 }
 
+=head2 parse_sections
+
+Extract section class and content from the page.
+
+=cut
+
 sub parse_sections {
     my ( $self, $page ) = @_;
 
@@ -158,8 +176,9 @@ Wrap up the getting of sections process.
 sub build_sections {
     my $self = shift;
 
+# TODO: Deal with nested sections gracefully.
     if ( $self->has_nested_section ) {
-        warn "page: ", $self->page;
+#        warn "page: ", $self->page;
         die "Damn: Haz Nested Sections.  Nested sections are not supported";
 
 # return Array[]HashRef] with error when we have a nested <sx>
@@ -177,7 +196,7 @@ sub build_sections {
     }
 }
 
-=head build_page_structure
+=head2 build_page_structure
 
 It's just an href that we'll persist as a Mongo document.
 

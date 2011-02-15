@@ -1,6 +1,6 @@
+use strictures 1;
 package Mojito::Role::DB;
 use Moo::Role;
-use strictures 1;
 use MongoDB;
 
 # Create a database and get a handle on a users collection.

@@ -1,5 +1,5 @@
-package Mojito::Page::Render;
 use strictures 1;
+package Mojito::Page::Render;
 use 5.010;
 use Moo;
 use Mojito::Template;
@@ -22,6 +22,12 @@ has 'stripper' => (
     builder => '_build_stripper',
 );
 
+=head2 render_sections
+
+Turn the sections into something viewable in a HTML browser.
+
+=cut
+
 sub render_sections {
     my ( $self, $doc ) = @_;
 
@@ -39,6 +45,12 @@ sub render_sections {
 
     return ( \@raw_document_sections, \@formatted_document_sections );
 }
+
+=head2 render_page
+
+Make a page for viewing in the browser.
+
+=cut
 
 sub render_page {
     my ( $self, $doc ) = @_;
@@ -61,6 +73,12 @@ sub render_page {
     
     return $page;
 }
+
+=head2 render_page_org
+
+Original array template technique.
+
+=cut
 
 sub render_page_org {
     my ( $self, $doc ) = @_;
@@ -95,6 +113,13 @@ END_HTML
     
     return $rendered_page;
 }
+
+=head2 render_body
+
+Turn the raw into something distilled.
+TODO: Do we really need to return two things when only one is used?
+
+=cut
 
 sub render_body {
     my ( $self, $doc ) = @_;
@@ -180,6 +205,12 @@ sub format_for_web {
     return ( $content, $formatted_content );
 }
 
+=head2 pod2html
+
+Turn POD into HTML
+
+=cut
+
 sub pod2html {
     my ( $self, $content ) = @_;
 
@@ -193,6 +224,13 @@ sub pod2html {
 
     return $html;
 }
+
+=head2 intro_text
+
+Extract the beginning text substring.
+TODO: extract first 3 words intstead of a substring to break on word boundaries.
+
+=cut
 
 sub intro_text {
     my ( $self, $html ) = @_;

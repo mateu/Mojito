@@ -71,7 +71,7 @@ say 'something';
 Implicit Section
 
 </sx>
-<sx c="JavaScipt">
+<sx c="JavaScript">
 function () { var one = 1 }
 </sx>
 <sx c=Implicit>
@@ -130,34 +130,30 @@ $parsed_simple_non_implicit_section = <<'END';
 <sx c=Perl>say "Bom dia";</sx>
 END
 
-$sections = [
-    {
-        class => "Implicit",
-        content =>
-          "<sx c=\"Implicit\">\n    Yeah\n<section>Heya</section>\nOK\n</sx>"
-    },
-    {
-        class   => "Python",
-        content => "<sx c=\"Python\">def: init</sx>"
-    },
-    {
-        class => "Implicit",
-        content =>
-"<sx c=\"Implicit\">\n<section>What happens here?</section>\nHow about here?\n</sx>"
-    },
-    {
-        class   => "PHP",
-        content => "<sx c=\"PHP\">a[3]</sx>"
-    },
-    {
-        class => "Implicit",
-        content =>
-"<sx c=\"Implicit\">\nDirty\n<section>The End</section>\nNasty test\n</sx>"
-    }
+$sections  = 
+[
+  {
+    class => "Implicit",
+    content => "\n    Yeah\n<section>Heya</section>\nOK\n"
+  },
+  {
+    class => "Python",
+    content => "def: init"
+  },
+  {
+    class => "Implicit",
+    content => "\n<section>What happens here?</section>\nHow about here?\n"
+  },
+  {
+    class => "PHP",
+    content => "a[3]"
+  },
+  {
+    class => "Implicit",
+    content => "\nDirty\n<section>The End</section>\nNasty test\n"
+  }
 ];
-
 $page_structure = {
-    created        => "1234567890",
     default_format => "HTML",
     sections       => [
         {
@@ -182,7 +178,6 @@ $page_structure = {
             content => "\nDirty\n<section>The End</section>\nNasty test\n"
         }
     ],
-    title => "    Yeah\n<sectio"
 };
 
 $prettyprint =<<'END_WIKI';

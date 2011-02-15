@@ -1,7 +1,9 @@
 use strictures 1;
+use Test::More;
 use Mojito::Filter::Shortcuts;
-use Data::Dumper::Concise;
 
 my $content = '<section>With some <em>words</em> and a link shortcut: {{cpan MojoMojo}} for testing.</section>';
-print Mojito::Filter::Shortucts::Shortcuts::expand_shortcuts($content);
+$content = Mojito::Filter::Shortcuts::expand_shortcuts($content);
+like($content, qr/<a href="http:\/\/search.cpan.org\/perldoc\?MojoMojo">MojoMojo<\/a>/, 'CPAN Link');
 
+done_testing();

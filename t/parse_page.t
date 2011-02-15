@@ -2,13 +2,15 @@ use strictures 1;
 use 5.010;
 use Test::More;
 use Test::Differences;
+use Test::Exception;
 use FindBin qw($Bin);
 use lib "$Bin/data";
 use Fixture;
 use Mojito::Page::Parse;
 
-my $parser = Mojito::Page::Parse->new(page => $Fixture::nested_section);
-ok($parser->has_nested_section, 'nested section');
+my $parser = Mojito::Page::Parse->new(page => '<br>');
+dies_ok { Mojito::Page::Parse->new(page => $Fixture::nested_section) } 'nested section casuses die';
+#die_ok($parser->has_nested_section, 'nested section');
 
 # Change content to not be nested
 $parser->page($Fixture::not_nested_section);

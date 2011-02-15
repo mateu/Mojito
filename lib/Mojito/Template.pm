@@ -1,7 +1,6 @@
 use strictures 1;
 package Mojito::Template;
 use Moo;
-
 use Data::Dumper::Concise;
 
 # TODO - MOST DO: Make this alias where Mojito/files ends up.
@@ -10,7 +9,7 @@ my $base_URL = 'http://localhost/mojito/';
 has 'template' => (
     is      => 'rw',
     lazy    => 1,
-    builder => 'build_template',
+    builder => '_build_template',
 );
 has 'home_page' => (
     is      => 'rw',
@@ -30,7 +29,7 @@ my @css =
 
 my $js_css = join "\n", @javascripts, @css;
 
-sub build_template {
+sub _build_template {
     my $self = shift;
 
     my $edit_page = <<"END_HTML";
@@ -101,6 +100,14 @@ END_HTML
     return $home_page;
 }
 
+=head1 Methods
+
+=head2 fillin_edit_page
+
+Get the contents of the edit page proper given the starting template and some data.
+
+=cut
+
 sub fillin_edit_page {
     my ( $self, $page_source, $page_view, $mongo_id, $base_url ) = @_;
 
@@ -122,6 +129,12 @@ sub fillin_edit_page {
 
     return $output;
 }
+
+=head2 fillin_create_page
+
+Get the contents of the create page proper given the starting template and some data.
+
+=cut
 
 sub fillin_create_page {
     my ( $self, $base_url ) = @_;

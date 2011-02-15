@@ -10,6 +10,7 @@ use Data::Dumper::Concise;
 
 my $parser = Mojito::Page::Parse->new(page => $Fixture::implicit_normal_starting_section);
 my $sections = $parser->sections;
+#say Dumper $sections;
 is_deeply($sections, $Fixture::sections, 'build sections');
 
 done_testing();

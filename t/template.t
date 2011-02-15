@@ -3,9 +3,7 @@ use Mojito::Template;
 use 5.010;
 
 my $temple = Mojito::Template->new;
-say "template: ", $temple->template;
-
-ok(1);
+isa_ok($temple, 'Mojito::Template');
 
 
 done_testing();

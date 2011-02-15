@@ -1,3 +1,4 @@
+use strictures 1;
 package Mojito::Page;
 use Moo;
 use Sub::Quote qw(quote_sub);
@@ -65,7 +66,14 @@ has editer => (
     writer => '_build_edit',
 );
 
-# Create the handler objects
+=head1 Methods
+
+=head2 BUILD
+
+Create the handler objects
+
+=cut
+
 sub BUILD {
     my $self                  = shift;
     my $constructor_args_href = shift;

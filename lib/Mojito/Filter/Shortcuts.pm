@@ -4,6 +4,14 @@ use 5.010;
 
 my @shortcuts = (\&cpan_URL);
 
+=head1 Methods
+
+=head2 expand_shortcuts
+
+Expand the available shortcuts into the content.
+
+=cut
+
 sub expand_shortcuts {
     my $content = shift;
     foreach my $shortcut (@shortcuts) {
@@ -11,6 +19,12 @@ sub expand_shortcuts {
     }
     return $content;
 }
+
+=head2 cpan_URL
+
+Expand the cpan abbreviated shortcut.
+
+=cut
 
 sub cpan_URL {
     my ($content) = @_;
