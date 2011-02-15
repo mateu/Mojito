@@ -100,9 +100,6 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (POST + /preview + %*) {
             my ( $self, $params ) = @_;
 
-            #warn "posted content: ", $params->{content};
-            warn "Preview..";
-            warn "extra action: ", $params->{extra_action};
             my $pager = Mojito::Page->new( page => $params->{content} );
             my $page_struct = $pager->page_structure;
             if (   ( $params->{extra_action} eq 'save' )
@@ -112,9 +109,14 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
                 $page_struct->{body_html} = $pager->render_body($page_struct);
                 $page_struct->{title} =
                   $render->intro_text( $page_struct->{body_html} );
-                warn "*** TITLE: ", $page_struct->{title};
                 $pager->update( $params->{'mongo_id'}, $page_struct );
             }
+            elsif ($params->{'mongo_id'}) {
+                # Auto update this stuff so the user doesn't have to even think about clicking save button
+                # May still put in a save button later, but I think it should be tested without.   Just a 'Done' button take you to view.
+                $pager->update( $params->{'mongo_id'}, $page_struct );
+            }
+                
 
             my $rendered_content = $pager->render_body($page_struct);
             my $response_href    = { rendered_content => $rendered_content };
@@ -126,7 +128,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (GET + /page/*/edit ) {
             my ( $self, $id, $other ) = @_;
 
-            warn "Update Form for Page $id";
+            #warn "Update Form for Page $id";
             my $page             = $pager->read($id);
             my $rendered_content = $pager->render_body($page);
             my $source           = $page->{page_source};
@@ -143,8 +145,8 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (POST + /page/*/edit + %*) {
             my ( $self, $id, $params ) = @_;
 
-            warn "UPDATE Page $id";
-            warn "submit value: ", $params->{submit};
+            #warn "UPDATE Page $id";
+            #warn "submit value: ", $params->{submit};
             my $pager = Mojito::Page->new( page => $params->{content} );
             my $page = $pager->page_structure;
 
@@ -153,14 +155,13 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             $page->{body_html} = $pager->render_body($page);
             $page->{title}     = $pager->intro_text( $page->{body_html} );
 
-            #            warn "title is: ", $page->{title};
 
             # Save page
             $pager->update( $id, $page );
 
             # If view button was pushed let's go to view
             if ( $params->{submit} eq 'View' ) {
-                warn "going to View for id: $id";
+                #warn "going to View for id: $id";
                 my $redirect_url = "/page/${id}";
 
                 return [ 301, [ Location => $redirect_url ], [] ];

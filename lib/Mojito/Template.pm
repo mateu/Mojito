@@ -51,7 +51,7 @@ $js_css
 <section id="edit_area">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
-    <textarea id="content"  name="content" rows=12 /></textarea><br />
+    <textarea id="content"  name="content" rows=24 /></textarea><br />
     <input id="submit_save" name="submit" type="submit" value="Save" /> 
     <input id="submit_view" name="submit" type="submit" value="View" /> 
 </form>

@@ -11,11 +11,10 @@ An object to delegate to the Page family of objects.
 
 =head1 Synopsis
 
-use Mojito::Page;
-# Get page source from somewhere, mosted posted?
-my $page_source = $q->params('content');
-my $pager = Mojito::Page->new( page_source => $page_source);
-my $web_page = $pager->render_page;
+    use Mojito::Page;
+    my $page_source = $params->{content};
+    my $pager = Mojito::Page->new( page_source => $page_source);
+    my $web_page = $pager->render_page;
 
 =cut
 
