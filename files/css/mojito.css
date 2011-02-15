@@ -52,10 +52,12 @@ h1 {
 #edit_link {
 	font-size: 0.88em;
     float: left;
-    clear: both;
 }
 #new_link {
 	font-size: 0.88em;
-    float: left;
-    clear: both;
+    float: right;
+}
+
+nav {
+	display: inline;
 }

@@ -17,13 +17,14 @@ set 'logger'      => 'console';
 set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log'  => 1;
+
 #set 'warnings' => 1;
 
 our $VERSION = '0.1';
 
 get '/bench' => sub {
 
-    my $pager = Mojito::Page->new( page => $Fixture::implicit_section );
+    my $pager       = Mojito::Page->new( page => $Fixture::implicit_section );
     my $page_struct = $pager->page_structure;
     my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
     my $id          = $editer->create($page_struct);
@@ -101,7 +102,9 @@ get '/page/:id/edit' => sub {
     my $source           = $page->{page_source};
 
     # write source and rendered content into their tags
-    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, params->{id}, request->base );
+    my $output =
+      $tmpl->fillin_edit_page( $source, $rendered_content, params->{id},
+        request->base );
 };
 
 post '/page/:id/edit' => sub {
@@ -127,7 +130,8 @@ post '/page/:id/edit' => sub {
 
     my $source           = $page->{page_source};
     my $rendered_content = $pager->render_body($page);
-    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
+    my $output =
+      $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
 };
 
 get '/page/:id/delete' => sub {
@@ -141,6 +145,13 @@ get '/recent' => sub {
     my $want_delete_link = 1;
     my $links            = $pager->get_most_recent_links($want_delete_link);
 
+};
+
+get '/' => sub {
+    my $output = $tmpl->home_page;
+    my $links  = $pager->get_most_recent_links;
+    $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+    return $output;
 };
 
 dance;

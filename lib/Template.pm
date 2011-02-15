@@ -12,6 +12,11 @@ has 'template' => (
     lazy    => 1,
     builder => 'build_template',
 );
+has 'home_page' => (
+    is      => 'rw',
+    lazy    => 1,
+    builder => '_build_home_page',
+);
 
 my $javascripts = [
     'jquery/jquery-1.5.min.js',     'javascript/render_page.js',
@@ -41,6 +46,7 @@ $js_css
 <body class="html_body">
 <header>
 <nav id="edit_link" class="edit_link"></nav>
+<nav id="new_link" class="new_link"> <a href=/page>New</a></nav>
 </header>
 <article id="body_wrapper">
 <section id="edit_area">
@@ -56,13 +62,43 @@ $js_css
 </article>
 <footer>
 <nav id="edit_link" class="edit_link"></nav>
-<nav id="new_link" class="new_link"></nav>
+<nav id="new_link" class="new_link"> <a href=/page>New</a></nav>
 </footer>
 </body>
 </html>
 END_HTML
 
     return $edit_page;
+}
+
+sub _build_home_page {
+    my $self = shift;
+
+    my $home_page = <<"END_HTML";
+<!doctype html>
+<html> 
+<head>
+  <meta charset=utf-8>
+  <title>Mojito page</title>
+$js_css
+<script></script>
+<style></style>
+</head>
+<body class=html_body>
+<header>
+<nav id="new_link" class="new_link"> <a href=/page>New</a></nav>
+</header>
+<article id="body_wrapper">
+<section id="recent_area"></section>
+</article>
+<footer>
+<nav id="new_link" class="new_link"> <a href=/page>New</a></nav>
+</footer>
+</body>
+</html>
+END_HTML
+
+    return $home_page;
 }
 
 sub fillin_edit_page {
@@ -77,11 +113,9 @@ sub fillin_edit_page {
     # Remove recent area
     $output =~ s/<section id="recent_area".*?><\/section>//si;
 
-    # Remove edit link
+    # Remove edit and new links
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
-
-    # Remove new link
-    $output =~ s/<nav id="new_link".*?><\/nav>//sig;
+    $output =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
 
     # body with no style
     $output =~ s/<body.*?>/<body>/si;
@@ -105,9 +139,9 @@ sub fillin_create_page {
     # Remove recent area
     $output =~ s/<section id="recent_area".*?><\/section>//si;
 
-    # Remove edit and new link
+    # Remove edit and new links
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
-    $output =~ s/<nav id="new_link".*?><\/nav>//sig;
+    $output =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
 
     # body with no style
     $output =~ s/<body.*?>/<body>/si;

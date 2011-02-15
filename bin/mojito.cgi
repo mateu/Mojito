@@ -32,16 +32,16 @@ use JSON;
 
             #my $page             = $editer->read($id);
             my $rendered_content = $pager->render_page($page_struct);
-            
+
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
           },
 
           # PRESENT CREATE Page Form
           sub (GET + /page ) {
             my ($self) = @_;
-            
+
             my $base_url = base_url( $_[PSGI_ENV] );
-            my $output = $tmpl->fillin_create_page($base_url);
+            my $output   = $tmpl->fillin_create_page($base_url);
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -78,8 +78,10 @@ use JSON;
             my $links         = $editer->get_most_recent_links;
 
             # Change class on view_area when we're in view mode.
-            $rendered_page =~ s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-            $rendered_page =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+            $rendered_page =~
+s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+            $rendered_page =~
+s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
@@ -130,7 +132,9 @@ use JSON;
             my $source           = $page->{page_source};
 
             # write source and rendered content into their tags
-            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, base_url( $_[PSGI_ENV]) );
+            my $output =
+              $tmpl->fillin_edit_page( $source, $rendered_content, $id,
+                base_url( $_[PSGI_ENV] ) );
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -164,7 +168,9 @@ use JSON;
 
             my $source           = $page->{page_source};
             my $rendered_content = $pager->render_body($page);
-            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, base_url( $_[PSGI_ENV]) );
+            my $output =
+              $tmpl->fillin_edit_page( $source, $rendered_content, $id,
+                base_url( $_[PSGI_ENV] ) );
 
             return [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -182,6 +188,16 @@ use JSON;
           sub (GET + /hola/* ) {
             my ( $self, $name ) = @_;
             [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];
+          },
+
+          sub (GET + /) {
+            my ($self) = @_;
+
+            my $output = $tmpl->home_page;
+            my $links  = $pager->get_most_recent_links;
+            $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+
+            [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 
           sub (GET) {
