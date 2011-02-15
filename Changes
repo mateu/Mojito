@@ -1,2 +1,6 @@
 {{$NEXT}}
+          [Fixes]
+          - Exclude Fixture from require modules since it's in the dist.
+          
+0.001     2011-02-15 00:09:43 America/Denver
           Initial Release
