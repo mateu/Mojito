@@ -53,7 +53,7 @@ $js_css
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <textarea id="content"  name="content" rows=24 /></textarea><br />
     <input id="submit_save" name="submit" type="submit" value="Save" /> 
-    <input id="submit_view" name="submit" type="submit" value="View" /> 
+    <input id="submit_view" name="submit" type="submit" value="Done" /> 
 </form>
 </section>
 <section id="view_area" class="view_area_edit_mode"></section>
@@ -117,6 +117,10 @@ sub fillin_edit_page {
     $output =~ s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
     $output =~ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
 
+    # An Experiment in Design: take out the save button, because we have autosave every few seconds
+    # plus the "View" button will be renamed "Done"
+     $output =~ s/<input id="submit_save".*?>//sig;
+    
     # Remove recent area
     $output =~ s/<section id="recent_area".*?><\/section>//si;
 
@@ -162,42 +166,5 @@ sub fillin_create_page {
     return $output;
 }
 
-
-1
-
-__END__
-my $edit_page_table = <<"END_HTML";
-<!doctype html>
-<html> 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Mojito page</title>
-$js_css
-<script></script>
-</head>
-<body>
-<table width="85%" style="margin:auto;">
-<tr>
-<td width="50%> 
-<section id="edit_area" style="float:left;">
-<form id="editForm" action="" accept-charset="UTF-8" method="post">
-    <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
-    <textarea id="content" name="content" /></textarea><br />
-    <input id="submit_save" name="submit" type="submit" value="Save" /> 
-    <input id="submit_view" name="submit" type="submit" value="View" /> 
-</form>
-</section>
-</td><td width="50%" valign="top"> 
-<section id="view_area" style="float:left; margin-left:1em;"></section>
-</td>
-<td valign="top">
-<section id="recent_area"></section>
-</td>
-</tr>
-</table>
-<nav id="edit_link" style="clear:both;"></nav>
-</body>
-</html>
-END_HTML
 
 1

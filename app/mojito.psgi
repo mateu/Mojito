@@ -160,7 +160,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             $pager->update( $id, $page );
 
             # If view button was pushed let's go to view
-            if ( $params->{submit} eq 'View' ) {
+            if ( $params->{submit} eq 'Done' ) {
                 #warn "going to View for id: $id";
                 my $redirect_url = "/page/${id}";
 

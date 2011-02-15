@@ -1,7 +1,10 @@
 {{$NEXT}}
+          [Enchantments]
+          - Auto save, simplified button choices
+          - more rows to fallback to when autoresize fails
 
 0.01      2011-02-15 00:36:58 America/Denver
-          [Fixes]
+          [Remedies]
           - Exclude Fixture from require modules since it's in the dist.
           
 0.001     2011-02-15 00:09:43 America/Denver
