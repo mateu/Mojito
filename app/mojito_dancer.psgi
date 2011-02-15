@@ -102,9 +102,8 @@ get '/page/:id/edit' => sub {
     my $source           = $page->{page_source};
 
     # write source and rendered content into their tags
-    my $output =
-      $tmpl->fillin_edit_page( $source, $rendered_content, params->{id},
-        request->base );
+    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, params->{id}, request->base );
+    return $output;
 };
 
 post '/page/:id/edit' => sub {
@@ -130,8 +129,8 @@ post '/page/:id/edit' => sub {
 
     my $source           = $page->{page_source};
     my $rendered_content = $pager->render_body($page);
-    my $output =
-      $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
+    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
+    return $output;
 };
 
 get '/page/:id/delete' => sub {
@@ -141,10 +140,9 @@ get '/page/:id/delete' => sub {
 };
 
 get '/recent' => sub {
-
     my $want_delete_link = 1;
     my $links            = $pager->get_most_recent_links($want_delete_link);
-
+    return $links;
 };
 
 get '/' => sub {

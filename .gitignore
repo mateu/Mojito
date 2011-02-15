@@ -1,5 +1,5 @@
 .project
 .includepath
 .build
-bin/logs/
+app/logs/
 Mojito-*
