@@ -39,29 +39,9 @@ use JSON;
           # PRESENT CREATE Page Form
           sub (GET + /page ) {
             my ($self) = @_;
-
-            warn "Create Form";
-            my $output = $tmpl->template;
-
-            # Set mojito preiview_url variable
-            my ${base_url} = $_[PSGI_ENV]->{SCRIPT_NAME} || '/';
-            $output =~
-s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
-
-            # Take out view button and change save to create.
-            $output =~ s/<input id="submit_view".*?>//;
-            $output =~
-              s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
-            $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
-
-            # Remove recent area
-            $output =~ s/<section id="recent_area".*?><\/section>//si;
-
-            # Remove edit linka
-            $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
-
-            # body with no style
-            $output =~ s/<body.*?>/<body>/si;
+            
+            my $base_url = base_url( $_[PSGI_ENV] );
+            my $output = $tmpl->fillin_create_page($base_url);
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -98,10 +78,8 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
             my $links         = $editer->get_most_recent_links;
 
             # Change class on view_area when we're in view mode.
-            $rendered_page =~
-s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-            $rendered_page =~
-s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+            $rendered_page =~ s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+            $rendered_page =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
@@ -152,9 +130,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             my $source           = $page->{page_source};
 
             # write source and rendered content into their tags
-            my $output =
-              fillin_edit_page( $source, $rendered_content, $id,
-                base_url( $_[PSGI_ENV] ) );
+            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, base_url( $_[PSGI_ENV]) );
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -188,9 +164,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             my $source           = $page->{page_source};
             my $rendered_content = $pager->render_body($page);
-            my $output =
-              fillin_edit_page( $source, $rendered_content, $id,
-                base_url( $_[PSGI_ENV] ) );
+            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, base_url( $_[PSGI_ENV]) );
 
             return [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -219,32 +193,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           }
     }
 
-    sub fillin_edit_page {
-        my ( $page_source, $page_view, $mongo_id, $base_url ) = @_;
-
-        my $output = $tmpl->template;
-        $output =~
-s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
-        $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
-        $output =~
-s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
-        $output =~
-s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
-
-        # Remove recent area
-        $output =~ s/<section id="recent_area".*?><\/section>//si;
-
-        # Remove edit linka
-        $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
-
-        # body with no style
-        $output =~ s/<body.*?>/<body>/si;
-
-        return $output;
-    }
-
-    sub fillin_view_page {
-    }
+    sub fillin_view_page { }
 
     sub base_url {
         my $env = shift;

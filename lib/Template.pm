@@ -4,35 +4,30 @@ use Moo;
 
 use Data::Dumper::Concise;
 
-# TODO: Make this alias where Mojito/files ends up.
-my $base_URL = 'http://10.0.0.2/mojito/';
+# TODO - MOST DO: Make this alias where Mojito/files ends up.
+my $base_URL = 'http://localhost/mojito/';
 
 has 'template' => (
-    is => 'rw',
-    lazy => 1,
+    is      => 'rw',
+    lazy    => 1,
     builder => 'build_template',
 );
 
 my $javascripts = [
-    'jquery/jquery-1.5.min.js', 
-    'javascript/render_page.js',
-    'syntax_highlight/prettify.js', 
-    'jquery/autoresize.jquery.min.js',
+    'jquery/jquery-1.5.min.js',     'javascript/render_page.js',
+    'syntax_highlight/prettify.js', 'jquery/autoresize.jquery.min.js',
 ];
 my @javascripts = map { "<script src=${base_URL}$_></script>" } @{$javascripts};
 
-my $css = [ 
-    'syntax_highlight/prettify.css', 
-    'css/mojito.css',    
-];
+my $css = [ 'syntax_highlight/prettify.css', 'css/mojito.css', ];
 my @css =
   map { "<link href=${base_URL}$_ type=text/css rel=stylesheet />" } @{$css};
-  
+
 my $js_css = join "\n", @javascripts, @css;
 
 sub build_template {
     my $self = shift;
-     
+
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html> 
@@ -61,6 +56,7 @@ $js_css
 </article>
 <footer>
 <nav id="edit_link" class="edit_link"></nav>
+<nav id="new_link" class="new_link"></nav>
 </footer>
 </body>
 </html>
@@ -73,24 +69,57 @@ sub fillin_edit_page {
     my ( $self, $page_source, $page_view, $mongo_id, $base_url ) = @_;
 
     my $output = $self->template;
-    $output =~
-s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
+    $output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
     $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
-    $output =~
-s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
-    $output =~
-s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
+    $output =~ s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
+    $output =~ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
+
     # Remove recent area
     $output =~ s/<section id="recent_area".*?><\/section>//si;
-    # Remove edit linka
+
+    # Remove edit link
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
+
+    # Remove new link
+    $output =~ s/<nav id="new_link".*?><\/nav>//sig;
+
     # body with no style
     $output =~ s/<body.*?>/<body>/si;
 
     return $output;
 }
+
+sub fillin_create_page {
+    my ( $self, $base_url ) = @_;
+
+    my $output = $self->template;
+   
+    # Set mojito preiview_url variable
+    $output =~ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
+
+    # Take out view button and change save to create.
+    $output =~ s/<input id="submit_view".*?>//;
+    $output =~ s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
+    $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
+
+    # Remove recent area
+    $output =~ s/<section id="recent_area".*?><\/section>//si;
+
+    # Remove edit and new link
+    $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
+    $output =~ s/<nav id="new_link".*?><\/nav>//sig;
+
+    # body with no style
+    $output =~ s/<body.*?>/<body>/si;
     
-    my $edit_page_table = <<"END_HTML";
+    return $output;
+}
+
+
+1
+
+__END__
+my $edit_page_table = <<"END_HTML";
 <!doctype html>
 <html> 
 <head>

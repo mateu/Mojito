@@ -54,3 +54,8 @@ h1 {
     float: left;
     clear: both;
 }
+#new_link {
+	font-size: 0.88em;
+    float: left;
+    clear: both;
+}

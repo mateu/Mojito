@@ -44,26 +44,9 @@ get '/hola/:name' => sub {
 
 get '/page' => sub {
     warn "Create Form";
-    my $output = $tmpl->template;
 
-    # Set mojito preiview_url variable
-    my ${base_url} = request->base || '/';
-    $output =~
-s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>/;
-
-    # Take out view button and change save to create.
-    $output =~ s/<input id="submit_view".*?>//;
-    $output =~ s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
-    $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
-
-    # Remove recent area
-    $output =~ s/<section id="recent_area".*?><\/section>//si;
-
-    # Remove edit linka
-    $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
-
-    # body with no style
-    $output =~ s/<body.*?>/<body>/si;
+    my $base_url = request->base || '/';
+    my $output = $tmpl->fillin_create_page($base_url);
 
     return $output;
 };
@@ -118,9 +101,7 @@ get '/page/:id/edit' => sub {
     my $source           = $page->{page_source};
 
     # write source and rendered content into their tags
-    my $output =
-      $tmpl->fillin_edit_page( $source, $rendered_content, params->{id},
-        request->base );
+    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, params->{id}, request->base );
 };
 
 post '/page/:id/edit' => sub {
@@ -146,8 +127,7 @@ post '/page/:id/edit' => sub {
 
     my $source           = $page->{page_source};
     my $rendered_content = $pager->render_body($page);
-    my $output =
-      $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
+    my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, request->base );
 };
 
 get '/page/:id/delete' => sub {

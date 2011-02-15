@@ -50,14 +50,15 @@ sub render_page {
     }
     
     my $rendered_body = $self->render_body($doc);
+    # Remove edit area
     $page =~ s/(<section id="edit_area"[^>]*>).*?(<\/section>)//si;
+    # Insert rendered page into view area
     $page =~ s/(<section id="view_area"[^>]*>).*?(<\/section>)/$1${rendered_body}$2/si;
     
     if ( my $id = $doc->{'_id'} ) {
         $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="\/page\/${id}\/edit">Edit<\/a>$2/sig;
     }
     
-    # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
     return $page;
 }
 
