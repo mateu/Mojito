@@ -1,10 +1,10 @@
 {{$NEXT}}
           [Enchantments]
-          - Auto save, simplified button choices
-          - more rows to fallback to when autoresize fails
+          - Auto save and simplified button choices as a result
+          - more rows to fallback to when vertical autoresize fails
 
           [Remedies]
-          - Support multiple cpan shortcuts
+          - Support multiple cpan shortcuts withing one document
 
 0.01      2011-02-15 00:36:58 America/Denver
           [Remedies]

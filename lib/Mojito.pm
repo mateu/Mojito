@@ -1,3 +1,7 @@
+use strictures 1;
+package Mojito;
+1;
+__END__
 =head1 Name
 
 Mojito - A Lightweight Web Document System
@@ -10,12 +14,12 @@ Mojito is a web document system that allows one to author web pages.
 It has been inspired by MojoMojo which is a mature, stable, responsive and 
 feature rich wiki system.  Check MojoMojo out if you're looking for an enterprise
 grade wiki.  Mojito is not attempting to be a wiki, but rather its initial 
-goal is to allow an individual to write documents that could be for personal 
-or public consumption.
+goal is to allow an individuals to author HTML5 compliant documents that could be for 
+personal or public consumption.
 
 =head1 Goals
 
-Mojito is in early alpha stage so it has much growing to do.  
+Mojito is in alpha stage so it has much growing to do.  
 Some goals and guidelines are:
 
     * Somewhat Framework Agnostic.  Currently there is support for 
