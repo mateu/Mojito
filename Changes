@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.02      2011-02-15 20:56:33 America/Denver
           [Enchantments]
           - Auto save and simplified button choices as a result
           - more rows to fallback to when vertical autoresize fails
