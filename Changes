@@ -3,6 +3,9 @@
           - Auto save, simplified button choices
           - more rows to fallback to when autoresize fails
 
+          [Remedies]
+          - Support multiple cpan shortcuts
+
 0.01      2011-02-15 00:36:58 America/Denver
           [Remedies]
           - Exclude Fixture from require modules since it's in the dist.
