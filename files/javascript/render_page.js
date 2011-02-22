@@ -1,29 +1,24 @@
-// A central place to store variables
+// A central place to store application variables
 var mojito = {};
+var got_content, oneshot, resizeEditArea, fetchPreview;
+/* global prettyPrint: false */
 
-function resizeEditArea() {
-	// Check that we have an edit_area first.
-	if ( $('#edit_area').length ) {
-		mojito.edit_area_fraction = 0.40;
-		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_fraction);
-		console.log('resizing edit area to: ' + mojito.edit_width);
-		$('textarea#content').css('width', mojito.edit_width + 'px')
-	}
-};
-
+var oneshot_preview = oneshot();
+var oneshot_pause = 1000; // Time in milliseconds.
+var on_change_refresh_rate = 10000;
 var resizeTimer;
-$(window).resize(function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resizeEditArea, 100);
-});
 	
 $(document).ready(function() {
 
-	resizeEditArea();
 	$('#content').each(function() {
 		this.focus();
 	});
 
+	resizeEditArea();
+	$(window).resize(function() {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(resizeEditArea, 100);
+	});
 	$('textarea#content').autoResize({ 
 	    extraSpace : 60
     }).trigger('change');
@@ -33,6 +28,7 @@ $(document).ready(function() {
 		fetchPreview.only_every(on_change_refresh_rate);
 		oneshot_preview(fetchPreview, oneshot_pause);
 	});
+	
 	$('#submit_create').click(function() {
 		// if no content : no submit
 		return got_content();
@@ -57,22 +53,10 @@ function got_content() {
 	}
 }
 
-// Based on
-// http://www.germanforblack.com/javascript-sleeping-keypress-delays-and-bashing-bad-articles
-Function.prototype.only_every = function(millisecond_delay) {
-	if (!window.only_every_func) {
-		var function_object = this;
-		window.only_every_func = setTimeout(function() {
-			function_object();
-			window.only_every_func = null
-		}, millisecond_delay);
-	}
-};
-
-var fetchPreview = function(extra_action) {
+fetchPreview = function(extra_action) {
 	var content = $('textarea#content').val();
 	var mongo_id = $('#mongo_id').val();
-	data = { 
+	var data = { 
 			 content: content,
 			 mongo_id: mongo_id,
 			 extra_action: extra_action
@@ -97,6 +81,18 @@ var fetchPreview = function(extra_action) {
 	};
 
 	$.ajax(ajaxOptions);
+
+	return true;
+};
+
+function resizeEditArea() {
+	// Check that we have an edit_area first.
+	if ( $('#edit_area').length ) {
+		mojito.edit_area_fraction = 0.40;
+		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_fraction);
+		console.log('resizing edit area to: ' + mojito.edit_width);
+		$('textarea#content').css('width', mojito.edit_width + 'px');
+	}
 }
 
 function oneshot() {
@@ -106,6 +102,15 @@ function oneshot() {
 		timer = setTimeout(fun, time);
 	};
 }
-var oneshot_preview = oneshot();
-var oneshot_pause = 1000; // Time in milliseconds.
-var on_change_refresh_rate = 10000;
+
+// Based on
+// http://www.germanforblack.com/javascript-sleeping-keypress-delays-and-bashing-bad-articles
+Function.prototype.only_every = function(millisecond_delay) {
+	if (!window.only_every_func) {
+		var function_object = this;
+		window.only_every_func = setTimeout(function() {
+			function_object();
+			window.only_every_func = null;
+		}, millisecond_delay);
+	}
+};
