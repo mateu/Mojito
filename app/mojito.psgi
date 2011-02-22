@@ -10,6 +10,8 @@ use Mojito::Page::CRUD;
 use Mojito::Template;
 use JSON;
 
+use Data::Dumper::Concise;
+
 {
 
     package Mojito;
@@ -17,10 +19,16 @@ use JSON;
     my $editer = Mojito::Page::CRUD->new;
     my $pager  = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
     my $tmpl   = Mojito::Template->new;
-
-    #    use Data::Dumper::Concise;
+    my $base_url;
 
     sub dispatch_request {
+
+#        my $base_url = base_url();
+#        sub {
+#            my ($env) = @_;
+#            $base_url = $env->{SCRIPT_NAME} || '/';
+#            $pager->base_url($base_url);
+#          },
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -31,6 +39,7 @@ use JSON;
             my $id          = $editer->create($page_struct);
 
             #my $page             = $editer->read($id);
+            my $base_url         = base_url( $_[PSGI_ENV] );
             my $rendered_content = $pager->render_page($page_struct);
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
@@ -40,7 +49,6 @@ use JSON;
           sub (GET + /page ) {
             my ($self) = @_;
 
-            my $base_url = base_url( $_[PSGI_ENV] );
             my $output   = $tmpl->fillin_create_page($base_url);
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
@@ -51,6 +59,7 @@ use JSON;
             my ( $self, $params ) = @_;
 
             warn "Create Page";
+            my $base_url = base_url( $_[PSGI_ENV] );
 
             #			warn "content: ", $params->{content};
             #warn "submit type: ", $params->{submit};
@@ -63,7 +72,7 @@ use JSON;
               $pager->intro_text( $page_struct->{body_html} );
             warn "title: ", $page_struct->{title};
             my $id           = $pager->create($page_struct);
-            my $redirect_url = "/page/${id}/edit";
+            my $redirect_url = "${base_url}/page/${id}/edit";
 
             [ 301, [ Location => $redirect_url ], [] ];
           },
@@ -73,9 +82,10 @@ use JSON;
             my ( $self, $id ) = @_;
 
             warn "View Page $id";
+            my $base_url      = base_url( $_[PSGI_ENV] );
             my $page          = $pager->read($id);
             my $rendered_page = $pager->render_page($page);
-            my $links         = $editer->get_most_recent_links;
+            my $links         = $editer->get_most_recent_links( 0, $base_url );
 
             # Change class on view_area when we're in view mode.
             $rendered_page =~
@@ -90,8 +100,10 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (GET + /recent ) {
             my ($self) = @_;
 
+            my $base_url         = base_url( $_[PSGI_ENV] );
             my $want_delete_link = 1;
-            my $links = $pager->get_most_recent_links($want_delete_link);
+            my $links =
+              $pager->get_most_recent_links( $want_delete_link, $base_url );
 
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
@@ -111,12 +123,12 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
                   $render->intro_text( $page_struct->{body_html} );
                 $pager->update( $params->{'mongo_id'}, $page_struct );
             }
-            elsif ($params->{'mongo_id'}) {
-                # Auto update this stuff so the user doesn't have to even think about clicking save button
-                # May still put in a save button later, but I think it should be tested without.   Just a 'Done' button take you to view.
+            elsif ( $params->{'mongo_id'} ) {
+
+# Auto update this stuff so the user doesn't have to even think about clicking save button
+# May still put in a save button later, but I think it should be tested without.   Just a 'Done' button take you to view.
                 $pager->update( $params->{'mongo_id'}, $page_struct );
             }
-                
 
             my $rendered_content = $pager->render_body($page_struct);
             my $response_href    = { rendered_content => $rendered_content };
@@ -147,22 +159,23 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             #warn "UPDATE Page $id";
             #warn "submit value: ", $params->{submit};
-            my $pager = Mojito::Page->new( page => $params->{content} );
-            my $page = $pager->page_structure;
+            my $base_url = base_url( $_[PSGI_ENV] );
+            my $pager    = Mojito::Page->new( page => $params->{content} );
+            my $page     = $pager->page_structure;
 
             # Store rendered parts as well.  May as well until proven wrong.
             $page->{page_html} = $pager->render_page($page);
             $page->{body_html} = $pager->render_body($page);
             $page->{title}     = $pager->intro_text( $page->{body_html} );
 
-
             # Save page
             $pager->update( $id, $page );
 
             # If view button was pushed let's go to view
             if ( $params->{submit} eq 'Done' ) {
+
                 #warn "going to View for id: $id";
-                my $redirect_url = "/page/${id}";
+                my $redirect_url = "${base_url}/page/${id}";
 
                 return [ 301, [ Location => $redirect_url ], [] ];
             }
@@ -194,9 +207,11 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (GET + /) {
             my ($self) = @_;
 
-            my $output = $tmpl->home_page;
-            my $links  = $pager->get_most_recent_links;
-            $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+            my $output   = $tmpl->home_page;
+            my $base_url = base_url( $_[PSGI_ENV] );
+            my $links    = $pager->get_most_recent_links( 0, $base_url );
+            $output =~
+s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -207,7 +222,8 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
           sub () {
             [ 405, [ 'Content-type', 'text/plain' ], ['Method not allowed'] ];
-          }
+          },
+
     }
 
     sub fillin_view_page { }
@@ -227,7 +243,6 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
         #          ) . ($env->{SCRIPT_NAME} || '/');
         return $uri;
     }
-
 }
 
 Mojito->run_if_script;

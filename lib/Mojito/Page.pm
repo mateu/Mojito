@@ -25,6 +25,10 @@ use Mojito::Page::CRUD;
 
 # roles
 
+has base_url => (
+    is => 'rw',
+);
+
 has parser => (
     is      => 'ro',
     isa     => sub { die "Need a PageParse object.  Have ref($_[0]) instead." unless $_[0]->isa('Mojito::Page::Parse') },

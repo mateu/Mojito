@@ -134,14 +134,14 @@ Turn the data into HTML
 =cut
 
 sub get_most_recent_links {
-    my ($self, $want_delete_link) = @_;
+    my ($self, $want_delete_link, $base_url) = @_;
     
     my $link_data = $self->get_most_recent_link_data;
     my $links = '<b>Recent Articles</b><br />';
     foreach my $datum (@{$link_data}) {
-        $links .= '<a href="/page/' . $datum->{id} . '">' . $datum->{title} . "</a>";
+        $links .= "<a href=\"${base_url}/page/" . $datum->{id} . '">' . $datum->{title} . "</a>";
         if ($want_delete_link) {
-            $links .=  ' | <a id="page_delete" href="/page/'   . $datum->{id} . '/delete"> delete</a>';
+            $links .=  " | <a id=\"page_delete\" href=\"${base_url}/page/"   . $datum->{id} . '/delete"> delete</a>';
         }
         $links .= "<br />\n";
     }
