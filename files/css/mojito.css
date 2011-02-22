@@ -32,7 +32,7 @@ h1 {
 .view_area_view_mode {
     float:left; 
     margin-left: 2em;
-    width: 62%;
+    width: 64%;
     background-color: white;
 }
 
@@ -42,11 +42,12 @@ h1 {
     margin-left: 1em;
     padding-left: 1em;
     padding-right: 1em;
-    width: 22%;
+    width: 20%;
     border: 1px solid #888; 
     background-color: #cafc97;  
     -moz-border-radius: 10px;
     border-radius: 10px;
+    font-size: 0.88em;
 }
 
 #edit_link {

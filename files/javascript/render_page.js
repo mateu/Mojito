@@ -88,7 +88,7 @@ fetchPreview = function(extra_action) {
 function resizeEditArea() {
 	// Check that we have an edit_area first.
 	if ( $('#edit_area').length ) {
-		mojito.edit_area_fraction = 0.40;
+		mojito.edit_area_fraction = 0.46;
 		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_fraction);
 		console.log('resizing edit area to: ' + mojito.edit_width);
 		$('textarea#content').css('width', mojito.edit_width + 'px');
