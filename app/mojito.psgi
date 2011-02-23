@@ -25,7 +25,7 @@ use Data::Dumper::Concise;
         my ($self, $env) = @_;
         my $base_url = $env->{SCRIPT_NAME}||'/';
         # make sure the base url ends with a slash
-        $base_url =~ s/[^\/]$/\//;
+        $base_url =~ s/([^\/])$/$1\//;
         # pass base url to template since we need it there for link generation
         $tmpl->base_url($base_url);
         $mojito->base_url($base_url);
