@@ -3,16 +3,18 @@ package Mojito::Page::Render;
 use 5.010;
 use Moo;
 use Mojito::Template;
+use Mojito::Filter::Shortcuts;
 use Text::Textile qw(textile);
 use Text::Markdown;
 use Pod::Simple::XHTML;
-use Data::Dumper::Concise;
 use HTML::Strip;
-use Mojito::Filter::Shortcuts;
+use Data::Dumper::Concise;
 
 my $textile  = Text::Textile->new;
 my $markdown = Text::Markdown->new;
 my $tmpl     = Mojito::Template->new;
+
+has base_url => ( is => 'rw', );
 
 has 'stripper' => (
     is => 'ro',
@@ -55,6 +57,10 @@ Make a page for viewing in the browser.
 sub render_page {
     my ( $self, $doc ) = @_;
 
+    # Give the tmpl object a base url first before asking for the html template.
+    my $base_url = $self->base_url;
+    $tmpl->base_url($base_url);
+    warn "base url: $base_url";
     my $page = $tmpl->template;
     
     if (my $title = $doc->{title}) {
@@ -68,50 +74,10 @@ sub render_page {
     $page =~ s/(<section id="view_area"[^>]*>).*?(<\/section>)/$1${rendered_body}$2/si;
     
     if ( my $id = $doc->{'_id'} ) {
-        $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="\/page\/${id}\/edit">Edit<\/a>$2/sig;
+        $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="${base_url}page\/${id}\/edit">Edit<\/a>$2/sig;
     }
     
     return $page;
-}
-
-=head2 render_page_org
-
-Original array template technique.
-
-=cut
-
-sub render_page_org {
-    my ( $self, $doc ) = @_;
-
-    my $header = <<'END_HTML';
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-END_HTML
-
-    my @page_pieces = ($header);
-    
-    if ($doc->{title}) {
-       my $title = "<title>$doc->{title}</title></head>";
-       push @page_pieces, $title;
-    }
-    
-    my $rendered_body = $self->render_body($doc);
-    push @page_pieces, $rendered_body;
-    
-    if ( $doc->{'_id'} ) {
-        my $edit_link = '<a href="/page/' . $doc->{'_id'} . '/edit">Edit</a>';
-        push @page_pieces, $edit_link;
-    }
-    
-    my $footer = "</body>\n</html>";
-    push @page_pieces, $footer;
-
-    # Pieces are: $header, $title, $rendered_body, $edit_link, $footer
-    my $rendered_page = join "\n", @page_pieces;
-    
-    return $rendered_page;
 }
 
 =head2 render_body

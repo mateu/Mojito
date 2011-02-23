@@ -3,6 +3,16 @@ package Mojito;
 use Moo;
 use Mojito::Page;
 
+=head1 Attributes
+
+=head2 base_url
+
+Base of the application used for creating internal links.
+
+=cut
+
+has base_url => ( is => 'rw', );
+
 =head1 Methods
 
 =head2 create_page
@@ -14,7 +24,7 @@ Create a new page and return its id (as a string, not an object).
 sub create_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new( page => $params->{content} );
+    my $pager = Mojito::Page->new( page => $params->{content}, base_url => $self->base_url );
     my $page_struct = $pager->page_structure;
     $page_struct->{page_html} = $pager->render_page($page_struct);
     $page_struct->{body_html} = $pager->render_body($page_struct);
@@ -27,7 +37,7 @@ sub create_page {
 sub preview_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new( page => $params->{content} );
+    my $pager = Mojito::Page->new( page => $params->{content}, base_url => $self->base_url );
     my $page_struct = $pager->page_structure;
     if (   $params->{extra_action}
         && ( $params->{extra_action} eq 'save' )
@@ -54,7 +64,7 @@ sub preview_page {
 sub update_page {
     my ( $self, $params ) = @_;
     
-    my $pager = Mojito::Page->new( page => $params->{content} );
+    my $pager = Mojito::Page->new( page => $params->{content}, base_url => $self->base_url );
     my $page = $pager->page_structure;
 
     # Store rendered parts as well.  May as well until proven wrong.

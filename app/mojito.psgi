@@ -19,7 +19,6 @@ use Data::Dumper::Concise;
     my $mojito = Mojito->new;
     my $render = Mojito::Page::Render->new;
     my $editer = Mojito::Page::CRUD->new;
-    my $pager  = Mojito::Page->new( page => '<sx>Mojito page</sx>' );
     my $tmpl   = Mojito::Template->new;
 
     sub dispatch_request {
@@ -27,8 +26,13 @@ use Data::Dumper::Concise;
         my $base_url = $env->{SCRIPT_NAME}||'/';
         # make sure the base url ends with a slash
         $base_url =~ s/[^\/]$/\//;
-        $pager->base_url($base_url);
-        warn "base_url: $base_url";
+        # pass base url to template since we need it there for link generation
+        $tmpl->base_url($base_url);
+        $mojito->base_url($base_url);
+        my $pager  = Mojito::Page->new({
+            page     => '<sx>Mojito page</sx>',
+            base_url => $base_url,
+        });
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -46,7 +50,7 @@ use Data::Dumper::Concise;
           sub (GET + /page ) {
             my ($self) = @_;
 
-            my $output   = $tmpl->fillin_create_page($base_url);
+            my $output   = $tmpl->fillin_create_page;
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -56,7 +60,7 @@ use Data::Dumper::Concise;
             my ( $self, $params ) = @_;
 
             warn "Create Page";
-            my $id = $mojito->create_page( {content => $params->{content} });
+            my $id = $mojito->create_page($params);
             my $redirect_url = "${base_url}page/${id}/edit";
 
             [ 301, [ Location => $redirect_url ], [] ];
@@ -110,7 +114,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             my $source           = $page->{page_source};
 
             # write source and rendered content into their tags
-            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, $base_url );
+            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id );
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -135,7 +139,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             my $source           = $page->{page_source};
             my $rendered_content = $pager->render_body($page);
-            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id, $base_url );
+            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id );
 
             return [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -174,24 +178,6 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             [ 405, [ 'Content-type', 'text/plain' ], ['Method not allowed'] ];
           },
 
-    }
-
-    sub fillin_view_page { }
-
-    sub base_url {
-        my $env = shift;
-
-        my $uri = $env->{SCRIPT_NAME} || '/';
-
-        #          ($env->{'psgi.url_scheme'} || "http")
-        #          . "://"
-        #          . (
-        #            $env->{HTTP_HOST}
-        #              || (($env->{SERVER_NAME} || "")
-        #              . " : "
-        #              . ($env->{SERVER_PORT} || 80))
-        #          ) . ($env->{SCRIPT_NAME} || '/');
-        return $uri;
     }
 }
 
