@@ -34,6 +34,12 @@ sub create_page {
     return $id;
 }
 
+=head2 preview_page
+
+AJAX preview of a page (parse and render, save when button pressed)
+
+=cut
+
 sub preview_page {
     my ( $self, $params ) = @_;
 
@@ -60,6 +66,12 @@ sub preview_page {
 
     return $response_href;
 }
+
+=head2 update_page
+
+Update a page given: content, id and base_url
+
+=cut
 
 sub update_page {
     my ( $self, $params ) = @_;
