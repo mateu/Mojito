@@ -18,7 +18,7 @@ An object to delegate to the Page family of objects.
 
 =cut
 
-# delegatees
+# delegates
 use Mojito::Page::Parse;
 use Mojito::Page::Render;
 use Mojito::Page::CRUD;
