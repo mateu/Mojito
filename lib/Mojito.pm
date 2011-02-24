@@ -56,8 +56,12 @@ sub preview_page {
     }
     elsif ( $params->{'mongo_id'} ) {
 
-# Auto update this stuff so the user doesn't have to even think about clicking save button
-# May still put in a save button later, but I think it should be tested without.   Just a 'Done' button take you to view.
+        # Auto update this stuff so the user doesn't have to even think about clicking save button
+        # May still put in a save button later, but I think it should be tested without.   
+        # Just a 'Done' button take you to view.
+        # TODO: add title, page and body html to page_struct like above.
+        #       Do we even need these two branches given that we're autosaving now.
+        # TODO: on new page, insert to get an id then update to that from the start
         $pager->update( $params->{'mongo_id'}, $page_struct );
     }
 

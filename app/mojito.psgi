@@ -8,7 +8,6 @@ use Fixture;
 use Mojito;
 use Mojito::Page;
 use Mojito::Page::CRUD;
-use Mojito::Template;
 use JSON;
 
 use Data::Dumper::Concise;
@@ -17,9 +16,7 @@ use Data::Dumper::Concise;
 
     package MojitoApp;
     my $mojito = Mojito->new;
-    my $render = Mojito::Page::Render->new;
     my $editer = Mojito::Page::CRUD->new;
-    my $tmpl   = Mojito::Template->new;
 
     sub dispatch_request {
         my ($self, $env) = @_;
@@ -27,7 +24,6 @@ use Data::Dumper::Concise;
         # make sure the base url ends with a slash
         $base_url =~ s/([^\/])$/$1\//;
         # pass base url to template since we need it there for link generation
-        $tmpl->base_url($base_url);
         $mojito->base_url($base_url);
         my $pager  = Mojito::Page->new({
             page     => '<sx>Mojito page</sx>',
@@ -50,7 +46,7 @@ use Data::Dumper::Concise;
           sub (GET + /page ) {
             my ($self) = @_;
 
-            my $output   = $tmpl->fillin_create_page;
+            my $output   = $pager->fillin_create_page;
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -114,7 +110,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             my $source           = $page->{page_source};
 
             # write source and rendered content into their tags
-            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id );
+            my $output = $pager->fillin_edit_page( $source, $rendered_content, $id );
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -123,34 +119,28 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (POST + /page/*/edit + %*) {
             my ( $self, $id, $params ) = @_;
 
-            #warn "UPDATE Page $id";
-            #warn "submit value: ", $params->{submit};
             $params->{id} = $id;
             my $page = $mojito->update_page($params);
 
-            # If view button was pushed let's go to view
+            # If 'Done' button was pushed let's go to view
             if ( $params->{submit} eq 'Done' ) {
-
-                #warn "going to View for id: $id";
                 my $redirect_url = "${base_url}page/${id}";
-
                 return [ 301, [ Location => $redirect_url ], [] ];
             }
 
             my $source           = $page->{page_source};
             my $rendered_content = $pager->render_body($page);
-            my $output = $tmpl->fillin_edit_page( $source, $rendered_content, $id );
+            my $output = $pager->fillin_edit_page( $source, $rendered_content, $id );
 
             return [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 
           # DELETE a Page
           sub (GET + /page/*/delete ) {
-            my ( $self, $id, $other ) = @_;
-
-            warn "Delete page $id";
+            my ( $self, $id ) = @_;
+            
             $pager->delete($id);
-
+            
             return [ 301, [ Location => '/recent' ], [] ];
           },
 
@@ -162,7 +152,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (GET + /) {
             my ($self) = @_;
 
-            my $output   = $tmpl->home_page;
+            my $output   = $pager->home_page;
             my $links    = $pager->get_most_recent_links( 0, $base_url );
             $output =~
 s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
@@ -171,7 +161,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           },
 
           sub (GET) {
-            [ 200, [ 'Content-type', 'text/plain' ], ['Hello world!'] ];
+            [ 200, [ 'Content-type', 'text/plain' ], ['Hola world!'] ];
           },
 
           sub () {
