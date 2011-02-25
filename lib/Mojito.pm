@@ -1,8 +1,8 @@
 use strictures 1;
-
 package Mojito;
 use Moo;
 use Mojito::Page;
+use Mojito::Page::CRUD;
 
 =head1 Attributes
 
@@ -13,6 +13,8 @@ Base of the application used for creating internal links.
 =cut
 
 has base_url => ( is => 'rw', );
+
+has bench_fixture => ( is => 'ro', lazy => 1, builder => '_build_bench_fixture');
 
 =head1 Methods
 
@@ -112,16 +114,17 @@ Present the form with a page ready to be edited.
 
 sub edit_page_form {
     my ( $self, $params ) = @_;
-    
+
     my $pager = Mojito::Page->new(
         page     => '<b>Mojito page</b>',
         base_url => $self->base_url
     );
-    my $page             = $pager->read($params->{id});
+    my $page             = $pager->read( $params->{id} );
     my $rendered_content = $pager->render_body($page);
     my $source           = $page->{page_source};
 
-    return $pager->fillin_edit_page( $source, $rendered_content, $params->{id} );
+    return $pager->fillin_edit_page( $source, $rendered_content,
+        $params->{id} );
 }
 
 =head2 view_page
@@ -151,6 +154,48 @@ sub view_page {
       s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
     return $rendered_page;
+}
+
+=head2 bench
+
+A path for benchmarking to get an basic idea of peformance.
+
+=cut
+
+sub bench {
+    my $self  = shift;
+    my $pager = Mojito::Page->new(
+        page     => $self->bench_fixture,
+        base_url => $self->base_url,
+    );
+    my $page_struct = $pager->page_structure;
+    my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
+    my $id          = $editer->create($page_struct);
+    
+    return $pager->render_page($page_struct);
+}
+
+sub _build_bench_fixture {
+    my $self = shift;
+    
+    my $implicit_section = <<'END';
+h1. Greetings
+
+<sx c=Perl>
+use Modern::Perl;
+say 'something';
+</sx>
+
+Implicit Section
+
+<sx c="JavaScript">
+function () { var one = 1 }
+</sx>
+
+Stuff After
+
+END
+    return $implicit_section;
 }
 
 1;

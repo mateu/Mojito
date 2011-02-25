@@ -60,7 +60,6 @@ sub render_page {
     # Give the tmpl object a base url first before asking for the html template.
     my $base_url = $self->base_url;
     $tmpl->base_url($base_url);
-    warn "base url: $base_url";
     my $page = $tmpl->template;
     
     if (my $title = $doc->{title}) {

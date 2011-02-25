@@ -37,7 +37,6 @@ sub _build_template {
     my $self = shift;
 
     my $base_url = $self->base_url;
-    warn "base url: $base_url";
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html> 

@@ -4,10 +4,8 @@ use Web::Simple 'MojitoApp';
 use Dir::Self;
 use lib __DIR__ . "/../lib";
 use lib __DIR__ . "/../t/data";
-use Fixture;
 use Mojito;
 use Mojito::Page;
-use Mojito::Page::CRUD;
 use JSON;
 
 use Data::Dumper::Concise;
@@ -40,11 +38,8 @@ use Data::Dumper::Concise;
         # A Benchmark URI
         sub (GET + /bench ) {
             my ($self) = @_;
-            my $pager = Mojito::Page->new( page => $Fixture::implicit_section );
-            my $page_struct = $pager->page_structure;
-            my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
-            my $id          = $editer->create($page_struct);
-            my $rendered_content = $pager->render_page($page_struct);
+            
+            my $rendered_content = $mojito->bench;
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
           },
