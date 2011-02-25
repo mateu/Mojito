@@ -19,16 +19,23 @@ use Data::Dumper::Concise;
     my $editer = Mojito::Page::CRUD->new;
 
     sub dispatch_request {
-        my ($self, $env) = @_;
-        my $base_url = $env->{SCRIPT_NAME}||'/';
+        my ( $self, $env ) = @_;
+
+        my $base_url = $env->{SCRIPT_NAME} || '/';
+
         # make sure the base url ends with a slash
         $base_url =~ s/([^\/])$/$1\//;
-        # pass base url to template since we need it there for link generation
+
+        # pass base url to mojito where we can reuse it
+        # Also added it to pager.  A little redundant but
+        # tighter than before.
         $mojito->base_url($base_url);
-        my $pager  = Mojito::Page->new({
-            page     => '<sx>Mojito page</sx>',
-            base_url => $base_url,
-        });
+        my $pager = Mojito::Page->new(
+            {
+                page     => '<sx>Mojito page</sx>',
+                base_url => $base_url,
+            }
+        );
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -46,7 +53,7 @@ use Data::Dumper::Concise;
           sub (GET + /page ) {
             my ($self) = @_;
 
-            my $output   = $pager->fillin_create_page;
+            my $output = $pager->fillin_create_page;
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -56,7 +63,7 @@ use Data::Dumper::Concise;
             my ( $self, $params ) = @_;
 
             warn "Create Page";
-            my $id = $mojito->create_page($params);
+            my $id           = $mojito->create_page($params);
             my $redirect_url = "${base_url}page/${id}/edit";
 
             [ 301, [ Location => $redirect_url ], [] ];
@@ -66,16 +73,7 @@ use Data::Dumper::Concise;
           sub (GET + /page/* ) {
             my ( $self, $id ) = @_;
 
-            warn "View Page $id";
-            my $page          = $pager->read($id);
-            my $rendered_page = $pager->render_page($page);
-            my $links         = $pager->get_most_recent_links( 0, $base_url );
-
-            # Change class on view_area when we're in view mode.
-            $rendered_page =~
-s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-            $rendered_page =~
-s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+            my $rendered_page = $mojito->view_page( { id => $id } );
 
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
@@ -85,7 +83,8 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             my ($self) = @_;
 
             my $want_delete_link = 1;
-            my $links = $pager->get_most_recent_links( $want_delete_link, $base_url );
+            my $links =
+              $pager->get_most_recent_links( $want_delete_link, $base_url );
 
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
@@ -95,22 +94,16 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
             my ( $self, $params ) = @_;
 
             my $response_href = $mojito->preview_page($params);
-            my $JSON_response    = JSON::encode_json($response_href);
-            
+            my $JSON_response = JSON::encode_json($response_href);
+
             [ 200, [ 'Content-type', 'application/json' ], [$JSON_response] ];
           },
 
           # Present UPDATE Page Form
           sub (GET + /page/*/edit ) {
-            my ( $self, $id, $other ) = @_;
+            my ( $self, $id ) = @_;
 
-            #warn "Update Form for Page $id";
-            my $page             = $pager->read($id);
-            my $rendered_content = $pager->render_body($page);
-            my $source           = $page->{page_source};
-
-            # write source and rendered content into their tags
-            my $output = $pager->fillin_edit_page( $source, $rendered_content, $id );
+            my $output = $mojito->edit_page_form( { id => $id } );
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -121,26 +114,17 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
             $params->{id} = $id;
             my $page = $mojito->update_page($params);
-
-            # If 'Done' button was pushed let's go to view
-            if ( $params->{submit} eq 'Done' ) {
-                my $redirect_url = "${base_url}page/${id}";
-                return [ 301, [ Location => $redirect_url ], [] ];
-            }
-
-            my $source           = $page->{page_source};
-            my $rendered_content = $pager->render_body($page);
-            my $output = $pager->fillin_edit_page( $source, $rendered_content, $id );
-
-            return [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+            my $redirect_url = "${base_url}page/${id}";
+            
+            return [ 301, [ Location => $redirect_url ], [] ];
           },
 
           # DELETE a Page
           sub (GET + /page/*/delete ) {
             my ( $self, $id ) = @_;
-            
+
             $pager->delete($id);
-            
+
             return [ 301, [ Location => '/recent' ], [] ];
           },
 
@@ -152,8 +136,8 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub (GET + /) {
             my ($self) = @_;
 
-            my $output   = $pager->home_page;
-            my $links    = $pager->get_most_recent_links( 0, $base_url );
+            my $output = $pager->home_page;
+            my $links = $pager->get_most_recent_links( 0, $base_url );
             $output =~
 s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 

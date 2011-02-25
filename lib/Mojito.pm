@@ -1,4 +1,5 @@
 use strictures 1;
+
 package Mojito;
 use Moo;
 use Mojito::Page;
@@ -24,7 +25,10 @@ Create a new page and return its id (as a string, not an object).
 sub create_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new( page => $params->{content}, base_url => $self->base_url );
+    my $pager = Mojito::Page->new(
+        page     => $params->{content},
+        base_url => $self->base_url
+    );
     my $page_struct = $pager->page_structure;
     $page_struct->{page_html} = $pager->render_page($page_struct);
     $page_struct->{body_html} = $pager->render_body($page_struct);
@@ -43,7 +47,10 @@ AJAX preview of a page (parse and render, save when button pressed)
 sub preview_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new( page => $params->{content}, base_url => $self->base_url );
+    my $pager = Mojito::Page->new(
+        page     => $params->{content},
+        base_url => $self->base_url
+    );
     my $page_struct = $pager->page_structure;
     if (   $params->{extra_action}
         && ( $params->{extra_action} eq 'save' )
@@ -56,12 +63,12 @@ sub preview_page {
     }
     elsif ( $params->{'mongo_id'} ) {
 
-        # Auto update this stuff so the user doesn't have to even think about clicking save button
-        # May still put in a save button later, but I think it should be tested without.   
-        # Just a 'Done' button take you to view.
-        # TODO: add title, page and body html to page_struct like above.
-        #       Do we even need these two branches given that we're autosaving now.
-        # TODO: on new page, insert to get an id then update to that from the start
+# Auto update this stuff so the user doesn't have to even think about clicking save button
+# May still put in a save button later, but I think it should be tested without.
+# Just a 'Done' button take you to view.
+# TODO: add title, page and body html to page_struct like above.
+#       Do we even need these two branches given that we're autosaving now.
+# TODO: on new page, insert to get an id then update to that from the start
         $pager->update( $params->{'mongo_id'}, $page_struct );
     }
 
@@ -79,8 +86,11 @@ Update a page given: content, id and base_url
 
 sub update_page {
     my ( $self, $params ) = @_;
-    
-    my $pager = Mojito::Page->new( page => $params->{content}, base_url => $self->base_url );
+
+    my $pager = Mojito::Page->new(
+        page     => $params->{content},
+        base_url => $self->base_url
+    );
     my $page = $pager->page_structure;
 
     # Store rendered parts as well.  May as well until proven wrong.
@@ -90,8 +100,57 @@ sub update_page {
 
     # Save page
     $pager->update( $params->{id}, $page );
-    
+
     return $page;
+}
+
+=head2 edit_page_form
+
+Present the form with a page ready to be edited.
+
+=cut
+
+sub edit_page_form {
+    my ( $self, $params ) = @_;
+    
+    my $pager = Mojito::Page->new(
+        page     => '<b>Mojito page</b>',
+        base_url => $self->base_url
+    );
+    my $page             = $pager->read($params->{id});
+    my $rendered_content = $pager->render_body($page);
+    my $source           = $page->{page_source};
+
+    return $pager->fillin_edit_page( $source, $rendered_content, $params->{id} );
+}
+
+=head2 view_page
+
+Given a page id, we retrieve its page from the db and return
+the HTML form of the page to the browser.
+
+=cut
+
+sub view_page {
+    my ( $self, $params ) = @_;
+
+# page is required for PageParser so let's put in a placeholder to make it happen
+# when it gets delegated to during BUILD of page delegator object
+    my $pager = Mojito::Page->new(
+        page     => '<b>Mojito page</b>',
+        base_url => $self->base_url
+    );
+    my $page          = $pager->read( $params->{id} );
+    my $rendered_page = $pager->render_page($page);
+    my $links         = $pager->get_most_recent_links( 0, $self->base_url );
+
+    # Change class on view_area when we're in view mode.
+    $rendered_page =~
+      s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+    $rendered_page =~
+      s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+
+    return $rendered_page;
 }
 
 1;
