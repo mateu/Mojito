@@ -14,7 +14,6 @@ use Data::Dumper::Concise;
 
     package MojitoApp;
     my $mojito = Mojito->new;
-    my $editer = Mojito::Page::CRUD->new;
 
     sub dispatch_request {
         my ( $self, $env ) = @_;
@@ -57,7 +56,6 @@ use Data::Dumper::Concise;
           sub (POST + /page + %* ) {
             my ( $self, $params ) = @_;
 
-            warn "Create Page";
             my $id           = $mojito->create_page($params);
             my $redirect_url = "${base_url}page/${id}/edit";
 
@@ -79,7 +77,7 @@ use Data::Dumper::Concise;
 
             my $want_delete_link = 1;
             my $links =
-              $pager->get_most_recent_links( $want_delete_link, $base_url );
+              $pager->get_most_recent_links($want_delete_link);
 
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
@@ -132,7 +130,7 @@ use Data::Dumper::Concise;
             my ($self) = @_;
 
             my $output = $pager->home_page;
-            my $links = $pager->get_most_recent_links( 0, $base_url );
+            my $links = $pager->get_most_recent_links;
             $output =~
 s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 

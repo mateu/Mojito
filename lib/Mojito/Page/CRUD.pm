@@ -7,6 +7,8 @@ use Data::Dumper::Concise;
 
 with('Mojito::Role::DB');
 
+has base_url => ( is => 'rw', );
+
 =head1 Methods
 
 =head2 create
@@ -134,7 +136,9 @@ Turn the data into HTML
 =cut
 
 sub get_most_recent_links {
-    my ($self, $want_delete_link, $base_url) = @_;
+    my ($self, $want_delete_link) = @_;
+    
+    my $base_url = $self->base_url;
     
     my $link_data = $self->get_most_recent_link_data;
     my $links = '<b>Recent Articles</b><br />';
