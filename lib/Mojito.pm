@@ -139,7 +139,6 @@ the HTML form of the page to the browser.
 sub view_page {
     my ( $self, $params ) = @_;
 
-    warn Dumper $params;
 # page is required for PageParser so let's put in a placeholder to make it happen
 # when it gets delegated to during BUILD of page delegator object
     my $pager = Mojito::Page->new(

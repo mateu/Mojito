@@ -2,13 +2,12 @@
           [Enchantments]
           - base URL implemented to app can be mounted at root or not.
           - Added Mojito::Middleware so Mojito objects can be wrapped
-            into the appliction.
-          - Used Mojito::Middleware to create Tatsumaki version of Mojito.
+            into the application.
+          - Created Tatsumaki version of Mojito.
           
           [Refactor]
-          - a Mojito "meta" object to handle the bulk of route bodies
-            implemented for Web::Simple (mojito.psgi), Dancer and 
-            Mojolicious versions.
+          - Created and implemented a Mojito "meta" object to handle 
+            the bulk of route bodies.
             
 
 0.02      2011-02-15 20:56:33 America/Denver
