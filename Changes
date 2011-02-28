@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.03      2011-02-27 20:47:52 America/Denver
           [Enchantments]
           - base URL implemented to app can be mounted at root or not.
           - Added Mojito::Middleware so Mojito objects can be wrapped
