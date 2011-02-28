@@ -3,23 +3,21 @@ use Tatsumaki::Error;
 use Tatsumaki::Application;
 use Tatsumaki::HTTPClient;
 use Tatsumaki::Server;
+use JSON;
 
-use Dir::Self;
-use lib __DIR__ . "/../lib";
-use lib __DIR__ . "/../t/data";
-use Fixture;
-use Mojito::Page::Parse;
-use Mojito::Page::CRUD;
-use Mojito::Page::Render;
-use Mojito::Page;
-use Mojito::Template;
+use Data::Dumper::Concise;
 
 package MainHandler;
 use parent qw(Tatsumaki::Handler);
+use Data::Dumper::Concise;
 
 sub get {
-    my $self = shift;
-    $self->write("Hello World");
+    my ($self) = @_;
+    my $pager = $self->request->env->{'mojito.pager'};
+    my $output = $pager->home_page;
+    my $links  = $pager->get_most_recent_links;
+    $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+    $self->write($output);
 }
 
 package HolaNameHandler;
@@ -27,7 +25,8 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $name ) = @_;
-    $self->write("Hola $name");
+    $self->write(
+        "<html><head><tite>$name</title></head><body>Hola $name</body></html>");
 }
 
 package BenchHandler;
@@ -35,24 +34,114 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $name ) = @_;
-    my $pager = Mojito::Page->new( page => $Fixture::implicit_section );
-    my $page_struct = $pager->page_structure;
-    my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
-    my $id          = $editer->create($page_struct);
+    $self->write( $self->request->env->{'mojito.object'}->bench );
+}
 
-    #my $page             = $editer->read($id);
-    my $rendered_content = $pager->render_page($page_struct);
-    $self->write($rendered_content);
+package CreatePage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ($self) = @_;
+    $self->write( $self->request->env->{'mojito.pager'}->fillin_create_page );
+}
+
+sub post {
+    my ($self) = @_;
+    my $base_url = $self->request->env->{'mojito.base_url'};
+    my $id =
+      $self->request->env->{'mojito.object'}
+      ->create_page( $self->request->parameters );
+    $self->response->redirect("${base_url}page/${id}/edit");
+}
+
+package PreviewPage;
+use parent qw(Tatsumaki::Handler);
+
+sub post {
+    my ($self) = @_;
+    $self->response->content_type('application/json');
+    $self->write(
+        JSON::encode_json(
+            $self->request->env->{'mojito.object'}
+              ->preview_page( $self->request->parameters )
+        )
+    );
+}
+
+package ViewPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $self->write(
+        $self->request->env->{'mojito.object'}->view_page( { id => $id } ) );
+}
+
+package EditPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $self->write(
+        $self->request->env->{'mojito.object'}->edit_page_form( { id => $id } )
+    );
+}
+
+sub post {
+    my ( $self, $id ) = @_;
+
+    my $params = $self->request->parameters;
+    $params->{id} = $id;
+    $self->request->env->{'mojito.object'}->update_page($params);
+    my $base_url = $self->request->env->{'mojito.base_url'};
+    $self->response->redirect("${base_url}page/${id}");
+}
+
+package RecentPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ($self) = @_;
+
+    my $want_delete_link = 1;
+    my $links =
+      $self->request->env->{'mojito.pager'}
+      ->get_most_recent_links($want_delete_link);
+    $self->write($links);
+}
+
+package DeletePage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $self->request->env->{'mojito.pager'}->delete($id);
+    $self->response->redirect(
+        $self->request->env->{'mojito.base_url'} . 'recent' );
 }
 
 package main;
+use Plack::Builder;
 
 my $app = Tatsumaki::Application->new(
     [
-        '/'           => 'MainHandler',
-        '/hola/(\w+)' => 'HolaNameHandler',
-        '/bench'      => 'BenchHandler',
+        '/'                  => 'MainHandler',
+        '/hola/(\w+)'        => 'HolaNameHandler',
+        '/bench'             => 'BenchHandler',
+        '/recent'            => 'RecentPage',
+        '/page/(\w+)/edit'   => 'EditPage',
+        '/page/(\w+)/delete' => 'DeletePage',
+        '/page/(\w+)'        => 'ViewPage',
+        '/page'              => 'CreatePage',
+        '/preview'           => 'PreviewPage',
     ]
 );
 
-return $app;
+builder {
+
+    #    enable "Debug";
+    enable "+Mojito::Middleware";
+    $app;
+};
+
+#return $app;

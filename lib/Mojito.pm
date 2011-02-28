@@ -90,8 +90,6 @@ Update a page given: content, id and base_url
 
 sub update_page {
     my ( $self, $params ) = @_;
-    warn "params: ";
-    warn Dumper $params;
 
     my $pager = Mojito::Page->new(
         page     => $params->{content},

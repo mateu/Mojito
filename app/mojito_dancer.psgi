@@ -3,10 +3,9 @@ use Dancer;
 use Dancer::Plugin::Ajax;
 use 5.010;
 use Dir::Self;
-use lib __DIR__ . "/../../../dev/Mojito/lib";
-use lib __DIR__ . "/../../../dev/Mojito/t/data";
-use Mojito::Page;
+use lib __DIR__ . "/../lib";
 use Mojito;
+use Mojito::Page;
 
 use Data::Dumper::Concise;
 
@@ -43,8 +42,7 @@ get '/page' => sub {
 };
 
 post '/page' => sub {
-    my $params = params;
-    my $id = $mojito->create_page($params);
+    my $id = $mojito->create_page(scalar params);
     redirect "${base_url}page/${id}/edit";
 };
 
