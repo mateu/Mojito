@@ -8,9 +8,10 @@ use lib "$Bin/data";
 use Fixture;
 use Mojito::Page::Parse;
 
-my $parser = Mojito::Page::Parse->new(page => '<br>');
-dies_ok { Mojito::Page::Parse->new(page => $Fixture::nested_section) } 'nested section casuses die';
-#die_ok($parser->has_nested_section, 'nested section');
+my $parser = Mojito::Page::Parse->new(page => $Fixture::nested_section);
+isa_ok($parser, 'Mojito::Page::Parse');
+ok($parser->has_nested_section,  'nested section');
+dies_ok { $parser->sections } 'Build nested sections';
 
 # Change content to not be nested
 $parser->page($Fixture::not_nested_section);

@@ -1,32 +1,25 @@
 #!/usr/bin/env perl
 use Dancer;
 use Dancer::Plugin::Ajax;
-use 5.010;
-use Dir::Self;
-use lib __DIR__ . "/../lib";
 use Mojito;
-use Mojito::Page;
 
 use Data::Dumper::Concise;
 
-my $mojito = Mojito->new;
-my ($pager, $base_url);
+my ($mojito, $base_url);
 set 'logger'      => 'console';
 set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log'  => 1;
-
-#set 'warnings' => 1;
+set 'warnings' => 1;
 
 before sub {
     $base_url = request->base;
     if ($base_url !~ m/\/$/) {
         $base_url .= '/';
     }
+    $mojito = Mojito->new( base_url => $base_url);
     $mojito->base_url($base_url);
-    $pager = Mojito::Page->new( page => '<sx>Mojito page</sx>', base_url => $base_url );
     var base_url => $base_url;
-    var pager => $pager;
 };
 
 get '/bench' => sub {
@@ -38,7 +31,7 @@ get '/hola/:name' => sub {
 };
 
 get '/page' => sub {
-    return $pager->fillin_create_page;
+    return $mojito->fillin_create_page;
 };
 
 post '/page' => sub {
@@ -66,19 +59,19 @@ post '/page/:id/edit' => sub {
 
 get '/page/:id/delete' => sub {
     my $id = params->{id};
-    $pager->delete($id);
+    $mojito->delete($id);
     redirect $base_url . 'recent';
 };
 
 get '/recent' => sub {
     my $want_delete_link = 1;
-    my $links            = $pager->get_most_recent_links($want_delete_link);
+    my $links            = $mojito->get_most_recent_links($want_delete_link);
     return $links;
 };
 
 get '/' => sub {
-    my $output = $pager->home_page;
-    my $links  = $pager->get_most_recent_links;
+    my $output = $mojito->home_page;
+    my $links  = $mojito->get_most_recent_links;
     $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
     return $output;
 };

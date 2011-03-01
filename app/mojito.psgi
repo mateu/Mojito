@@ -1,11 +1,6 @@
 #!/usr/bin/env perl
-
 use Web::Simple 'MojitoApp';
-use Dir::Self;
-use lib __DIR__ . "/../lib";
-use lib __DIR__ . "/../t/data";
 use Mojito;
-use Mojito::Page;
 use JSON;
 
 use Data::Dumper::Concise;
@@ -13,7 +8,6 @@ use Data::Dumper::Concise;
 {
 
     package MojitoApp;
-    my $mojito;
 
     sub dispatch_request {
         my ( $self, $env ) = @_;
@@ -26,7 +20,7 @@ use Data::Dumper::Concise;
         # pass base url to mojito where we can reuse it
         # Also added it to pager.  A little redundant but
         # tighter than before.
-        $mojito = Mojito->new( base_url => $base_url);
+        my $mojito = Mojito->new( base_url => $base_url);
 
         # A Benchmark URI
         sub (GET + /bench ) {

@@ -87,8 +87,10 @@ sub post {
 
     my $params = $self->request->parameters;
     $params->{id} = $id;
-    $self->request->env->{'mojito'}->update_page($params);
-    my $base_url = $self->request->env->{'mojito'}->base_url;
+    my $mojito = $self->request->env->{'mojito'};
+    $mojito->update_page($params);
+    my $base_url = $mojito->base_url;
+    
     $self->response->redirect("${base_url}page/${id}");
 }
 
@@ -99,9 +101,8 @@ sub get {
     my ($self) = @_;
 
     my $want_delete_link = 1;
-    my $links =
-      $self->request->env->{'mojito'}
-      ->get_most_recent_links($want_delete_link);
+    my $links = $self->request->env->{'mojito'}->get_most_recent_links($want_delete_link);
+    
     $self->write($links);
 }
 

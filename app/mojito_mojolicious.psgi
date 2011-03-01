@@ -1,10 +1,8 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
 use Mojito;
-use Mojito::Page;
 
-my $mojito = Mojito->new;
-my ($pager, $base_url);
+my ($mojito, $base_url);
 
 app->hook(before_dispatch => sub {
     my $self  = shift;
@@ -12,8 +10,7 @@ app->hook(before_dispatch => sub {
     if ($base_url !~ m/\/$/) {
         $base_url .= '/';
     }
-    $mojito->base_url($base_url);
-    $pager = Mojito::Page->new( page => '<sx>Mojito page</sx>', base_url => $base_url );
+    $mojito = Mojito->new( base_url => $base_url );
 });
 
 
@@ -29,7 +26,7 @@ get '/hola/:name' => sub {
 
 get '/page' => sub {
     my $self = shift;
-    $self->render( text => $pager->fillin_create_page );
+    $self->render( text => $mojito->fillin_create_page );
 };
 
 post '/page' => sub {
@@ -67,21 +64,21 @@ post '/page/:id/edit' => sub {
 get '/page/:id/delete' => sub {
     my $self = shift;
     my $id = $self->param('id');
-    $pager->delete($id);
+    $mojito->delete($id);
     $self->redirect_to($base_url . 'recent');
 };
 
 get '/recent' => sub {
     my $self = shift;
     my $want_delete_link = 1;
-    my $links            = $pager->get_most_recent_links($want_delete_link);
+    my $links            = $mojito->get_most_recent_links($want_delete_link);
     $self->render( text => $links );
 };
 
 get '/' => sub {
     my $self = shift;
-    my $output = $pager->home_page;
-    my $links  = $pager->get_most_recent_links;
+    my $output = $mojito->home_page;
+    my $links  = $mojito->get_most_recent_links;
     $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
     $self->render( text => $output );
 };
