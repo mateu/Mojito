@@ -1,8 +1,12 @@
 {{$NEXT}}
 
+0.04      2011-02-28 22:43:00 America/Denver
+          [Refactor]
+          - A Mojito object is now a derived class of Mojito::Page.
+            
 0.03      2011-02-27 20:47:52 America/Denver
           [Enchantments]
-          - base URL implemented to app can be mounted at root or not.
+          - base URL implemented so app can be mounted at root or not.
           - Added Mojito::Middleware so Mojito objects can be wrapped
             into the application.
           - Created Tatsumaki version of Mojito.
