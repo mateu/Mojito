@@ -13,9 +13,9 @@ use Data::Dumper::Concise;
 
 sub get {
     my ($self) = @_;
-    my $pager = $self->request->env->{'mojito.pager'};
-    my $output = $pager->home_page;
-    my $links  = $pager->get_most_recent_links;
+    my $mojito = $self->request->env->{'mojito'};
+    my $output = $mojito->home_page;
+    my $links  = $mojito->get_most_recent_links;
     $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
     $self->write($output);
 }
@@ -34,7 +34,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $name ) = @_;
-    $self->write( $self->request->env->{'mojito.object'}->bench );
+    $self->write( $self->request->env->{'mojito'}->bench );
 }
 
 package CreatePage;
@@ -42,15 +42,13 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ($self) = @_;
-    $self->write( $self->request->env->{'mojito.pager'}->fillin_create_page );
+    $self->write( $self->request->env->{'mojito'}->fillin_create_page );
 }
 
 sub post {
     my ($self) = @_;
-    my $base_url = $self->request->env->{'mojito.base_url'};
-    my $id =
-      $self->request->env->{'mojito.object'}
-      ->create_page( $self->request->parameters );
+    my $base_url = $self->request->env->{'mojito'}->base_url;
+    my $id = $self->request->env->{'mojito'}->create_page( $self->request->parameters );
     $self->response->redirect("${base_url}page/${id}/edit");
 }
 
@@ -62,7 +60,7 @@ sub post {
     $self->response->content_type('application/json');
     $self->write(
         JSON::encode_json(
-            $self->request->env->{'mojito.object'}
+            $self->request->env->{'mojito'}
               ->preview_page( $self->request->parameters )
         )
     );
@@ -73,8 +71,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->write(
-        $self->request->env->{'mojito.object'}->view_page( { id => $id } ) );
+    $self->write($self->request->env->{'mojito'}->view_page({ id => $id }));
 }
 
 package EditPage;
@@ -82,9 +79,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->write(
-        $self->request->env->{'mojito.object'}->edit_page_form( { id => $id } )
-    );
+    $self->write($self->request->env->{'mojito'}->edit_page_form({id => $id}));
 }
 
 sub post {
@@ -92,8 +87,8 @@ sub post {
 
     my $params = $self->request->parameters;
     $params->{id} = $id;
-    $self->request->env->{'mojito.object'}->update_page($params);
-    my $base_url = $self->request->env->{'mojito.base_url'};
+    $self->request->env->{'mojito'}->update_page($params);
+    my $base_url = $self->request->env->{'mojito'}->base_url;
     $self->response->redirect("${base_url}page/${id}");
 }
 
@@ -105,7 +100,7 @@ sub get {
 
     my $want_delete_link = 1;
     my $links =
-      $self->request->env->{'mojito.pager'}
+      $self->request->env->{'mojito'}
       ->get_most_recent_links($want_delete_link);
     $self->write($links);
 }
@@ -116,8 +111,7 @@ use parent qw(Tatsumaki::Handler);
 sub get {
     my ( $self, $id ) = @_;
     $self->request->env->{'mojito.pager'}->delete($id);
-    $self->response->redirect(
-        $self->request->env->{'mojito.base_url'} . 'recent' );
+    $self->response->redirect($self->request->env->{'mojito'}->base_url . 'recent');
 }
 
 package main;

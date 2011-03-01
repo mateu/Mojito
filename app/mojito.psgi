@@ -13,7 +13,7 @@ use Data::Dumper::Concise;
 {
 
     package MojitoApp;
-    my $mojito = Mojito->new;
+    my $mojito;
 
     sub dispatch_request {
         my ( $self, $env ) = @_;
@@ -26,13 +26,7 @@ use Data::Dumper::Concise;
         # pass base url to mojito where we can reuse it
         # Also added it to pager.  A little redundant but
         # tighter than before.
-        $mojito->base_url($base_url);
-        my $pager = Mojito::Page->new(
-            {
-                page     => '<sx>Mojito page</sx>',
-                base_url => $base_url,
-            }
-        );
+        $mojito = Mojito->new( base_url => $base_url);
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -47,7 +41,7 @@ use Data::Dumper::Concise;
           sub (GET + /page ) {
             my ($self) = @_;
 
-            my $output = $pager->fillin_create_page;
+            my $output = $mojito->fillin_create_page;
 
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
@@ -76,8 +70,7 @@ use Data::Dumper::Concise;
             my ($self) = @_;
 
             my $want_delete_link = 1;
-            my $links =
-              $pager->get_most_recent_links($want_delete_link);
+            my $links = $mojito->get_most_recent_links($want_delete_link);
 
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
@@ -116,7 +109,7 @@ use Data::Dumper::Concise;
           sub (GET + /page/*/delete ) {
             my ( $self, $id ) = @_;
 
-            $pager->delete($id);
+            $mojito->delete($id);
 
             return [ 301, [ Location => '/recent' ], [] ];
           },
@@ -129,8 +122,8 @@ use Data::Dumper::Concise;
           sub (GET + /) {
             my ($self) = @_;
 
-            my $output = $pager->home_page;
-            my $links = $pager->get_most_recent_links;
+            my $output = $mojito->home_page;
+            my $links = $mojito->get_most_recent_links;
             $output =~
 s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 

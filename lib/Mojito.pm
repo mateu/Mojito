@@ -1,10 +1,10 @@
 use strictures 1;
 package Mojito;
 use Moo;
-use Mojito::Page;
-use Mojito::Page::CRUD;
 
 use Data::Dumper::Concise;
+
+extends 'Mojito::Page';
 
 =head1 Attributes
 
@@ -29,15 +29,14 @@ Create a new page and return its id (as a string, not an object).
 sub create_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new(
-        page     => $params->{content},
-        base_url => $self->base_url
-    );
-    my $page_struct = $pager->page_structure;
-    $page_struct->{page_html} = $pager->render_page($page_struct);
-    $page_struct->{body_html} = $pager->render_body($page_struct);
-    $page_struct->{title}     = $pager->intro_text( $page_struct->{body_html} );
-    my $id = $pager->create($page_struct);
+    # We need to get some content into the delegatee
+    $self->parser->page($params->{content});
+    
+    my $page_struct = $self->page_structure;
+    $page_struct->{page_html} = $self->render_page($page_struct);
+    $page_struct->{body_html} = $self->render_body($page_struct);
+    $page_struct->{title}     = $self->intro_text( $page_struct->{body_html} );
+    my $id = $self->create($page_struct);
 
     return $id;
 }
@@ -51,32 +50,27 @@ AJAX preview of a page (parse and render, save when button pressed)
 sub preview_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new(
-        page     => $params->{content},
-        base_url => $self->base_url
-    );
-    my $page_struct = $pager->page_structure;
+    $self->parser->page($params->{content});
+    my $page_struct = $self->page_structure;
     if (   $params->{extra_action}
         && ( $params->{extra_action} eq 'save' )
         && ( $params->{'mongo_id'} ) )
     {
-        $page_struct->{page_html} = $pager->render_page($page_struct);
-        $page_struct->{body_html} = $pager->render_body($page_struct);
-        $page_struct->{title} = $pager->intro_text( $page_struct->{body_html} );
-        $pager->update( $params->{'mongo_id'}, $page_struct );
+        $page_struct->{page_html} = $self->render_page($page_struct);
+        $page_struct->{body_html} = $self->render_body($page_struct);
+        $page_struct->{title} = $self->intro_text( $page_struct->{body_html} );
+        $self->update( $params->{'mongo_id'}, $page_struct );
     }
     elsif ( $params->{'mongo_id'} ) {
 
 # Auto update this stuff so the user doesn't have to even think about clicking save button
-# May still put in a save button later, but I think it should be tested without.
-# Just a 'Done' button take you to view.
 # TODO: add title, page and body html to page_struct like above.
 #       Do we even need these two branches given that we're autosaving now.
 # TODO: on new page, insert to get an id then update to that from the start
-        $pager->update( $params->{'mongo_id'}, $page_struct );
+        $self->update( $params->{'mongo_id'}, $page_struct );
     }
 
-    my $rendered_content = $pager->render_body($page_struct);
+    my $rendered_content = $self->render_body($page_struct);
     my $response_href = { rendered_content => $rendered_content };
 
     return $response_href;
@@ -91,19 +85,16 @@ Update a page given: content, id and base_url
 sub update_page {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new(
-        page     => $params->{content},
-        base_url => $self->base_url
-    );
-    my $page = $pager->page_structure;
+    $self->parser->page($params->{content});
+    my $page = $self->page_structure;
 
     # Store rendered parts as well.  May as well until proven wrong.
-    $page->{page_html} = $pager->render_page($page);
-    $page->{body_html} = $pager->render_body($page);
-    $page->{title}     = $pager->intro_text( $page->{body_html} );
+    $page->{page_html} = $self->render_page($page);
+    $page->{body_html} = $self->render_body($page);
+    $page->{title}     = $self->intro_text( $page->{body_html} );
 
     # Save page
-    $pager->update( $params->{id}, $page );
+    $self->update( $params->{id}, $page );
 
     return $page;
 }
@@ -117,16 +108,11 @@ Present the form with a page ready to be edited.
 sub edit_page_form {
     my ( $self, $params ) = @_;
 
-    my $pager = Mojito::Page->new(
-        page     => '<b>Mojito page</b>',
-        base_url => $self->base_url
-    );
-    my $page             = $pager->read( $params->{id} );
-    my $rendered_content = $pager->render_body($page);
+    my $page             = $self->read( $params->{id} );
+    my $rendered_content = $self->render_body($page);
     my $source           = $page->{page_source};
 
-    return $pager->fillin_edit_page( $source, $rendered_content,
-        $params->{id} );
+    return $self->fillin_edit_page( $source, $rendered_content, $params->{id} );
 }
 
 =head2 view_page
@@ -139,15 +125,9 @@ the HTML form of the page to the browser.
 sub view_page {
     my ( $self, $params ) = @_;
 
-# page is required for PageParser so let's put in a placeholder to make it happen
-# when it gets delegated to during BUILD of page delegator object
-    my $pager = Mojito::Page->new(
-        page     => '<b>Mojito page</b>',
-        base_url => $self->base_url
-    );
-    my $page          = $pager->read( $params->{id} );
-    my $rendered_page = $pager->render_page($page);
-    my $links         = $pager->get_most_recent_links( 0, $self->base_url );
+    my $page          = $self->read( $params->{id} );
+    my $rendered_page = $self->render_page($page);
+    my $links         = $self->get_most_recent_links( 0, $self->base_url );
 
     # Change class on view_area when we're in view mode.
     $rendered_page =~
@@ -166,15 +146,16 @@ A path for benchmarking to get an basic idea of peformance.
 
 sub bench {
     my $self  = shift;
-    my $pager = Mojito::Page->new(
-        page     => $self->bench_fixture,
-        base_url => $self->base_url,
-    );
-    my $page_struct = $pager->page_structure;
-    my $editer      = Mojito::Page::CRUD->new( db_name => 'bench' );
-    my $id          = $editer->create($page_struct);
     
-    return $pager->render_page($page_struct);
+    $self->parser->page($self->bench_fixture);
+    my $page_struct = $self->page_structure;
+    
+    # Let's run our bench stuff in its own DB to keep it separate from
+    # real (user created) pages.
+    $self->editer->db_name('bench');
+    my $id = $self->create($page_struct);
+    
+    return $self->render_page($page_struct);
 }
 
 sub _build_bench_fixture {
