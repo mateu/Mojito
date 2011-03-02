@@ -5,8 +5,6 @@ use Tatsumaki::HTTPClient;
 use Tatsumaki::Server;
 use JSON;
 
-use Data::Dumper::Concise;
-
 package MainHandler;
 use parent qw(Tatsumaki::Handler);
 use Data::Dumper::Concise;
@@ -117,6 +115,8 @@ sub get {
 
 package main;
 use Plack::Builder;
+use Mojito;
+use Data::Dumper::Concise;
 
 my $app = Tatsumaki::Application->new(
     [
@@ -136,7 +136,21 @@ builder {
 
     #    enable "Debug";
     enable "+Mojito::Middleware";
+    enable "Auth::Basic", authenticator => \&authen_cb;
+#    enable 'Session';
+#    enable 'Auth::Form', authenticator => sub { 1 }; 
+    
     $app;
 };
 
+sub authen_cb {
+    my($username, $password) = @_;
+    use Mojito::Page;
+    my $mojito = Mojito::Page->new;
+    $mojito->editer->collection_name('users');
+    use MongoDB::OID;
+    my $oid = MongoDB::OID->new( value => 'hunter' );
+    my $user = $mojito->editer->collection->find_one( { username => $username } );
+    return $username eq 'hunter' && $password eq $user->{password};
+}
 #return $app;
