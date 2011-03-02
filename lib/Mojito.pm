@@ -127,7 +127,7 @@ sub view_page {
 
     my $page          = $self->read( $params->{id} );
     my $rendered_page = $self->render_page($page);
-    my $links         = $self->get_most_recent_links( 0, $self->base_url );
+    my $links         = $self->get_most_recent_links;
 
     # Change class on view_area when we're in view mode.
     $rendered_page =~

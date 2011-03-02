@@ -41,6 +41,12 @@ $(document).ready(function() {
 		alert("Are you sure?");
 		return false;
 	});
+	$('#recent_articles_label').click(function() {
+		  $('#recent_area').toggle('slow', function() {
+		    // Animation complete.
+		  });
+		  $('.view_area_view_mode').width('90%');
+	});
 });
 
 function got_content() {

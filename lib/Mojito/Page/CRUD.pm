@@ -141,7 +141,7 @@ sub get_most_recent_links {
     my $base_url = $self->base_url;
     
     my $link_data = $self->get_most_recent_link_data;
-    my $links = '<b>Recent Articles</b><br />';
+    my $links = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />';
     foreach my $datum (@{$link_data}) {
         $links .= "<a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a>";
         if ($want_delete_link) {
