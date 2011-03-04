@@ -45,9 +45,8 @@ sub get {
 
 sub post {
     my ($self) = @_;
-    my $base_url = $self->request->env->{'mojito'}->base_url;
-    my $id = $self->request->env->{'mojito'}->create_page( $self->request->parameters );
-    $self->response->redirect("${base_url}page/${id}/edit");
+    my $redirect_url = $self->request->env->{'mojito'}->create_page( $self->request->parameters );
+    $self->response->redirect($redirect_url);
 }
 
 package PreviewPage;
@@ -85,11 +84,9 @@ sub post {
 
     my $params = $self->request->parameters;
     $params->{id} = $id;
-    my $mojito = $self->request->env->{'mojito'};
-    $mojito->update_page($params);
-    my $base_url = $mojito->base_url;
+    my $redirect_url = $self->request->env->{'mojito'}->update_page($params);
     
-    $self->response->redirect("${base_url}page/${id}");
+    $self->response->redirect($redirect_url);
 }
 
 package RecentPage;
@@ -109,8 +106,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->request->env->{'mojito.pager'}->delete($id);
-    $self->response->redirect($self->request->env->{'mojito'}->base_url . 'recent');
+    $self->response->redirect($self->request->env->{mojito}->delete_page({id => $id}));
 }
 
 package main;

@@ -6,11 +6,16 @@ use Mojito;
 use Data::Dumper::Concise;
 
 my ($mojito, $base_url);
-set 'logger'      => 'console';
-set 'log'         => 'debug';
-set 'show_errors' => 1;
-set 'access_log'  => 1;
-set 'warnings' => 1;
+set 'logger'      => 'file';
+setting log_path => '/tmp';
+set 'log_path'    => '/tmp';
+setting log_dir => '/tmp';
+set 'log_dir'    => '/tmp';
+set 'appdir'     => '/tmp';
+#set 'log'         => 'debug';
+#set 'show_errors' => 1;
+#set 'access_log'  => 1;
+#set 'warnings' => 1;
 
 before sub {
     $base_url = request->base;
@@ -18,7 +23,6 @@ before sub {
         $base_url .= '/';
     }
     $mojito = Mojito->new( base_url => $base_url);
-    $mojito->base_url($base_url);
     var base_url => $base_url;
 };
 
@@ -35,8 +39,7 @@ get '/page' => sub {
 };
 
 post '/page' => sub {
-    my $id = $mojito->create_page(scalar params);
-    redirect "${base_url}page/${id}/edit";
+    redirect $mojito->create_page(scalar params);
 };
 
 ajax '/preview' => sub {
@@ -52,15 +55,12 @@ get '/page/:id/edit' => sub {
 };
 
 post '/page/:id/edit' => sub {
-    my $page = $mojito->update_page(scalar params);
-    my $id = params->{id};
-    redirect "${base_url}page/${id}";
+    redirect $mojito->update_page(scalar params);
 };
 
 get '/page/:id/delete' => sub {
     my $id = params->{id};
-    $mojito->delete($id);
-    redirect $base_url . 'recent';
+    redirect $mojito->delete_page( {id => params->{id}} );
 };
 
 get '/recent' => sub {

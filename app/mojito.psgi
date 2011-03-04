@@ -44,8 +44,7 @@ use Data::Dumper::Concise;
           sub (POST + /page + %* ) {
             my ( $self, $params ) = @_;
 
-            my $id           = $mojito->create_page($params);
-            my $redirect_url = "${base_url}page/${id}/edit";
+            my $redirect_url = $mojito->create_page($params);
 
             [ 301, [ Location => $redirect_url ], [] ];
           },
@@ -93,8 +92,7 @@ use Data::Dumper::Concise;
             my ( $self, $id, $params ) = @_;
 
             $params->{id} = $id;
-            my $page = $mojito->update_page($params);
-            my $redirect_url = "${base_url}page/${id}";
+            my $redirect_url = $mojito->update_page($params);
             
             return [ 301, [ Location => $redirect_url ], [] ];
           },
@@ -102,10 +100,7 @@ use Data::Dumper::Concise;
           # DELETE a Page
           sub (GET + /page/*/delete ) {
             my ( $self, $id ) = @_;
-
-            $mojito->delete($id);
-
-            return [ 301, [ Location => '/recent' ], [] ];
+            return [ 301, [ Location => $mojito->delete_page({id => $id}) ], [] ];
           },
 
           sub (GET + /hola/* ) {

@@ -22,7 +22,8 @@ has bench_fixture => ( is => 'ro', lazy => 1, builder => '_build_bench_fixture')
 
 =head2 create_page
 
-Create a new page and return its id (as a string, not an object).
+Create a new page and return the url to redirect to, namely the page in edit mode.
+We might change this to view mode if demand persuades. 
 
 =cut
 
@@ -37,8 +38,8 @@ sub create_page {
     $page_struct->{body_html} = $self->render_body($page_struct);
     $page_struct->{title}     = $self->intro_text( $page_struct->{body_html} );
     my $id = $self->create($page_struct);
-
-    return $id;
+    
+    return $self->base_url . 'page/' . $id . '/edit';
 }
 
 =head2 preview_page
@@ -96,7 +97,7 @@ sub update_page {
     # Save page
     $self->update( $params->{id}, $page );
 
-    return $page;
+    return $self->base_url . 'page/' . $params->{id};
 }
 
 =head2 edit_page_form
@@ -136,6 +137,19 @@ sub view_page {
       s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
     return $rendered_page;
+}
+
+=head2 delete_page
+
+Delet a page given a page id.
+Return the URL to recent (maybe home someday?)
+
+=cut
+
+sub delete_page {
+    my ( $self, $params ) = @_;
+    $self->delete($params->{id});
+    return $self->base_url . 'recent';
 }
 
 =head2 bench
