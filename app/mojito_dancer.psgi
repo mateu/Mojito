@@ -2,24 +2,27 @@
 use Dancer;
 use Dancer::Plugin::Ajax;
 use Mojito;
+use Mojito::Auth;
 
 use Data::Dumper::Concise;
 
-my ($mojito, $base_url);
 #set 'log_path'  => '/tmp';
 set 'logger'      => 'console';
 set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log'  => 1;
-set 'warnings' => 1;
+set 'warnings'    => 1;
 
+set plack_middlewares => [
+        [ "+Mojito::Middleware" ],
+        [ "Auth::Basic",   authenticator => \&Mojito::Auth::authen_cb ],
+];
+
+# Provide a shortcut to the mojito object
+my ($mojito);
 before sub {
-    $base_url = request->base;
-    if ($base_url !~ m/\/$/) {
-        $base_url .= '/';
-    }
-    $mojito = Mojito->new( base_url => $base_url);
-    var base_url => $base_url;
+    $mojito = request->env->{mojito};
+    var mojito => $mojito;
 };
 
 get '/bench' => sub {
@@ -43,7 +46,6 @@ ajax '/preview' => sub {
 };
 
 get '/page/:id' => sub {
-    debug "VIEW PAGE";
     return $mojito->view_page( {id => params->{id}} );
 };
 
@@ -56,21 +58,15 @@ post '/page/:id/edit' => sub {
 };
 
 get '/page/:id/delete' => sub {
-    my $id = params->{id};
     redirect $mojito->delete_page( {id => params->{id}} );
 };
 
 get '/recent' => sub {
-    my $want_delete_link = 1;
-    my $links            = $mojito->get_most_recent_links($want_delete_link);
-    return $links;
+    return $mojito->get_most_recent_links({want_delete_link => 1});
 };
 
 get '/' => sub {
-    my $output = $mojito->home_page;
-    my $links  = $mojito->get_most_recent_links;
-    $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
-    return $output;
+    return $mojito->view_home_page;
 };
 
 dance;

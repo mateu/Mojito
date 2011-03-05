@@ -6,21 +6,13 @@ use JSON;
 use Data::Dumper::Concise;
 
 {
-
     package MojitoApp;
-
+    use Mojito::Auth;
+    use Plack::Builder;
+    
     sub dispatch_request {
         my ( $self, $env ) = @_;
-
-        my $base_url = $env->{SCRIPT_NAME} || '/';
-
-        # make sure the base url ends with a slash
-        $base_url =~ s/([^\/])$/$1\//;
-
-        # pass base url to mojito where we can reuse it
-        # Also added it to pager.  A little redundant but
-        # tighter than before.
-        my $mojito = Mojito->new( base_url => $base_url);
+        my $mojito = $env->req->env->{mojito};
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -126,8 +118,18 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
           sub () {
             [ 405, [ 'Content-type', 'text/plain' ], ['Method not allowed'] ];
           },
-
     }
+    
+    # Wrap in middleware here.
+    around 'to_psgi_app', sub {
+        my ($orig, $self) = (shift, shift);
+        my $app = $self->$orig(@_); 
+        builder {
+            enable "+Mojito::Middleware";
+            enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
+            $app;
+        };
+    };
 }
 
 MojitoApp->run_if_script;

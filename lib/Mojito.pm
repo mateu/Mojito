@@ -138,6 +138,13 @@ sub view_page {
 
     return $rendered_page;
 }
+
+=head2 view_home_page
+
+Create the view for the base of the application.
+
+=cut
+
 sub view_home_page {
     my $self = shift;
 
