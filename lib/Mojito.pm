@@ -138,6 +138,15 @@ sub view_page {
 
     return $rendered_page;
 }
+sub view_home_page {
+    my $self = shift;
+
+    my $output = $self->home_page;
+    my $links  = $self->get_most_recent_links;
+    $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+    
+    return $output;
+}
 
 =head2 delete_page
 

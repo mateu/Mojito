@@ -132,11 +132,12 @@ sub get_most_recent_link_data {
 =head2 get_most_recent_links
 
 Turn the data into HTML
+$args should be a HashRef of options
 
 =cut
 
 sub get_most_recent_links {
-    my ($self, $want_delete_link) = @_;
+    my ($self, $args) = @_;
     
     my $base_url = $self->base_url;
     
@@ -144,7 +145,7 @@ sub get_most_recent_links {
     my $links = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />';
     foreach my $datum (@{$link_data}) {
         $links .= "<a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a>";
-        if ($want_delete_link) {
+        if ($args->{want_delete_link}) {
             $links .=  " | <a id=\"page_delete\" href=\"${base_url}page/"   . $datum->{id} . '/delete"> delete</a>';
         }
         $links .= "<br />\n";

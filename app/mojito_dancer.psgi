@@ -6,16 +6,12 @@ use Mojito;
 use Data::Dumper::Concise;
 
 my ($mojito, $base_url);
-set 'logger'      => 'file';
-setting log_path => '/tmp';
-set 'log_path'    => '/tmp';
-setting log_dir => '/tmp';
-set 'log_dir'    => '/tmp';
-set 'appdir'     => '/tmp';
-#set 'log'         => 'debug';
-#set 'show_errors' => 1;
-#set 'access_log'  => 1;
-#set 'warnings' => 1;
+#set 'log_path'  => '/tmp';
+set 'logger'      => 'console';
+set 'log'         => 'debug';
+set 'show_errors' => 1;
+set 'access_log'  => 1;
+set 'warnings' => 1;
 
 before sub {
     $base_url = request->base;
@@ -47,6 +43,7 @@ ajax '/preview' => sub {
 };
 
 get '/page/:id' => sub {
+    debug "VIEW PAGE";
     return $mojito->view_page( {id => params->{id}} );
 };
 

@@ -1,23 +1,16 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
 use Mojito;
+use Mojito::Auth;
 use Plack::Builder;
 
-my ( $mojito, $base_url );
-
-app->hook(
-    before_dispatch => sub {
-        my $self = shift;
-        $base_url = $self->req->url->base;
-        if ( $base_url !~ m/\/$/ ) {
-            $base_url .= '/';
-        }
-        $mojito = Mojito->new( base_url => $base_url );
-    }
-);
-
+# Make a shortcut the the mojito app object
+app->helper( mojito => sub {
+    return $_[0]->req->env->{mojito};
+});
+ 
 get '/bench' => sub {
-    $_[0]->render( text => $_[0]->req->env->{mojito}->bench );
+    $_[0]->render( text => $_[0]->mojito->bench );
 };
 
 get '/hola/:name' => sub {
@@ -25,74 +18,53 @@ get '/hola/:name' => sub {
 };
 
 get '/page' => sub {
-    $_[0]->render( text => $_[0]->req->env->{mojito}->fillin_create_page );
+    $_[0]->render( text => $_[0]->mojito->fillin_create_page );
 };
 
 post '/page' => sub {
     $_[0]->redirect_to(
-        $_[0]->req->env->{mojito}->create_page( $_[0]->req->params->to_hash ) );
+        $_[0]->mojito->create_page( $_[0]->req->params->to_hash ) );
 };
 
 post '/preview' => sub {
     $_[0]->render( json =>
-          $_[0]->req->env->{mojito}->preview_page( $_[0]->req->params->to_hash )
+          $_[0]->mojito->preview_page( $_[0]->req->params->to_hash )
     );
 };
 
 get '/page/:id' => sub {
     $_[0]->render( text =>
-          $_[0]->req->env->{mojito}->view_page( { id => $_[0]->param('id') } )
+          $_[0]->mojito->view_page( { id => $_[0]->param('id') } )
     );
 };
 
 get '/page/:id/edit' => sub {
-    $_[0]->render( text => $_[0]->req->env->{mojito}
-          ->edit_page_form( { id => $_[0]->param('id') } ) );
+    $_[0]->render( text => $_[0]->mojito->edit_page_form( { id => $_[0]->param('id') } ) );
 };
 
 post '/page/:id/edit' => sub {
 
-    # for whatever reason ->params doesn't include placeholder params
+    # $self->req->params doesn't include placeholder $self->param() 's 
     my $params = $_[0]->req->params->to_hash;
     $params->{'id'} = $_[0]->param('id');
 
-    $_[0]->redirect_to($_[0]->req->env->{mojito}->update_page($params));
+    $_[0]->redirect_to($_[0]->mojito->update_page($params));
 };
 
 get '/page/:id/delete' => sub {
-    $_[0]->redirect_to( $_[0]->req->env->{mojito}->delete_page({ id => $_[0]->param('id') }) );
+    $_[0]->redirect_to( $_[0]->mojito->delete_page({ id => $_[0]->param('id') }) );
 };
 
 get '/recent' => sub {
-    my $self             = shift;
-    my $want_delete_link = 1;
-    my $links            = $mojito->get_most_recent_links($want_delete_link);
-    $self->render( text => $links );
+    $_[0]->render( text => $_[0]->mojito->get_most_recent_links({want_delete_link => 1}));
 };
 
 get '/' => sub {
-    my $self   = shift;
-    my $output = $mojito->home_page;
-    my $links  = $mojito->get_most_recent_links;
-    $output =~
-      s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
-    $self->render( text => $output );
+    $_[0]->render( text => $_[0]->mojito->view_home_page );
 };
 
 builder {
     enable "+Mojito::Middleware";
-    enable "Auth::Basic", authenticator => \&authen_cb;
+    enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
     app->start;
 };
-
-sub authen_cb {
-    my ( $username, $password ) = @_;
-    use Mojito::Page;
-    my $mojito = Mojito::Page->new;
-    $mojito->editer->collection_name('users');
-    use MongoDB::OID;
-    my $oid = MongoDB::OID->new( value => 'hunter' );
-    my $user =
-      $mojito->editer->collection->find_one( { username => $username } );
-    return $username eq 'hunter' && $password eq $user->{password};
-}
