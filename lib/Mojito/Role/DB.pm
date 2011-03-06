@@ -12,7 +12,7 @@ has 'conn' => (
 has 'db_name' => (
     is => 'rw',
     lazy => 1,
-    default => sub { 'docs' },
+    default => sub { 'mojito' },
 );
 has 'db' => (
     is => 'ro',
@@ -23,7 +23,6 @@ has 'collection' => (
     is => 'ro',
     lazy => 1,
     builder => '_build_collection',
-#    default => sub { $_[0]->db->notes },
 );
 has 'collection_name' => (
     is => 'rw',

@@ -112,9 +112,21 @@ sub add_user {
     return $id;
 }
 
-sub secret () { ## no critic
+=head2 secret
+
+Used by Plack::Middleware::Auth::Digest
+
+=cut
+
+sub _secret () { ## no critic
     'més_vi_si_us_plau';
 }
+
+=head2 BUILD
+
+Set some things post object construction, pre object use.
+
+=cut
 
 sub BUILD {
     my $self = shift;

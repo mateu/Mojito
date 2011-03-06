@@ -18,7 +18,7 @@ set plack_middlewares => [
 #        [ "Auth::Basic",   authenticator => \&Mojito::Auth::authen_cb ],
         [ "Auth::Digest", 
               realm => "Mojito", 
-              secret => Mojito::Auth::secret,
+              secret => Mojito::Auth::_secret,
               password_hashed => 1,
               authenticator => Mojito::Auth->new->digest_authen_cb, ],
 ];

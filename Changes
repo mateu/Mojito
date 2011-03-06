@@ -1,5 +1,15 @@
 {{$NEXT}}
-
+          [Enchantments]
+          - Digest Authentication required on all non /public URLs
+          - implemented script/add_user.pl to add users to the DB for page access.
+          - enabled setting both the db and collection in the DB role.
+            Now we can get to a 'bench' database and a 'users' collection.
+          
+          [Refactor]
+          - Middleware for Mojito object
+          - Controller golfing
+          - renamed notes database to 'mojito'
+          
 0.04      2011-02-28 22:43:00 America/Denver
           [Refactor]
           - A Mojito object is now a derived class of Mojito::Page.

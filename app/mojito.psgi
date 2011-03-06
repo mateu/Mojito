@@ -129,7 +129,7 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
            # enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
             enable "Auth::Digest", 
               realm => "Mojito", 
-              secret => Mojito::Auth::secret,
+              secret => Mojito::Auth::_secret,
               password_hashed => 1,
               authenticator => Mojito::Auth->new->digest_authen_cb;
             $app;

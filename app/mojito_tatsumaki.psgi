@@ -71,6 +71,14 @@ sub get {
     $self->write($self->request->env->{'mojito'}->view_page({ id => $id }));
 }
 
+package ViewPagePublic;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $self->write($self->request->env->{'mojito'}->view_page({ id => $id }));
+}
+
 package EditPage;
 use parent qw(Tatsumaki::Handler);
 
@@ -94,10 +102,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ($self) = @_;
-
-    my $want_delete_link = 1;
-    my $links = $self->request->env->{'mojito'}->get_most_recent_links($want_delete_link);
-    
+    my $links = $self->request->env->{'mojito'}->get_most_recent_links({want_delete_link => 1});
     $self->write($links);
 }
 
@@ -124,6 +129,7 @@ my $app = Tatsumaki::Application->new(
         '/page/(\w+)/edit'   => 'EditPage',
         '/page/(\w+)/delete' => 'DeletePage',
         '/page/(\w+)'        => 'ViewPage',
+        '/public/page/(\w+)' => 'ViewPagePublic',
         '/page'              => 'CreatePage',
         '/preview'           => 'PreviewPage',
     ]
@@ -134,10 +140,11 @@ builder {
     # enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
     # enable "Debug";
     # enable 'Session';
-    # enable 'Auth::Form', authenticator => sub { 1 }; 
-    enable "Auth::Digest", 
+    # enable 'Auth::Form', authenticator => sub { 1 };
+    
+    enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ } "Auth::Digest", 
               realm => "Mojito", 
-              secret => Mojito::Auth::secret,
+              secret => Mojito::Auth::_secret,
               password_hashed => 1,
               authenticator => Mojito::Auth->new->digest_authen_cb;
     $app;
