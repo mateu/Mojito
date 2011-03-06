@@ -7,12 +7,12 @@ use Data::Dumper::Concise;
 
 {
     package MojitoApp;
-    use Mojito::Auth;
     use Plack::Builder;
+    use Mojito::Auth;
     
     sub dispatch_request {
         my ( $self, $env ) = @_;
-        my $mojito = $env->req->env->{mojito};
+        my $mojito = $env->{mojito};
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -126,7 +126,12 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
         my $app = $self->$orig(@_); 
         builder {
             enable "+Mojito::Middleware";
-            enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
+           # enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
+            enable "Auth::Digest", 
+              realm => "Mojito", 
+              secret => Mojito::Auth::secret,
+              password_hashed => 1,
+              authenticator => Mojito::Auth->new->digest_authen_cb;
             $app;
         };
     };

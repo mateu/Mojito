@@ -50,6 +50,16 @@ sub HashRef () {  ## no critic
     quote_sub q{ die "$_[0] is not an HashRef!" if ref($_[0]) ne 'HASH' };
 }
 
+=head2 CodeRef
+
+A CodeRef type
+
+=cut
+
+sub CodeRef () {  ## no critic
+    quote_sub q{ die "$_[0] is not an CodeRef!" if ref($_[0]) ne 'CODE' };
+}
+
 =head2 RegexpRef
 
 A regular expression reference type

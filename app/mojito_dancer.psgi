@@ -15,7 +15,12 @@ set 'warnings'    => 1;
 
 set plack_middlewares => [
         [ "+Mojito::Middleware" ],
-        [ "Auth::Basic",   authenticator => \&Mojito::Auth::authen_cb ],
+#        [ "Auth::Basic",   authenticator => \&Mojito::Auth::authen_cb ],
+        [ "Auth::Digest", 
+              realm => "Mojito", 
+              secret => Mojito::Auth::secret,
+              password_hashed => 1,
+              authenticator => Mojito::Auth->new->digest_authen_cb, ],
 ];
 
 # Provide a shortcut to the mojito object

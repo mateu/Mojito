@@ -130,13 +130,16 @@ my $app = Tatsumaki::Application->new(
 );
 
 builder {
-
     enable "+Mojito::Middleware";
-    enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
+    # enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
     # enable "Debug";
     # enable 'Session';
     # enable 'Auth::Form', authenticator => sub { 1 }; 
-    
+    enable "Auth::Digest", 
+              realm => "Mojito", 
+              secret => Mojito::Auth::secret,
+              password_hashed => 1,
+              authenticator => Mojito::Auth->new->digest_authen_cb;
     $app;
 };
 
