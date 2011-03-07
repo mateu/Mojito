@@ -50,7 +50,7 @@ $js_css
 <body class="html_body">
 <header>
 <nav id="edit_link" class="edit_link"></nav>
-<nav id="new_link" class="new_link"> <a href=/page>New</a></nav>
+<nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>
 </header>
 <article id="body_wrapper">
 <section id="edit_area">
