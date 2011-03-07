@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.05      2011-03-07 08:26:26 America/Denver
           [Enchantments]
           - Digest Authentication required on all non /public URLs
           - implemented script/add_user.pl to add users to the DB for page access.
