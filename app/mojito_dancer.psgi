@@ -2,6 +2,7 @@
 use Dancer;
 use Dancer::Plugin::Ajax;
 use Plack::Builder;
+use lib '../lib';
 use Mojito;
 use Mojito::Auth;
 
@@ -13,16 +14,6 @@ set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log'  => 1;
 set 'warnings'    => 1;
-
-set plack_middlewares => [
-        [ "+Mojito::Middleware" ],
-#        [ "Auth::Basic",   authenticator => \&Mojito::Auth::authen_cb ],
-        [ "Auth::Digest", 
-              realm => "Mojito", 
-              secret => Mojito::Auth::_secret,
-              password_hashed => 1,
-              authenticator => Mojito::Auth->new->digest_authen_cb, ],
-];
 
 # Provide a shortcut to the mojito object
 my ($mojito);

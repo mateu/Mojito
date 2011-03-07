@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
+use lib '../lib';
 use Mojito;
 use Mojito::Auth;
 use Plack::Builder;

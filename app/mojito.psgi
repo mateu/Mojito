@@ -1,6 +1,8 @@
 #!/usr/bin/env perl
 use Web::Simple 'MojitoApp';
+use lib '../lib';
 use Mojito;
+use Mojito::Auth;
 use JSON;
 
 use Data::Dumper::Concise;
@@ -8,7 +10,6 @@ use Data::Dumper::Concise;
 {
     package MojitoApp;
     use Plack::Builder;
-    use Mojito::Auth;
     
     sub dispatch_request {
         my ( $self, $env ) = @_;
