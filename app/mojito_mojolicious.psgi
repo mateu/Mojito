@@ -66,10 +66,11 @@ get '/' => sub {
 builder {
     enable "+Mojito::Middleware";
 #    enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
-    enable "Auth::Digest", 
-              realm => "Mojito", 
-              secret => Mojito::Auth::_secret,
-              password_hashed => 1,
-              authenticator => Mojito::Auth->new->digest_authen_cb;
+    enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
+      "Auth::Digest", 
+      realm => "Mojito", 
+      secret => Mojito::Auth::_secret,
+      password_hashed => 1,
+      authenticator => Mojito::Auth->new->digest_authen_cb;
     app->start;
 };

@@ -127,7 +127,8 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
         builder {
             enable "+Mojito::Middleware";
            # enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
-            enable "Auth::Digest", 
+            enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
+              "Auth::Digest",
               realm => "Mojito", 
               secret => Mojito::Auth::_secret,
               password_hashed => 1,
