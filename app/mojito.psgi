@@ -126,7 +126,6 @@ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
         my $app = $self->$orig(@_); 
         builder {
             enable "+Mojito::Middleware";
-           # enable "Auth::Basic", authenticator => \&Mojito::Auth::authen_cb;
             enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
               "Auth::Digest",
               realm => "Mojito", 
