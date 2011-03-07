@@ -1,11 +1,13 @@
 use strictures 1;
-
 package Mojito::Template;
 use Moo;
+use Cwd qw/ abs_path /;
+use Dir::Self;
 use Data::Dumper::Concise;
 
 # TODO - MOST DO: Make this alias where Mojito/files ends up.
-my $base_URL = 'http://localhost/mojito/';
+my $config = get_config();
+my $static_url = $config->{static_url};
 
 has 'template' => (
     is      => 'rw',
@@ -25,18 +27,18 @@ my $javascripts = [
     'jquery/jquery-1.5.min.js',     'javascript/render_page.js',
     'syntax_highlight/prettify.js', 'jquery/autoresize.jquery.min.js',
 ];
-my @javascripts = map { "<script src=${base_URL}$_></script>" } @{$javascripts};
+my @javascripts = map { "<script src=${static_url}$_></script>" } @{$javascripts};
 
 my $css = [ 'syntax_highlight/prettify.css', 'css/mojito.css', ];
 my @css =
-  map { "<link href=${base_URL}$_ type=text/css rel=stylesheet />" } @{$css};
+  map { "<link href=${static_url}$_ type=text/css rel=stylesheet />" } @{$css};
 
 my $js_css = join "\n", @javascripts, @css;
 
 sub _build_template {
     my $self = shift;
 
-    my $base_url = $self->base_url;
+    my $base_url  = $self->base_url;
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html> 
@@ -78,7 +80,7 @@ END_HTML
 sub _build_home_page {
     my $self = shift;
 
-    my $base_url = $self->base_url;
+    my $base_url  = $self->base_url;
     my $home_page = <<"END_HTML";
 <!doctype html>
 <html> 
@@ -116,7 +118,7 @@ Get the contents of the edit page proper given the starting template and some da
 
 sub fillin_edit_page {
     my ( $self, $page_source, $page_view, $mongo_id ) = @_;
-    
+
     my $output   = $self->template;
     my $base_url = $self->base_url;
     $output =~
@@ -176,6 +178,40 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
     $output =~ s/<body.*?>/<body>/si;
 
     return $output;
+}
+
+=head2 get_config
+
+Read the configuration file.  (technique pilfered from Mojo::Server::Hypntoad).
+Config file is looked for in three locations: 
+    ENV
+    conf/mojito_local.conf
+    conf/mojito.conf
+First location that exists is used.
+
+=cut
+
+sub get_config {
+    
+    # WARNING: Path dependent on position of Template.pm and conf/ directory.
+    my $file = 
+         $ENV{MOJITO_CONFIG} 
+      || abs_path(__DIR__ . '/../../conf/mojito_local.conf')
+      || abs_path(__DIR__ . '/../../conf/mojito.conf');
+
+
+    # Config
+    my $config = {};
+    if ( -r $file ) {
+        unless ( $config = do $file ) {
+            die qq/Can't load config file "$file": $@/ if $@;
+            die qq/Can't load config file "$file": $!/ unless defined $config;
+            die qq/Config file "$file" did not return a hashref.\n/
+              unless ref $config eq 'HASH';
+        }
+    }
+
+    return $config;
 }
 
 1
