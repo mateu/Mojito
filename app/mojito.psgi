@@ -18,46 +18,35 @@ use Data::Dumper::Concise;
         # A Benchmark URI
         sub (GET + /bench ) {
             my ($self) = @_;
-            
             my $rendered_content = $mojito->bench;
-
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_content] ];
           },
 
           # PRESENT CREATE Page Form
           sub (GET + /page ) {
             my ($self) = @_;
-
             my $output = $mojito->fillin_create_page;
-
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 
           # CREATE New Page, redirect to Edit Page mode
           sub (POST + /page + %* ) {
             my ( $self, $params ) = @_;
-
             my $redirect_url = $mojito->create_page($params);
-
             [ 301, [ Location => $redirect_url ], [] ];
           },
 
           # VIEW a Page
           sub (GET + /page/* ) {
             my ( $self, $id ) = @_;
-
             my $rendered_page = $mojito->view_page( { id => $id } );
-
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
 
           # LIST Pages in chrono order
           sub (GET + /recent ) {
             my ($self) = @_;
-
-            my $want_delete_link = 1;
-            my $links = $mojito->get_most_recent_links($want_delete_link);
-
+            my $links = $mojito->get_most_recent_links({want_delete_link => 1});
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
 
@@ -74,9 +63,7 @@ use Data::Dumper::Concise;
           # Present UPDATE Page Form
           sub (GET + /page/*/edit ) {
             my ( $self, $id ) = @_;
-
             my $output = $mojito->edit_page_form( { id => $id } );
-
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 

@@ -193,7 +193,6 @@ First location that exists is used.
 
 sub get_config {
     
-    # WARNING: Path dependent on position of Template.pm and conf/ directory.
     my $file = 
          $ENV{MOJITO_CONFIG} 
       || abs_path(__DIR__ . '/../../conf/mojito_local.conf')
@@ -210,7 +209,6 @@ sub get_config {
               unless ref $config eq 'HASH';
         }
     }
-
     return $config;
 }
 

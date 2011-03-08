@@ -1,4 +1,8 @@
 {{$NEXT}}
+          [Enchantments]
+          - Basic mojito.conf with mojito_local.conf override option.
+          - Expose /public/feed and /public/page views (initial implementation in Tatsumaki)
+          
 
 0.05      2011-03-07 08:26:26 America/Denver
           [Enchantments]

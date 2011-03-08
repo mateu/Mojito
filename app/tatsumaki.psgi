@@ -76,7 +76,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->write($self->request->env->{'mojito'}->view_page({ id => $id }));
+    $self->write($self->request->env->{'mojito'}->view_page_public({ id => $id }));
 }
 
 package EditPage;
@@ -106,6 +106,15 @@ sub get {
     $self->write($links);
 }
 
+package FeedPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ($self, $feed) = @_;
+    my $links = $self->request->env->{'mojito'}->get_feed_links($feed);
+    $self->write($links);
+}
+
 package DeletePage;
 use parent qw(Tatsumaki::Handler);
 
@@ -132,6 +141,7 @@ my $app = Tatsumaki::Application->new(
         '/public/page/(\w+)' => 'ViewPagePublic',
         '/page'              => 'CreatePage',
         '/preview'           => 'PreviewPage',
+        '/public/feed/(\w+)' => 'FeedPage',
     ]
 );
 

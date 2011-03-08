@@ -61,6 +61,7 @@ has editer => (
             update
             delete
             get_most_recent_links
+            get_feed_links
           )
     ],
     writer => '_build_edit',
