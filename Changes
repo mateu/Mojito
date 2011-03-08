@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.06      2011-03-07 23:02:08 America/Denver
           [Enchantments]
           - mojito.conf with mojito_local.conf and $ENV{MOJITO_CONFIG} override option.
           - Expose /public/feed and /public/page views 
