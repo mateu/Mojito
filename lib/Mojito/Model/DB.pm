@@ -1,5 +1,5 @@
 use strictures 1;
-package Mojito::DB;
+package Mojito::Model::DB;
 use Moo;
 
 with('Mojito::Role::DB');

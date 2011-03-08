@@ -2,5 +2,5 @@
 .includepath
 .build
 app/logs/
-conf/mojito_local.conf
+lib/Mojito/conf/mojito_local.conf
 Mojito-*

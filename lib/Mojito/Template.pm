@@ -1,12 +1,12 @@
 use strictures 1;
 package Mojito::Template;
 use Moo;
+use Mojito::Model::Config;
 use Cwd qw/ abs_path /;
 use Dir::Self;
 use Data::Dumper::Concise;
 
-# TODO - MOST DO: Make this alias where Mojito/files ends up.
-my $config = get_config();
+my $config = Mojito::Model::Config->new->config;
 my $static_url = $config->{static_url};
 
 has 'template' => (
@@ -178,38 +178,6 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
     $output =~ s/<body.*?>/<body>/si;
 
     return $output;
-}
-
-=head2 get_config
-
-Read the configuration file.  (technique pilfered from Mojo::Server::Hypntoad).
-Config file is looked for in three locations: 
-    ENV
-    conf/mojito_local.conf
-    conf/mojito.conf
-First location that exists is used.
-
-=cut
-
-sub get_config {
-    
-    my $file = 
-         $ENV{MOJITO_CONFIG} 
-      || abs_path(__DIR__ . '/../../conf/mojito_local.conf')
-      || abs_path(__DIR__ . '/../../conf/mojito.conf');
-
-
-    # Config
-    my $config = {};
-    if ( -r $file ) {
-        unless ( $config = do $file ) {
-            die qq/Can't load config file "$file": $@/ if $@;
-            die qq/Can't load config file "$file": $!/ unless defined $config;
-            die qq/Config file "$file" did not return a hashref.\n/
-              unless ref $config eq 'HASH';
-        }
-    }
-    return $config;
 }
 
 1
