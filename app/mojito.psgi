@@ -42,6 +42,11 @@ use Data::Dumper::Concise;
             my $rendered_page = $mojito->view_page( { id => $id } );
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
+        
+        sub (GET + /public/page/* ) {
+            my ($self, $id) = @_;
+            [ 200, [ 'Content-type', 'text/html' ], [ $mojito->view_page_public({id => $id})] ];
+        },
 
           # LIST Pages in chrono order
           sub (GET + /recent ) {
@@ -90,13 +95,12 @@ use Data::Dumper::Concise;
 
           sub (GET + /) {
             my ($self) = @_;
-
-            my $output = $mojito->home_page;
-            my $links = $mojito->get_most_recent_links;
-            $output =~
-s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
-
-            [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+            [ 200, [ 'Content-type', 'text/html' ], [$mojito->view_home_page] ];
+          },
+          
+          sub (GET + /public/feed/*) {
+            my ( $self, $feed ) = @_;
+            [ 200, [ 'Content-type', 'text/html' ], [$mojito->get_feed_links($feed)] ];
           },
 
           sub (GET) {

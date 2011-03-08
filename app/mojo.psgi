@@ -39,6 +39,12 @@ get '/page/:id' => sub {
     );
 };
 
+get '/public/page/:id' => sub {
+    $_[0]->render( text =>
+          $_[0]->mojito->view_page_public( { id => $_[0]->param('id') } )
+    );
+};
+
 get '/page/:id/edit' => sub {
     $_[0]->render( text => $_[0]->mojito->edit_page_form( { id => $_[0]->param('id') } ) );
 };
@@ -57,11 +63,15 @@ get '/page/:id/delete' => sub {
 };
 
 get '/recent' => sub {
-    $_[0]->render( text => $_[0]->mojito->get_most_recent_links({want_delete_link => 1}));
+    $_[0]->render( text => $_[0]->mojito->get_most_recent_links({want_delete_link => 1}) );
 };
 
 get '/' => sub {
     $_[0]->render( text => $_[0]->mojito->view_home_page );
+};
+
+get '/public/feed/:feed' => sub {
+    $_[0]->render( text => $_[0]->mojito->get_feed_links($_[0]->param('feed')) );
 };
 
 builder {

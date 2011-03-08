@@ -46,6 +46,10 @@ get '/page/:id' => sub {
     return $mojito->view_page( {id => params->{id}} );
 };
 
+get '/public/page/:id' => sub {
+    return $mojito->view_page_public( {id => params->{id}} );
+};
+
 get '/page/:id/edit' => sub {
     return $mojito->edit_page_form( {id => params->{id}} );
 };
@@ -64,6 +68,10 @@ get '/recent' => sub {
 
 get '/' => sub {
     return $mojito->view_home_page;
+};
+
+get '/public/feed/:feed' => sub {
+    return $mojito->get_feed_links(params->{feed});
 };
 
 builder {
