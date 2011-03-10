@@ -271,7 +271,7 @@ Mojito is in alpha stage so it has much growing to do.
 Some goals and guidelines are:
 
     * Somewhat Framework Agnostic.  Currently there is support for 
-      Web::Simple, Dancer and Mojo with Tatsumaki support planned)
+      Web::Simple, Dancer, Mojo and Tatsumaki.
     * Minimalistic Interface.  No Phluff or at least options to turn features off.
     * A page engine that can standalone or potentially be plugged into MojoMojo.  
     * Exchange between MojoMojo and Mojito document formats.
@@ -279,12 +279,8 @@ Some goals and guidelines are:
 
 =head1 Current Limitations
 
-    * No Auth support
     * No Search
-    * Hardwired to a 'documents' named mongo db and a 'notes' collection
     * No revision history (only 1 version any any page)
-    * Prematurely optimized ;)
-
 
 =head1 Authors
 
