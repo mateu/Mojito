@@ -38,7 +38,7 @@ post '/page' => sub {
     redirect $mojito->create_page(scalar params);
 };
 
-ajax '/preview' => sub {
+post '/preview' => sub {
     to_json( $mojito->preview_page(scalar params) );
 };
 
