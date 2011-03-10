@@ -1,6 +1,8 @@
 {{$NEXT}}
+
+0.07      2011-03-09 23:03:56 America/Denver
           [Tests]
-          - Plack::Test test suite for author mode.
+          - Plack::Test test suite for release mode.
           
           [Misc]
           - Explicitly state that Perl 5.10.1 is required.
