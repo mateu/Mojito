@@ -1,6 +1,7 @@
 use strictures 1;
 package Mojito;
 use Moo;
+BEGIN { require 5.010001; }
 
 use Data::Dumper::Concise;
 
