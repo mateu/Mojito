@@ -10,10 +10,10 @@ use Data::Dumper::Concise;
 
 # Monkey patch Auth::Digest during testing to let me in the door.
 BEGIN {
-    if (!$ENV{AUTHOR_TESTING}) {
-        require Test::More;
-        Test::More::plan(skip_all => 'these tests are for testing by the author');
-    }
+#    if (!$ENV{AUTHOR_TESTING}) {
+#        require Test::More;
+#        Test::More::plan(skip_all => 'these tests are for testing by the author');
+#    }
     
     use Plack::Middleware::Auth::Digest;
     no warnings 'redefine';

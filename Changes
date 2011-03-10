@@ -1,4 +1,9 @@
 {{$NEXT}}
+          [Tests]
+          - Plack::Test test suite for author mode.
+          
+          [Misc]
+          - Explicitly state that Perl 5.10.1 is required.
 
 0.06      2011-03-07 23:02:08 America/Denver
           [Enchantments]
