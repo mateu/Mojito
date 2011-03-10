@@ -96,7 +96,7 @@ function resizeEditArea() {
 	if ( $('#edit_area').length ) {
 		mojito.edit_area_fraction = 0.46;
 		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_fraction);
-		console.log('resizing edit area to: ' + mojito.edit_width);
+		//console.log('resizing edit area to: ' + mojito.edit_width);
 		$('textarea#content').css('width', mojito.edit_width + 'px');
 	}
 }
