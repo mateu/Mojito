@@ -8,6 +8,7 @@ use Data::Dumper::Concise;
 
 my $config = Mojito::Model::Config->new->config;
 my $static_url = $config->{static_url};
+my $mojito_version = $config->{VERSION};
 
 has 'template' => (
     is      => 'rw',
@@ -44,6 +45,7 @@ sub _build_template {
 <html> 
 <head>
   <meta charset=utf-8>
+  <meta http-equiv="powered by" content="Mojito $mojito_version" />
   <title>Mojito page</title>
 $js_css
 <script></script>
@@ -86,6 +88,7 @@ sub _build_home_page {
 <html> 
 <head>
   <meta charset=utf-8>
+  <meta http-equiv="powered by" content="Mojito $mojito_version" />
   <title>Mojito page</title>
 $js_css
 <script></script>

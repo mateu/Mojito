@@ -41,6 +41,9 @@ sub _build_config {
               unless ref $config eq 'HASH';
         }
     }
+    
+    # Let's add in the version number.
+    $config->{VERSION} = $Mojito::Role::Config::VERSION || 'development version';
     return $config;
 }
 
