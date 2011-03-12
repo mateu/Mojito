@@ -45,7 +45,7 @@ sub render_sections {
         push @formatted_document_sections, $formatted_section;
     }
 
-    return ( \@raw_document_sections, \@formatted_document_sections );
+    return \@formatted_document_sections;
 }
 
 =head2 render_page
@@ -89,7 +89,7 @@ TODO: Do we really need to return two things when only one is used?
 sub render_body {
     my ( $self, $doc ) = @_;
 
-    my ( $raw_sections, $rendered_sections ) = $self->render_sections($doc);
+    my $rendered_sections = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
     $rendered_body = Mojito::Filter::Shortcuts::expand_shortcuts($rendered_body);
