@@ -25,8 +25,8 @@ has 'home_page' => (
 );
 
 my $javascripts = [
-    'jquery/jquery-1.5.min.js',     'javascript/render_page.js',
-    'syntax_highlight/prettify.js', 'jquery/autoresize.jquery.min.js',
+    'jquery/jquery_min.js',     'javascript/render_page.js',
+    'syntax_highlight/prettify.js', 'jquery/autoresize_min.js',
 ];
 my @javascripts = map { "<script src=${static_url}$_></script>" } @{$javascripts};
 
