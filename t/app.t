@@ -5,6 +5,7 @@ use Plack::Util;
 use Test::More;
 use HTTP::Request;
 use HTTP::Request::Common;
+use JSON;
 use FindBin qw($Bin);
 use Data::Dumper::Concise;
 
@@ -59,7 +60,8 @@ foreach my $app_file (@app_files) {
         $request = POST '/preview', [content => '*Bom dia*'];
         $response = $client_cb->($request);
         is   $response->code,    200;
-        like $response->content, qr!<p><strong>Bom dia</strong></p>!;
+        my $hashref = decode_json($response->content);
+        is $hashref->{rendered_content}, '<p><strong>Bom dia</strong></p>';
     };
 }
 
