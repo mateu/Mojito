@@ -10,7 +10,7 @@ my ($fragment, $little_fragment, $big_fragment, $huge_fragment);
 $fragment = $little_fragment;
 # WARNING. Any second arg means use big frag.
 if ($ARGV[1] eq 'B') {
-    $fragment = $big_fragment; 
+    $fragment = $big_fragment;
     say "using Big fragment";
 }
 elsif ($ARGV[1] eq 'H') {
@@ -19,67 +19,67 @@ elsif ($ARGV[1] eq 'H') {
 }
 my $count = $ARGV[0] || 1000;
 my $result = cmpthese(
-	$count,
-	{
-		'dom_parse' => sub {
-			$dom
-			  ->parse($fragment);
-		},
-		'dom_select' => sub {
-			$dom
-			  ->parse($fragment)
-			  ->at('#hope');
-		},
-		'dom_replace' => sub {
-			$dom
-			  ->parse($fragment)
-			  ->at('#hope')
-			  ->replace_inner($replacement)
-		},
-		'dom_to_html' => sub {
-			$dom
-			  ->parse($fragment)
-			  ->at('#hope')
-			  ->replace_inner($replacement)
-			  ->root->to_xml;
-		},
-		'dom_inner_text' => sub {
-			$dom
-			  ->parse($fragment)
-			  ->at('#hope')
-			  ->text;
-		},
-		'zoom_parse' => sub {
-			$zoom
-			  ->from_html($fragment);
-		},
-		'zoom_select' => sub {
-			$zoom
-			  ->from_html($fragment)
-			  ->select('#hope');
-		},
-		'zoom_replace' => sub {
-			$zoom
-			  ->from_html($fragment)
-			  ->select('#hope')
-			  ->replace_content($replacement);
-		},
-		'zoom_to_html' => sub {
-			say $zoom
-			  ->from_file('little_fragment.html')
-			  ->select('#hope')
-			  ->replace_content($replacement)
-			  ->to_html;
-		},
+    $count,
+{
+        'dom_parse' => sub {
+            $dom
+              ->parse($fragment);
+        },
+        'dom_select' => sub {
+            $dom
+              ->parse($fragment)
+              ->at('#hope');
+        },
+        'dom_replace' => sub {
+            $dom
+              ->parse($fragment)
+              ->at('#hope')
+              ->replace_inner($replacement)
+        },
+        'dom_to_html' => sub {
+            $dom
+              ->parse($fragment)
+              ->at('#hope')
+              ->replace_inner($replacement)
+              ->root->to_xml;
+        },
+        'dom_inner_text' => sub {
+            $dom
+              ->parse($fragment)
+              ->at('#hope')
+              ->text;
+        },
+        'zoom_parse' => sub {
+            $zoom
+              ->from_html($fragment);
+        },
+        'zoom_select' => sub {
+            $zoom
+              ->from_html($fragment)
+              ->select('#hope');
+        },
+        'zoom_replace' => sub {
+            $zoom
+              ->from_html($fragment)
+              ->select('#hope')
+              ->replace_content($replacement);
+        },
+        'zoom_to_html' => sub {
+            say $zoom
+              ->from_file('little_fragment.html')
+              ->select('#hope')
+              ->replace_content($replacement)
+              ->to_html;
+        },
 
-		'zoom_inner_text' => sub {
-			$zoom
-			  ->from_html($fragment)
-			  ->select('#hope')
-			  ->collect_content({ into => \my @hopes })->run;
+        'zoom_inner_text' => sub {
+            $zoom
+              ->from_html($fragment)
+              ->select('#hope')
+              ->collect_content({ into => \my @hopes })->run;
              $hopes[0]->{raw};
-		}
-	}
+        }
+    }
 );
 
 BEGIN  {
@@ -94,7 +94,7 @@ EOH
   <div>
 h1.  From Script to Modules
 
-Recently I wrote about using Chart::Clicker to create plots of the high and low [[/hunter/charts/weather/temperature_forecast]].  The "code":/wiki/hunter/Charts/Weather/Temperature_Forecast.attachment/11 I demonstrated was in the form a script.  
+Recently I wrote about using Chart::Clicker to create plots of the high and low [[/hunter/charts/weather/temperature_forecast]].  The "code":/wiki/hunter/Charts/Weather/Temperature_Forecast.attachment/11 I demonstrated was in the form a script.
 The code did its job, but was not structured so well nor was it as easy to (re)use as it could be.  Let's examine the situation and see if we can't make it better.
 
 h1. Separation of Concerns
@@ -106,7 +106,7 @@ Instead of one big script let's break the work into parts.  A natural break down
 
 h2. Get Data
 
-The chart itself doesn't care where the data comes from so let's encapsulate that functionality into its own module.  The original script used the subroutine get_high_low_data() to query a temperature forecast URL to obtain the data.   We'll derive a class that will handle this behavior.  
+The chart itself doesn't care where the data comes from so let's encapsulate that functionality into its own module.  The original script used the subroutine get_high_low_data() to query a temperature forecast URL to obtain the data.   We'll derive a class that will handle this behavior.
 
 {{cpan Weather::Underground::Forecast}}
 
@@ -126,8 +126,8 @@ The other major part of the process is to plot the data.  This gave rise to {{cp
 
 <pre lang="Perl">
 use Chart::Weather::Forecast::Temperature;
-my $charter = Chart::Weather::Forecast::Temperature->new( 
-    highs => $highs, 
+my $charter = Chart::Weather::Forecast::Temperature->new(
+    highs => $highs,
     lows => $lows,
     chart_temperature_file => '/tmp/temperature-forecast.png',
 );
@@ -146,8 +146,8 @@ Putting the two modules together we get the complete functionality of the origin
 use Weather::Underground::Forecast;
 use Chart::Weather::Forecast::Temperature;
 my $forecaster = Weather::Underground::Forecast->new(location => 99701);
-my $charter    = Chart::Weather::Forecast::Temperature->new( 
-    highs => $forecaster->highs, 
+my $charter    = Chart::Weather::Forecast::Temperature->new(
+    highs => $forecaster->highs,
     lows  => $forecaster->lows
 );
 $charter->create_chart;  # writes to /tmp/temperature-forecast.png by default
@@ -155,7 +155,7 @@ $charter->create_chart;  # writes to /tmp/temperature-forecast.png by default
 
 With just a few lines of code one constructs a couple of objects and calls a few methods to obtain a plot of the temperature forecast for an arbitrary location.  Now instead of a copying, pasting and editing somebody else's script to one's personal tastes, one can instead install a couple of CPAN modules and put them to work with a few strokes of the pen.. errr.. keyboard.
 </div>
-  
+
 EOH
 
  $huge_fragment =<<'EOH';
@@ -209,7 +209,7 @@ EOH
  </div>
 
 <div class="noprint" style="float:right;align:left;width:19ex">
-<a href="http://hexten.net/cpan-faces/"><img src="http://www.gravatar.com/avatar.php?gravatar_id=4e8e2db385219e064e6dea8fbd386434&rating=G&size=80&default=http%3A%2F%2Fst.pimg.net%2Ftucs%2Fimg%2Fwho.png" width=80 height=80 
+<a href="http://hexten.net/cpan-faces/"><img src="http://www.gravatar.com/avatar.php?gravatar_id=4e8e2db385219e064e6dea8fbd386434&rating=G&size=80&default=http%3A%2F%2Fst.pimg.net%2Ftucs%2Fimg%2Fwho.png" width=80 height=80
 style="float:right"
 /></a>
 <br style="clear:both"/>
@@ -352,7 +352,7 @@ name="SYNOPSIS"
           &#60;p&#62;Name: &#60;span class=&#34;name&#34;&#62;Epitaph&#60;/span&#62;&#60;/p&#62;
           &#60;p&#62;Age: &#60;span class=&#34;age&#34;&#62;&#38;lt;redacted&#38;gt;&#60;/span&#62;&#60;/p&#62;
         &#60;/span&#62;
-        
+
       &#60;/div&#62;
     &#60;/body&#62;
   &#60;/html&#62;</pre>
@@ -462,7 +462,7 @@ name="PUTTING_THE_FUN_INTO_FUNCTIONAL"
 <p>each time produces a new Zoom object. If you want to package up a set of transforms to re-use, HTML::Zoom provides an &#39;apply&#39; method:</p>
 
 <pre class="prettyprint">  my $add_name = sub { $_-&#62;select(&#39;.name&#39;)-&#62;replace_content($name) };
- 
+
   my $same_as_z2 = $z1-&#62;apply($add_name);</pre>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'

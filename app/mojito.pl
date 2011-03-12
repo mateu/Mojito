@@ -10,7 +10,7 @@ use Data::Dumper::Concise;
 {
     package MojitoApp;
     use Plack::Builder;
-    
+
     sub dispatch_request {
         my ( $self, $env ) = @_;
         my $mojito = $env->{mojito};
@@ -42,7 +42,7 @@ use Data::Dumper::Concise;
             my $rendered_page = $mojito->view_page( { id => $id } );
             [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
           },
-        
+
         sub (GET + /public/page/* ) {
             my ($self, $id) = @_;
             [ 200, [ 'Content-type', 'text/html' ], [ $mojito->view_page_public({id => $id})] ];
@@ -78,7 +78,7 @@ use Data::Dumper::Concise;
 
             $params->{id} = $id;
             my $redirect_url = $mojito->update_page($params);
-            
+
             return [ 301, [ Location => $redirect_url ], [] ];
           },
 
@@ -97,7 +97,7 @@ use Data::Dumper::Concise;
             my ($self) = @_;
             [ 200, [ 'Content-type', 'text/html' ], [$mojito->view_home_page] ];
           },
-          
+
           sub (GET + /public/feed/*) {
             my ( $self, $feed ) = @_;
             [ 200, [ 'Content-type', 'text/html' ], [$mojito->get_feed_links($feed)] ];
@@ -111,16 +111,16 @@ use Data::Dumper::Concise;
             [ 405, [ 'Content-type', 'text/plain' ], ['Method not allowed'] ];
           },
     }
-    
+
     # Wrap in middleware here.
     around 'to_psgi_app', sub {
         my ($orig, $self) = (shift, shift);
-        my $app = $self->$orig(@_); 
+        my $app = $self->$orig(@_);
         builder {
             enable "+Mojito::Middleware";
             enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
               "Auth::Digest",
-              realm => "Mojito", 
+              realm => "Mojito",
               secret => Mojito::Auth::_secret,
               password_hashed => 1,
               authenticator => Mojito::Auth->new->digest_authen_cb;

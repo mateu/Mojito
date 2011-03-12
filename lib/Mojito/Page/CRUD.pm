@@ -137,7 +137,7 @@ Given a cursor of documents then create the link data.
 
 sub get_link_data {
     my ($self, $cursor) = @_;
-    
+
     my $link_data;
     while ( my $doc = $cursor->next ) {
         my $title = $doc->{title} || 'no title';
@@ -156,9 +156,7 @@ $args should be a HashRef of options
 
 sub get_most_recent_links {
     my ($self, $args) = @_;
-    
-    my $base_url = $self->base_url;
-    
+
     my $link_data = $self->get_most_recent_link_data;
     my $link_title = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />';
     my $links = $self->create_list_of_links($link_data, $args);
@@ -174,7 +172,7 @@ Get the links for the documents belonging to a particular feed.
 
 sub get_feed_links {
     my ($self, $feed) = @_;
-    
+
     my $link_data = $self->get_feed_link_data($feed);
     my $title = ucfirst($feed) . ' Articles';
     my $link_title = "<span class='feeds' style='font-weight: bold;'>$title</span><br />";
@@ -195,7 +193,7 @@ Given link data (doc id and title) and possibly some $args then create hyperlink
 
 sub create_list_of_links {
     my ($self, $link_data, $args) = @_;
-    
+
     my $base_url = $self->base_url;
     $base_url .= 'public/' if $args->{want_public_link};
     my $links;

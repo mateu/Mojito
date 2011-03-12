@@ -4,12 +4,14 @@ use lib '../lib';
 use Mojito;
 use Mojito::Auth;
 use Plack::Builder;
+use Data::Dumper::Concise;
+use JSON;
 
 # Make a shortcut the the mojito app object
 app->helper( mojito => sub {
     return $_[0]->req->env->{mojito};
 });
- 
+
 get '/bench' => sub {
     $_[0]->render( text => $_[0]->mojito->bench );
 };
@@ -28,8 +30,9 @@ post '/page' => sub {
 };
 
 post '/preview' => sub {
-    $_[0]->render( json =>
-          $_[0]->mojito->preview_page( $_[0]->req->params->to_hash )
+    $_[0]->render(
+        text => encode_json($_[0]->mojito->preview_page( $_[0]->req->params->to_hash )),
+        format => 'json'
     );
 };
 
@@ -51,7 +54,7 @@ get '/page/:id/edit' => sub {
 
 post '/page/:id/edit' => sub {
 
-    # $self->req->params doesn't include placeholder $self->param() 's 
+    # $self->req->params doesn't include placeholder $self->param() 's
     my $params = $_[0]->req->params->to_hash;
     $params->{'id'} = $_[0]->param('id');
 
@@ -77,8 +80,8 @@ get '/public/feed/:feed' => sub {
 builder {
     enable "+Mojito::Middleware";
     enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
-      "Auth::Digest", 
-      realm => "Mojito", 
+      "Auth::Digest",
+      realm => "Mojito",
       secret => Mojito::Auth::_secret,
       password_hashed => 1,
       authenticator => Mojito::Auth->new->digest_authen_cb;

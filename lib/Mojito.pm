@@ -24,7 +24,7 @@ has bench_fixture => ( is => 'ro', lazy => 1, builder => '_build_bench_fixture')
 =head2 create_page
 
 Create a new page and return the url to redirect to, namely the page in edit mode.
-We might change this to view mode if demand persuades. 
+We might change this to view mode if demand persuades.
 
 =cut
 
@@ -33,13 +33,13 @@ sub create_page {
 
     # We need to get some content into the delegatee
     $self->parser->page($params->{content});
-    
+
     my $page_struct = $self->page_structure;
     $page_struct->{page_html} = $self->render_page($page_struct);
     $page_struct->{body_html} = $self->render_body($page_struct);
     $page_struct->{title}     = $self->intro_text( $page_struct->{body_html} );
     my $id = $self->create($page_struct);
-    
+
     return $self->base_url . 'page/' . $id . '/edit';
 }
 
@@ -94,12 +94,12 @@ sub update_page {
     $page->{page_html} = $self->render_page($page);
     $page->{body_html} = $self->render_body($page);
     $page->{title}     = $self->intro_text( $page->{body_html} );
-    
+
     # Add a feed if there is such a param
     if (my $feeds = $params->{feeds}) {
         # Allow : to separate multiple feeds. e.g. ?feed=ironman:chatterbox
         my @feeds = split ':', $feeds;
-        $page->{feeds} = [@feeds]; 
+        $page->{feeds} = [@feeds];
     }
 
     # Save page
@@ -165,13 +165,13 @@ sub view_page_public {
     # Change class on view_area when we're in view mode.
     $rendered_page =~
       s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-    
+
     # Strip out Edit and New links (even though they are Auth::Digest Protected)
     # Remove edit, new links and the recent area
     $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
     $rendered_page =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
     $rendered_page =~ s/<section id="recent_area".*?><\/section>//si;
-    
+
     return $rendered_page;
 }
 
@@ -187,7 +187,7 @@ sub view_home_page {
     my $output = $self->home_page;
     my $links  = $self->get_most_recent_links;
     $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
-    
+
     return $output;
 }
 
@@ -212,21 +212,21 @@ A path for benchmarking to get an basic idea of peformance.
 
 sub bench {
     my $self  = shift;
-    
+
     $self->parser->page($self->bench_fixture);
     my $page_struct = $self->page_structure;
-    
+
     # Let's run our bench stuff in its own DB to keep it separate from
     # real (user created) pages.
     $self->editer->db_name('bench');
-    my $id = $self->create($page_struct);
-    
+    $self->create($page_struct);
+
     return $self->render_page($page_struct);
 }
 
 sub _build_bench_fixture {
     my $self = shift;
-    
+
     my $implicit_section = <<'END';
 h1. Greetings
 
@@ -258,22 +258,22 @@ Mojito - A Lightweight Web Document System
 
 =head1 Description
 
-Mojito is a web document system that allows one to author web pages.  
-It has been inspired by MojoMojo which is a mature, stable, responsive and 
+Mojito is a web document system that allows one to author web pages.
+It has been inspired by MojoMojo which is a mature, stable, responsive and
 feature rich wiki system.  Check MojoMojo out if you're looking for an enterprise
-grade wiki.  Mojito is not attempting to be a wiki, but rather its initial 
-goal is to allow an individuals to author HTML5 compliant documents that could be for 
+grade wiki.  Mojito is not attempting to be a wiki, but rather its initial
+goal is to allow an individuals to author HTML5 compliant documents that could be for
 personal or public consumption.
 
 =head1 Goals
 
-Mojito is in alpha stage so it has much growing to do.  
+Mojito is in alpha stage so it has much growing to do.
 Some goals and guidelines are:
 
-    * Somewhat Framework Agnostic.  Currently there is support for 
+    * Somewhat Framework Agnostic.  Currently there is support for
       Web::Simple, Dancer, Mojo and Tatsumaki.
     * Minimalistic Interface.  No Phluff or at least options to turn features off.
-    * A page engine that can standalone or potentially be plugged into MojoMojo.  
+    * A page engine that can standalone or potentially be plugged into MojoMojo.
     * Exchange between MojoMojo and Mojito document formats.
     * HTML5
 

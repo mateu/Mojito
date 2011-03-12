@@ -89,7 +89,7 @@ BEGIN {
  </div>
 
 <div class="noprint" style="float:right;align:left;width:19ex">
-<a href="http://hexten.net/cpan-faces/"><img src="http://www.gravatar.com/avatar.php?gravatar_id=4e8e2db385219e064e6dea8fbd386434&rating=G&size=80&default=http%3A%2F%2Fst.pimg.net%2Ftucs%2Fimg%2Fwho.png" width=80 height=80 
+<a href="http://hexten.net/cpan-faces/"><img src="http://www.gravatar.com/avatar.php?gravatar_id=4e8e2db385219e064e6dea8fbd386434&rating=G&size=80&default=http%3A%2F%2Fst.pimg.net%2Ftucs%2Fimg%2Fwho.png" width=80 height=80
 style="float:right"
 /></a>
 <br style="clear:both"/>
@@ -232,7 +232,7 @@ name="SYNOPSIS"
           &#60;p&#62;Name: &#60;span class=&#34;name&#34;&#62;Epitaph&#60;/span&#62;&#60;/p&#62;
           &#60;p&#62;Age: &#60;span class=&#34;age&#34;&#62;&#38;lt;redacted&#38;gt;&#60;/span&#62;&#60;/p&#62;
         &#60;/span&#62;
-        
+
       &#60;/div&#62;
     &#60;/body&#62;
   &#60;/html&#62;</pre>
@@ -342,7 +342,7 @@ name="PUTTING_THE_FUN_INTO_FUNCTIONAL"
 <p>each time produces a new Zoom object. If you want to package up a set of transforms to re-use, HTML::Zoom provides an &#39;apply&#39; method:</p>
 
 <pre class="prettyprint">  my $add_name = sub { $_-&#62;select(&#39;.name&#39;)-&#62;replace_content($name) };
- 
+
   my $same_as_z2 = $z1-&#62;apply($add_name);</pre>
 
 <h2><a class='u' href='#___top' title='click to go to top of document'

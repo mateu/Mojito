@@ -61,21 +61,21 @@ sub render_page {
     my $base_url = $self->base_url;
     $tmpl->base_url($base_url);
     my $page = $tmpl->template;
-    
+
     if (my $title = $doc->{title}) {
        $page =~ s/<title>.*?<\/title>/<title>${title}<\/title>/si;
     }
-    
+
     my $rendered_body = $self->render_body($doc);
     # Remove edit area
     $page =~ s/(<section id="edit_area"[^>]*>).*?(<\/section>)//si;
     # Insert rendered page into view area
     $page =~ s/(<section id="view_area"[^>]*>).*?(<\/section>)/$1${rendered_body}$2/si;
-    
+
     if ( my $id = $doc->{'_id'} ) {
         $page =~ s/(<nav id="edit_link"[^>]*>).*?(<\/nav>)/$1<a href="${base_url}page\/${id}\/edit">Edit<\/a>$2/sig;
     }
-    
+
     return $page;
 }
 
@@ -147,7 +147,7 @@ sub format_for_web {
                 }
                 default {
                     # Let it ride (HTML)
-                }        
+                }
             }
         }
         when (/^HTML$/i) {
@@ -205,7 +205,7 @@ sub intro_text {
 
 sub _build_stripper {
     my $self = shift;
-    
+
     return HTML::Strip->new();
 }
 

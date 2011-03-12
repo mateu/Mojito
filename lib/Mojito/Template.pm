@@ -42,7 +42,7 @@ sub _build_template {
     my $base_url  = $self->base_url;
     my $edit_page = <<"END_HTML";
 <!doctype html>
-<html> 
+<html>
 <head>
   <meta charset=utf-8>
   <meta http-equiv="powered by" content="Mojito $mojito_version" />
@@ -61,8 +61,8 @@ $js_css
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <textarea id="content"  name="content" rows=32 /></textarea><br />
-    <input id="submit_save" name="submit" type="submit" value="Save" /> 
-    <input id="submit_view" name="submit" type="submit" value="Done" /> 
+    <input id="submit_save" name="submit" type="submit" value="Save" />
+    <input id="submit_view" name="submit" type="submit" value="Done" />
 </form>
 </section>
 <section id="view_area" class="view_area_edit_mode"></section>
@@ -85,7 +85,7 @@ sub _build_home_page {
     my $base_url  = $self->base_url;
     my $home_page = <<"END_HTML";
 <!doctype html>
-<html> 
+<html>
 <head>
   <meta charset=utf-8>
   <meta http-equiv="powered by" content="Mojito $mojito_version" />

@@ -20,7 +20,7 @@ Stuff After
 END
 
 $nested_section = <<'END';
-	   <sx c=SQL>Bon dia<section>heya</section><section>otra</section><sx c=squared>I'm nested</sx></sx>
+    <sx c=SQL>Bon dia<section>heya</section><section>otra</section><sx c=squared>I'm nested</sx></sx>
 END
 
 $not_nested_section = <<'END';
@@ -30,15 +30,15 @@ END
 $explicit_section = <<'END';
 
 
-    
-    
-        
+
+
+
        <sx c="mc_SQL">Hola
        </sx>
-       
 
-    
-    
+
+
+
 END
 $implicit_normal_section = <<'END';
 <sx c=Python>def: init</sx><section>What happens here?</section><sx c=PHP>a[3]</sx>
@@ -130,7 +130,7 @@ $parsed_simple_non_implicit_section = <<'END';
 <sx c=Perl>say "Bom dia";</sx>
 END
 
-$sections  = 
+$sections  =
 [
   {
     class => "Implicit",

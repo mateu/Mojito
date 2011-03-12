@@ -29,7 +29,7 @@ Expand the cpan abbreviated shortcut.
 sub cpan_URL {
     my ($content) = @_;
     return if !$content;
-    
+
     $content =~ s/{{cpan\s+([^}]*)}}/<a href="http:\/\/search.cpan.org\/perldoc?$1">$1<\/a>/sig;
     return $content;
 }

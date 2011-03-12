@@ -36,12 +36,12 @@ sub _build_conn {
 
 sub _build_db  {
     my $self = shift;
-    my $db_name = $self->db_name; 
+    my $db_name = $self->db_name;
     $self->conn->${db_name};
 }
 sub _build_collection  {
     my $self = shift;
-    my $collection_name = $self->collection_name; 
+    my $collection_name = $self->collection_name;
     $self->db->${collection_name};
 }
 1;

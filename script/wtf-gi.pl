@@ -37,12 +37,12 @@ sub transform_dancer {
     elsif ( $message->{response_type} eq 'redirect' ) {
         $message->{response} = 'redirect ' . $message->{response};
     }
-    
+
     my $route_body = <<"END_BODY";
 $message->{request_method} $message->{route} => sub {
     my \$params = scalar params;
     $message->{response};
-};    
+};
 END_BODY
 
     return $route_body;
@@ -50,19 +50,19 @@ END_BODY
 
 sub transform_mojo {
     my $message = shift;
-    
+
     if ( $message->{response_type} eq 'html' ) {
         $message->{response} = '$self->render( text => ' . $message->{response} . ')';
     }
     elsif ( $message->{response_type} eq 'redirect' ) {
         $message->{response} = '$self->redirect_to(' . $message->{response} .')';
     }
-    
+
     my $route_body = <<"END_BODY";
 $message->{request_method} $message->{route} => sub {
     my \$params = scalar params;
     $message->{response};
-};    
+};
 END_BODY
 
 }

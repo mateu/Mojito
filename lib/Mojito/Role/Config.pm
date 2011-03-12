@@ -1,5 +1,5 @@
 use strictures 1;
-package Mojito::Role::Config; 
+package Mojito::Role::Config;
 use Moo::Role;
 use Mojito::Types;
 use Cwd qw/ abs_path /;
@@ -9,13 +9,13 @@ has 'config' => (
     is  => 'ro',
     isa => Mojito::Types::HashRef,
     lazy => 1,
-    builder => '_build_config', 
+    builder => '_build_config',
 );
 
 =head2 get_config
 
 Read the configuration file.  (technique pilfered from Mojo::Server::Hypntoad).
-Config file is looked for in three locations: 
+Config file is looked for in three locations:
     ENV
     lib/Mojito/conf/mojito_local.conf
     lib/Mojito/conf/mojito.conf
@@ -24,9 +24,9 @@ The first location that exists is used.
 =cut
 
 sub _build_config {
-    
-    my $file = 
-         $ENV{MOJITO_CONFIG} 
+
+    my $file =
+         $ENV{MOJITO_CONFIG}
       || abs_path(__DIR__ . '/../conf/mojito_local.conf')
       || abs_path(__DIR__ . '/../conf/mojito.conf');
 
@@ -41,7 +41,7 @@ sub _build_config {
               unless ref $config eq 'HASH';
         }
     }
-    
+
     # Let's add in the version number.
     $config->{VERSION} = $Mojito::Role::Config::VERSION || 'development version';
     return $config;

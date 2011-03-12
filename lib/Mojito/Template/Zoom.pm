@@ -36,7 +36,7 @@ Inject rendered content into the view area.
 
 sub replace_view_area {
     my ($self, $new_content) = @_;
-    
+
     $self->view_area->replace_content(\$new_content);
 }
 
@@ -48,7 +48,7 @@ Inject source into edit area.
 
 sub replace_edit_area{
     my ($self, $new_content) = @_;
-    
+
     $self->edit_area->replace_content(\$new_content);
 }
 
@@ -60,7 +60,7 @@ Put some content into the edit page, both source and rendered.
 
 sub replace_edit_page {
     my ($self, $edit, $view) = @_;
-    
+
     $self->template_z
       ->select('#content')
       ->replace_content(\$edit)
@@ -70,25 +70,25 @@ sub replace_edit_page {
 
 sub _build_zoom {
     my ($self) = @_;
-    
+
     HTML::Zoom->new->from_html($self->template);
 }
 
 sub _build_template {
     my $self = shift;
-     
+
     my $edit_page = <<'END_HTML';
 <!doctype html>
-<html> 
+<html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Mojito page</title> 
+  <title>Mojito page</title>
 </head>
-<body>  
+<body>
 <section id="edit_area" style="float:left;">
-<form id="editForm" action="" accept-charset="UTF-8" method="post"> 
+<form id="editForm" action="" accept-charset="UTF-8" method="post">
     <textarea id="content" cols="72" rows="24" /></textarea><br />
-    <input id="submit" type="submit" value="Submit content" /> 
+    <input id="submit" type="submit" value="Submit content" />
 </form>
 </section>
 <section id="view_area" style="float:left; margin-left:1em;"></section>
