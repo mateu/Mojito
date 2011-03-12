@@ -157,9 +157,10 @@ $args should be a HashRef of options
 sub get_most_recent_links {
     my ($self, $args) = @_;
 
+    my $base_url = $self->base_url;
     my $link_data = $self->get_most_recent_link_data;
     my $link_title = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />';
-    my $links = $self->create_list_of_links($link_data, $args);
+    my $links = $self->create_list_of_links($link_data, $args) || "No Documents yet.  Get to <a href='${base_url}page'>writing!</a>";
 
     return $link_title . $links;
 }

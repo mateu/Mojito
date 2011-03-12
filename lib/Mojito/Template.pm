@@ -1,14 +1,11 @@
 use strictures 1;
 package Mojito::Template;
 use Moo;
-use Mojito::Model::Config;
-use Cwd qw/ abs_path /;
-use Dir::Self;
+use Mojito::Types;
 use Data::Dumper::Concise;
 
-my $config = Mojito::Model::Config->new->config;
-my $static_url = $config->{static_url};
-my $mojito_version = $config->{VERSION};
+with('Mojito::Template::Role::Javascript');
+with('Mojito::Template::Role::CSS');
 
 has 'template' => (
     is      => 'rw',
@@ -24,22 +21,18 @@ has 'home_page' => (
     builder => '_build_home_page',
 );
 
-my $javascripts = [
-    'jquery/jquery_min.js',     'javascript/render_page.js',
-    'syntax_highlight/prettify.js', 'jquery/autoresize_min.js',
-];
-my @javascripts = map { "<script src=${static_url}$_></script>" } @{$javascripts};
-
-my $css = [ 'syntax_highlight/prettify.css', 'css/mojito.css', ];
-my @css =
-  map { "<link href=${static_url}$_ type=text/css rel=stylesheet />" } @{$css};
-
-my $js_css = join "\n", @javascripts, @css;
+has js_css_html => (
+	is => 'ro',
+	isa => Mojito::Types::NoRef,
+	default => sub { my $self = shift; join "\n", @{$self->javascript_html}, @{$self->css_html} }
+);
 
 sub _build_template {
     my $self = shift;
 
     my $base_url  = $self->base_url;
+    my $mojito_version = $self->config->{VERSION};
+    my $js_css = $self->js_css_html;
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html>
@@ -83,6 +76,8 @@ sub _build_home_page {
     my $self = shift;
 
     my $base_url  = $self->base_url;
+    my $mojito_version = $self->config->{VERSION};
+    my $js_css = $self->js_css_html;
     my $home_page = <<"END_HTML";
 <!doctype html>
 <html>

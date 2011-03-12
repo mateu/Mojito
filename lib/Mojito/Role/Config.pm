@@ -25,12 +25,16 @@ The first location that exists is used.
 
 sub _build_config {
 
-    my $file =
-         $ENV{MOJITO_CONFIG}
-      || abs_path(__DIR__ . '/../conf/mojito_local.conf')
-      || abs_path(__DIR__ . '/../conf/mojito.conf');
-
-
+    my $conf_file  = abs_path(__DIR__ . '/../conf/mojito.conf');
+    my $local_conf = abs_path(__DIR__ . '/../conf/mojito_local.conf');
+    # See if a local conf exists
+    if (-r $local_conf) { 
+    	$conf_file = $local_conf;
+    }
+    
+    # Allow an ENV to take precedent.
+    my $file = $ENV{MOJITO_CONFIG} || $conf_file;
+ 
     # Config
     my $config = {};
     if ( -r $file ) {

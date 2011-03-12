@@ -2,6 +2,13 @@
           [Tests]
           - @TestingMania passes now except Kwalitee. use strict fails
             but we have something better in place already - strictures.
+            
+          [Remedies]
+          - Fix conf finding logic so mojito_local.conf is not required.
+          - Check for no recent docs before attempting to display recent docs list.
+
+	      [Refactor]
+          - Template.pm attributes and builders added and moved into roles.
 
 0.07      2011-03-09 23:03:56 America/Denver
           [Tests]
