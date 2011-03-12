@@ -28,13 +28,13 @@ sub _build_config {
     my $conf_file  = abs_path(__DIR__ . '/../conf/mojito.conf');
     my $local_conf = abs_path(__DIR__ . '/../conf/mojito_local.conf');
     # See if a local conf exists
-    if (-r $local_conf) { 
-    	$conf_file = $local_conf;
+    if (-r $local_conf) {
+        $conf_file = $local_conf;
     }
-    
+
     # Allow an ENV to take precedent.
     my $file = $ENV{MOJITO_CONFIG} || $conf_file;
- 
+
     # Config
     my $config = {};
     if ( -r $file ) {

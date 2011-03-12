@@ -22,9 +22,9 @@ has 'home_page' => (
 );
 
 has js_css_html => (
-	is => 'ro',
-	isa => Mojito::Types::NoRef,
-	default => sub { my $self = shift; join "\n", @{$self->javascript_html}, @{$self->css_html} }
+    is => 'ro',
+    isa => Mojito::Types::NoRef,
+    default => sub { my $self = shift; join "\n", @{$self->javascript_html}, @{$self->css_html} }
 );
 
 sub _build_template {
