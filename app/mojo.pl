@@ -31,8 +31,7 @@ post '/page' => sub {
 
 post '/preview' => sub {
     $_[0]->render(
-        text => encode_json($_[0]->mojito->preview_page( $_[0]->req->params->to_hash )),
-        format => 'json'
+        json => $_[0]->mojito->preview_page( $_[0]->req->params->to_hash )
     );
 };
 
