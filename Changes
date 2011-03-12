@@ -1,4 +1,7 @@
 {{$NEXT}}
+          [Tests]
+          - @TestingMania passes now except Kwalitee. use strict fails
+            but we have something better in place already - strictures.
 
 0.07      2011-03-09 23:03:56 America/Denver
           [Tests]
