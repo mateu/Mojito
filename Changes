@@ -9,6 +9,7 @@
 
 	      [Refactor]
           - Template.pm attributes and builders added and moved into roles.
+          - Broke out Doc and Link Models from CRUD.
 
 0.07      2011-03-09 23:03:56 America/Denver
           [Tests]

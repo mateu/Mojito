@@ -23,6 +23,7 @@ use Mojito::Page::Parse;
 use Mojito::Page::Render;
 use Mojito::Page::CRUD;
 use Mojito::Template;
+use Mojito::Model::Link;
 
 # roles
 
@@ -60,8 +61,6 @@ has editer => (
             read
             update
             delete
-            get_most_recent_links
-            get_feed_links
           )
     ],
     writer => '_build_edit',
@@ -80,6 +79,19 @@ has tmpl => (
     ],
     writer => '_build_template',
 );
+
+has linker => (
+    is      => 'ro',
+    isa     => sub { die "Need a Link Model object" unless $_[0]->isa('Mojito::Model::Link') },
+    handles => [
+        qw(
+            get_most_recent_links
+            get_feed_links
+          )
+    ],
+    writer => '_build_link',
+);
+
 =head1 Methods
 
 =head2 BUILD
@@ -97,6 +109,7 @@ sub BUILD {
     $self->_build_render(Mojito::Page::Render->new($constructor_args_href));
     $self->_build_edit(Mojito::Page::CRUD->new( $constructor_args_href));
     $self->_build_template(Mojito::Template->new( $constructor_args_href));
+    $self->_build_link(Mojito::Model::Link->new( $constructor_args_href));
 
 }
 
