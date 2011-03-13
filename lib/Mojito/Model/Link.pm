@@ -3,8 +3,6 @@ package Mojito::Model::Link;
 use Moo;
 use Mojito::Model::Doc;
 
-with('Mojito::Role::DB');
-
 has base_url => ( is => 'rw', );
 
 has doc => (
