@@ -1,16 +1,18 @@
 {{$NEXT}}
+
+0.08      2011-03-13 13:56:08 America/Denver
           [Tests]
           - @TestingMania passes now except Kwalitee. use strict fails
             but we have something better in place already - strictures.
 	  - Added Mojito::Middleware::TestDB to set the database as mojito_test
             when testing with RELEASE_TESTING set to true. 
           - Added more tests to t/app.t usng the mojito_test db. create, read, update, delete
-            
+
           [Remedies]
           - Fix conf finding logic so mojito_local.conf is not required.
           - Check for no recent docs before attempting to display recent docs list.
 
-	      [Refactor]
+          [Refactor]
           - Template.pm attributes and builders added and moved into roles.
           - Broke out Doc and Link Models from CRUD.
 
