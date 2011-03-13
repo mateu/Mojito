@@ -39,27 +39,27 @@ foreach my $app_file (@app_files) {
 
         my $request = HTTP::Request->new( GET => '/public/feed/ironman' );
         my $response = $client_cb->($request);
-        is   $response->code,    200;
-        like $response->content, qr/(Articles|empty)/;
+        is   $response->code,    200, 'feed status';
+        like $response->content, qr/(Articles|empty)/, 'feed content';
 
         $request = HTTP::Request->new( GET => '/');
         $response = $client_cb->($request);
-        is   $response->code,    200;
-        like $response->content, qr/Recent Articles/;
+        is   $response->code,    200, 'home page status';
+        like $response->content, qr/Recent Articles/, 'home page content';
 
         $request = HTTP::Request->new( GET => '/page');
         $response = $client_cb->($request);
-        is   $response->code,    200;
-        like $response->content, qr/id="edit_area"/;
+        is   $response->code,    200, 'create page status';
+        like $response->content, qr/id="edit_area"/, 'create page content';
 
         $request = POST '/page', [content => "h1. Perl Rocks"];
         $response = $client_cb->($request);
-        like $response->code, qr/^(?:301|302)$/;
+        like $response->code, qr/^(?:301|302)$/, 'post create page redirect';
 
         $request = HTTP::Request->new( GET => '/recent');
         $response = $client_cb->($request);
-        is   $response->code,    200;
-        like $response->content, qr/Perl Rocks/;
+        is   $response->code,    200, 'recent page status';
+        like $response->content, qr/Perl Rocks/, 'recent page content';
 
         # Let's get page id from the recent page
         # so we can request a specific page then delete it.
@@ -67,22 +67,36 @@ foreach my $app_file (@app_files) {
         my ($id) = $content =~ m!<a href="/page/(\w+)">Perl Rocks</a>!;
         $request = HTTP::Request->new( GET => "/page/${id}");
         $response = $client_cb->($request);
-        is   $response->code,    200;
-        like $response->content, qr/Perl Rocks/;
+        is   $response->code,    200, "page ${id} GET status";
+        like $response->content, qr/Perl Rocks/, "page ${id} content";
+
+        $request = HTTP::Request->new( GET => "/page/${id}/edit");
+        $response = $client_cb->($request);
+        is $response->code, 200, 'edit page status';
+
+        $request = POST "/page/${id}/edit", [content => "h1. Perl Rolls"];
+        $response = $client_cb->($request);
+        like $response->code, qr/^(?:301|302)$/, 'post edit page redirect';
+
+        $request = HTTP::Request->new( GET => "/page/${id}" );
+        $response = $client_cb->($request);
+        is   $response->code,    200, 'get edited page status';
+        like $response->content, qr/Perl Rolls/, 'edited page content';
+
         $request = HTTP::Request->new( GET => "/page/${id}/delete");
         $response = $client_cb->($request);
-        like $response->code, qr/^(?:301|302)$/;
+        like $response->code, qr/^(?:301|302)$/, 'delete page redirect';
 
         $request = HTTP::Request->new( GET => '/recent');
         $response = $client_cb->($request);
-        is   $response->code,    200;
-        unlike $response->content, qr/${id}/;
+        is   $response->code,    200, 'recent page status';
+        unlike $response->content, qr/${id}/, "page ${id} not on recent page";
 
         $request = POST '/preview', [content => '*Bom dia*'];
         $response = $client_cb->($request);
-        is   $response->code,    200;
+        is   $response->code,    200, 'preview page status';
         my $hashref = decode_json($response->content);
-        is $hashref->{rendered_content}, '<p><strong>Bom dia</strong></p>';
+        is $hashref->{rendered_content}, '<p><strong>Bom dia</strong></p>', 'preview page content';
     };
 }
 

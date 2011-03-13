@@ -2,6 +2,9 @@
           [Tests]
           - @TestingMania passes now except Kwalitee. use strict fails
             but we have something better in place already - strictures.
+	  - Added Mojito::Middleware::TestDB to set the database as mojito_test
+            when testing with RELEASE_TESTING set to true. 
+          - Added more tests to t/app.t usng the mojito_test db. create, read, update, delete
             
           [Remedies]
           - Fix conf finding logic so mojito_local.conf is not required.
