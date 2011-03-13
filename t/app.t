@@ -60,9 +60,9 @@ foreach my $app_file (@app_files) {
         $response = $client_cb->($request);
         is   $response->code,    200;
         like $response->content, qr/Perl Rocks/;
-       
+
         # Let's get page id from the recent page
-        # so we can request a specific page then delete it. 
+        # so we can request a specific page then delete it.
         my $content = $response->content;
         my ($id) = $content =~ m!<a href="/page/(\w+)">Perl Rocks</a>!;
         $request = HTTP::Request->new( GET => "/page/${id}");
@@ -77,7 +77,7 @@ foreach my $app_file (@app_files) {
         $response = $client_cb->($request);
         is   $response->code,    200;
         unlike $response->content, qr/${id}/;
-        
+
         $request = POST '/preview', [content => '*Bom dia*'];
         $response = $client_cb->($request);
         is   $response->code,    200;

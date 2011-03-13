@@ -2,7 +2,7 @@ use strictures 1;
 package Mojito::Middleware::TestDB;
 use parent qw(Plack::Middleware);
 
-# This middleware needs to be wrapped in after Mojito::Middleware 
+# This middleware needs to be wrapped in after Mojito::Middleware
 # which provides the $env->{mojito} object for which we adjust
 # the connecting DB to a test one.
 
