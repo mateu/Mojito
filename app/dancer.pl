@@ -13,7 +13,7 @@ set 'logger'      => 'console';
 set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log'  => 1;
-set 'warnings'    => 1;
+#set 'warnings'    => 1;
 
 # Provide a shortcut to the mojito object
 my ($mojito);
@@ -76,6 +76,7 @@ get '/public/feed/:feed' => sub {
 
 builder {
     enable "+Mojito::Middleware";
+    enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
     enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
       "Auth::Digest",
       realm => "Mojito",
