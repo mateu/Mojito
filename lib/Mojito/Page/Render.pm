@@ -193,14 +193,32 @@ sub pod2html {
 =head2 intro_text
 
 Extract the beginning text substring.
-TODO: extract first 3 words intstead of a substring to break on word boundaries.
 
 =cut
 
 sub intro_text {
     my ( $self, $html ) = @_;
-    my ($first_line) = $html =~ m/(.*?)\n/;
-    return substr( $self->stripper->parse($first_line), 0, 24 );
+    
+    my $title_length_limit = 24;
+    my ($title) = $html =~ m/(.*)?\n?/;
+    return '' if !$title;
+    $title = $self->stripper->parse($title);
+    if (length($title) > $title_length_limit) {
+        my @words = split /\s+/, $title;
+        my (@title_words, $title_length);
+        foreach my $word (@words) {
+            if ($title_length + length($word) <= $title_length_limit) {
+              push @title_words, $word;
+              $title_length += length($word);
+            }
+            else {
+              last;
+            }
+        }
+        $title = join ' ', @title_words;
+    }
+
+    return $title; 
 }
 
 sub _build_stripper {
