@@ -26,6 +26,7 @@ h1 {
 .view_area_edit_mode {
     float: left;
     margin-left: 2em;
+    padding-left: 1em;
     width: 46%;
 }
 
