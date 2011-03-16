@@ -199,13 +199,14 @@ Extract the beginning text substring.
 sub intro_text {
     my ( $self, $html ) = @_;
 
-    my $title_length_limit = 24;
+    my $title_length_limit = 32;
     my ($title) = $html =~ m/(.*)?\n?/;
     return '' if !$title;
     $title = $self->stripper->parse($title);
     if (length($title) > $title_length_limit) {
         my @words = split /\s+/, $title;
-        my (@title_words, $title_length);
+        my @title_words;
+        my $title_length = 0;
         foreach my $word (@words) {
             if ($title_length + length($word) <= $title_length_limit) {
               push @title_words, $word;
