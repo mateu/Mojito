@@ -6,6 +6,7 @@ use Mojito::Types;
 
 use Data::Dumper::Concise;
 
+# This is the page source
 has 'page' => (
     is       => 'rw',
     isa      => Mojito::Types::NoRef,
@@ -32,9 +33,9 @@ has 'page_structure' => (
 #      sub { return substr( $_[0]->stripper->parse( $_[0]->page ), 0, 24 ); },
 #);
 has 'default_format' => (
-    is => 'ro',
-
-    #    isa     => 'Str',
+    is => 'rw',
+    isa     => Mojito::Types::NoRef,
+    lazy => 1,
     default => sub { 'HTML' },
 );
 has 'created' => (

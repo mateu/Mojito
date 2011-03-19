@@ -62,9 +62,17 @@ function got_content() {
 fetchPreview = function(extra_action) {
 	var content = $('textarea#content').val();
 	var mongo_id = $('#mongo_id').val();
+	// Get wiki language from selected form value on create
+	var wiki_language = $('#wiki_language input:radio:checked').val();
+	if (!wiki_language) {
+		// Get wiki language from the hidden input for edits
+		wiki_language = $('input#wiki_language').val();
+	}
+	
 	var data = { 
 			 content: content,
 			 mongo_id: mongo_id,
+			 wiki_language: wiki_language,
 			 extra_action: extra_action
 		   };
 	// Don't submit ajax request if we have trivial content

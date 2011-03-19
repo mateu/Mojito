@@ -34,6 +34,8 @@ sub create_page {
     $self->parser->page($params->{content});
 
     my $page_struct = $self->page_structure;
+    # Load some parts to the page_struct
+    $page_struct->{default_format} = $params->{wiki_language};
     $page_struct->{page_html} = $self->render_page($page_struct);
     $page_struct->{body_html} = $self->render_body($page_struct);
     $page_struct->{title}     = $self->intro_text( $page_struct->{body_html} );
@@ -52,6 +54,7 @@ sub preview_page {
     my ( $self, $params ) = @_;
 
     $self->parser->page($params->{content});
+    $self->parser->default_format($params->{wiki_language});
     my $page_struct = $self->page_structure;
     if (   $params->{extra_action}
         && ( $params->{extra_action} eq 'save' )
@@ -87,6 +90,7 @@ sub update_page {
     my ( $self, $params ) = @_;
 
     $self->parser->page($params->{content});
+    $self->parser->default_format($params->{wiki_language});
     my $page = $self->page_structure;
 
     # Store rendered parts as well.  May as well until proven wrong.
@@ -120,7 +124,7 @@ sub edit_page_form {
     my $rendered_content = $self->render_body($page);
     my $source           = $page->{page_source};
 
-    return $self->fillin_edit_page( $source, $rendered_content, $params->{id} );
+    return $self->fillin_edit_page( $source, $rendered_content, $params->{id}, $page->{default_format} );
 }
 
 =head2 view_page

@@ -33,15 +33,12 @@ Turn the sections into something viewable in a HTML browser.
 sub render_sections {
     my ( $self, $doc ) = @_;
 
-    my ( @raw_document_sections, @formatted_document_sections );
+    my ( @formatted_document_sections );
     foreach my $section ( @{ $doc->{sections} } ) {
-
         my $from_format = $section->{class} || $doc->{default_format};
+        $from_format = $doc->{default_format} if ($section->{class} eq 'Implicit');
         my $to_format = 'HTML';
-        my ( $raw_section, $formatted_section ) =
-          $self->format_content( $section->{content}, $from_format,
-            $to_format );
-        push @raw_document_sections,       $raw_section;
+        my $formatted_section = $self->format_content( $section->{content}, $from_format, $to_format );
         push @formatted_document_sections, $formatted_section;
     }
 
@@ -112,7 +109,7 @@ sub format_content {
         $formatted_content = $self->format_for_web( $content, $from_format );
     }
 
-    return ( $content, $formatted_content );
+    return $formatted_content;
 }
 
 =head2 format_for_web
@@ -131,27 +128,7 @@ sub format_for_web {
 # We could provide a shortcut syntax such: <sx c=h> to represent <pre class="prettyprint">
     my $formatted_content = $content;
     given ($from_language) {
-        when (/^Implicit$/i) {
-
-            # Use default format for the page.
-            # Pretend it's just Textile for now
-            # my $formatter = Formatter::HTML::Textile->format($content);
-            #            $formatted_content = $formatter->fragment;
-            my $default_format = 'textile';
-            given ($default_format) {
-                when (/textile/) {
-                    $formatted_content = $textile->process($content);
-                }
-                when (/markdown/) {
-                    $formatted_content = $markdown->markdown($content);
-                }
-                default {
-                    # Let it ride (HTML)
-                }
-            }
-        }
         when (/^HTML$/i) {
-
             # pass HTML through as is
         }
         when (/^h$/i) {
@@ -160,14 +137,19 @@ sub format_for_web {
             $formatted_content = "<pre class='prettyprint'>${content}</pre>";
         }
         when (/^POD$/i) {
-
-            #warn "Processing POD";
             $formatted_content = $self->pod2html($content);
         }
+        when (/^textile$/i) {
+            $formatted_content = $textile->process($content);
+        }
+        when (/^markdown$/i) {
+            $formatted_content = $markdown->markdown($content);
+        }
         default {
+            # pass HTML through as is
         }
     }
-    return ( $content, $formatted_content );
+    return $formatted_content;
 }
 
 =head2 pod2html

@@ -52,10 +52,15 @@ $js_css
 <article id="body_wrapper">
 <section id="edit_area">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
+    <div id="wiki_language">
+        <input type="radio" id="textile"  name="wiki_language" value="textile" checked="checked" /><label for="textile">textile</label>
+        <input type="radio" id="markdown" name="wiki_language" value="markdown" /><label for="markdown">markdown</label>
+    </div>
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
-    <textarea id="content"  name="content" rows=32 /></textarea><br />
-    <input id="submit_save" name="submit" type="submit" value="Save" />
-    <input id="submit_view" name="submit" type="submit" value="Done" />
+    <input id="wiki_language" name="wiki_language" type="hidden" form="editForm" value="" />
+    <textarea id="content"  name="content" rows=32 required="required"/></textarea>
+    <input id="submit_save" name="submit" type="submit" value="Save" style="font-size: 66.7%;" />
+    <input id="submit_view" name="submit" type="submit" value="Done" style="font-size: 66.7%;" />
 </form>
 </section>
 <section id="view_area" class="view_area_edit_mode"></section>
@@ -115,13 +120,14 @@ Get the contents of the edit page proper given the starting template and some da
 =cut
 
 sub fillin_edit_page {
-    my ( $self, $page_source, $page_view, $mongo_id ) = @_;
+    my ( $self, $page_source, $page_view, $mongo_id, $wiki_language ) = @_;
 
     my $output   = $self->template;
     my $base_url = $self->base_url;
     $output =~
 s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
     $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
+    $output =~ s/(<input id="wiki_language".*?value=)""/$1"${wiki_language}"/si;
     $output =~
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
     $output =~
@@ -131,8 +137,9 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
 # plus the "View" button will be renamed "Done"
     $output =~ s/<input id="submit_save".*?>//sig;
 
-    # Remove recent area
+    # Remove recent area and wiki_language (for create only)
     $output =~ s/<section id="recent_area".*?><\/section>//si;
+    $output =~ s/<div id="wiki_language".*?>.*?<\/div>//si;
 
     # Remove edit and new links
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
@@ -167,6 +174,9 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
 
     # Remove recent area
     $output =~ s/<section id="recent_area".*?><\/section>//si;
+
+    # Remove wiki_language hidden input (for edit)
+    $output =~ s/<input id="wiki_language".*?\/>//sig;
 
     # Remove edit and new links
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;

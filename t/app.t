@@ -52,7 +52,7 @@ foreach my $app_file (@app_files) {
         is   $response->code,    200, 'create page status';
         like $response->content, qr/id="edit_area"/, 'create page content';
 
-        $request = POST '/page', [content => "h1. Perl Rocks"];
+        $request = POST '/page', [content => "h1. Perl Rocks", wiki_language => 'textile' ];
         $response = $client_cb->($request);
         like $response->code, qr/^(?:301|302)$/, 'post create page redirect';
 
@@ -74,7 +74,7 @@ foreach my $app_file (@app_files) {
         $response = $client_cb->($request);
         is $response->code, 200, 'edit page status';
 
-        $request = POST "/page/${id}/edit", [content => "h1. Perl Rolls"];
+        $request = POST "/page/${id}/edit", [content => "h1. Perl Rolls", wiki_language => 'textile' ];
         $response = $client_cb->($request);
         like $response->code, qr/^(?:301|302)$/, 'post edit page redirect';
 
@@ -92,7 +92,7 @@ foreach my $app_file (@app_files) {
         is   $response->code,    200, 'recent page status';
         unlike $response->content, qr/${id}/, "page ${id} not on recent page";
 
-        $request = POST '/preview', [content => '*Bom dia*'];
+        $request = POST '/preview', [content => '*Bom dia*', wiki_language => 'textile' ];
         $response = $client_cb->($request);
         is   $response->code,    200, 'preview page status';
         my $hashref = decode_json($response->content);
