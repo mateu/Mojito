@@ -17,8 +17,10 @@ sub _build_javascripts {
        [
           'jquery/jquery_min.js',
           'javascript/render_page.js',
+          'javascript/style.js',
           'syntax_highlight/prettify.js',
           'jquery/autoresize_min.js',
+          'jquery/jquery-ui-1.8.11.custom.min.js',
        ];
 }
 

@@ -16,6 +16,7 @@ sub _build_css {
     [
       'syntax_highlight/prettify.css',
       'css/mojito.css',
+      'css/ui-lightness/jquery-ui-1.8.11.custom.css',
     ];
 }
 
