@@ -55,6 +55,7 @@ $js_css
     <div id="wiki_language">
         <input type="radio" id="textile"  name="wiki_language" value="textile" checked="checked" /><label for="textile">textile</label>
         <input type="radio" id="markdown" name="wiki_language" value="markdown" /><label for="markdown">markdown</label>
+        <input type="radio" id="creole"   name="wiki_language" value="creole" /><label for="creole">creole</label>
     </div>
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <input id="wiki_language" name="wiki_language" type="hidden" form="editForm" value="" />

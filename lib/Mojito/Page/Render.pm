@@ -6,6 +6,7 @@ use Mojito::Template;
 use Mojito::Filter::Shortcuts;
 use Text::Textile qw(textile);
 use Text::Markdown;
+use Text::WikiCreole;
 use Pod::Simple::XHTML;
 use HTML::Strip;
 use Data::Dumper::Concise;
@@ -144,6 +145,9 @@ sub format_for_web {
         }
         when (/^markdown$/i) {
             $formatted_content = $markdown->markdown($content);
+        }
+        when (/^creole/i) {
+            $formatted_content = creole_parse($content);
         }
         default {
             # pass HTML through as is
