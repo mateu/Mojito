@@ -49,10 +49,10 @@ h1 {
     padding-right: 1em;
     width: 20%;
     border: 1px solid #888;
-    background-color: #cafc97;
+    background-color: #cafc97; 
     -moz-border-radius: 10px;
     border-radius: 10px;
-    font-size: 0.88em;
+    font-size: 0.82em;
 }
 
 #edit_link {
@@ -67,4 +67,8 @@ h1 {
 
 nav {
     display: inline;
+}
+
+.list_of_links {
+    padding-bottom: 0.5em;   
 }

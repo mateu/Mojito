@@ -75,7 +75,7 @@ sub get_most_recent_links {
 
     my $base_url = $self->base_url;
     my $link_data = $self->get_most_recent_link_data;
-    my $link_title = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />';
+    my $link_title = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />' . "\n";
     my $links = $self->create_list_of_links($link_data, $args) || "No Documents yet.  Get to <a href='${base_url}page'>writing!</a>";
 
     return $link_title . $links;
@@ -115,11 +115,11 @@ sub create_list_of_links {
     $base_url .= 'public/' if $args->{want_public_link};
     my $links;
     foreach my $datum (@{$link_data}) {
-        $links .= "<a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a>";
+        $links .= "<div class='list_of_links'>&middot; <a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a></div>";
         if ($args && $args->{want_delete_link}) {
             $links .=  " | <a id=\"page_delete\" href=\"${base_url}page/"   . $datum->{id} . '/delete"> delete</a>';
         }
-        $links .= "<br />\n";
+        $links .= "\n";
     }
     return $links;
 }
