@@ -1,4 +1,13 @@
 {{$NEXT}}
+          [Remedies]
+          - Implicit sections properly added
+          
+          [Enchantments]
+          - Multiple wiki language support (textile, markdown, creole)
+
+          [View]
+          - A little style added for forms (via jQuery UI)
+          - recent area style refined
 
 0.08      2011-03-13 13:56:08 America/Denver
           [Tests]
