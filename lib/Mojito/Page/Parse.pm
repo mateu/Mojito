@@ -115,8 +115,8 @@ sub add_implicit_sections {
     my $page                = $self->page;
 
     # Add implicit sections in between explicit sections (if needed)
-    if ( my ($tweener) = $page =~ m/<\/sx>(?!\s*<sx\.)(.*?)<sx\./si ) {
-        $page =~ s/<\/sx>(?!\s*<sx\.).*?<sx\./<\/sx>\n<sx.Implicit>$tweener<\/sx>\n<sx./sig;
+    if ( $page =~ m/<\/sx>(?!\s*<sx\.).*?<sx\./si ) {
+        $page =~ s/<\/sx>(?!\s*<sx\.)(.*?)<sx\./<\/sx>\n<sx.Implicit>$1<\/sx>\n<sx./sig;
     }
 
     # Add implicit section at the beginning (if needed)
