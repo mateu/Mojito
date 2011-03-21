@@ -71,3 +71,13 @@ nav {
 .list_of_links {
     padding-bottom: 0.33em;
 }
+
+/* Wrap text in pre's */
+pre {
+    overflow: auto;
+    overflow-x: auto; /* Use horizontal scroller if needed; for Firefox 2, not
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+    white-space : normal; /* crucial for IE 6, maybe 7? */
+}
