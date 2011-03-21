@@ -115,7 +115,7 @@ sub create_list_of_links {
     $base_url .= 'public/' if $args->{want_public_link};
     my $links;
     foreach my $datum (@{$link_data}) {
-        $links .= "<div class='list_of_links'><a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a></div>";
+        $links .= "<div class='list_of_links'>&middot; <a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a></div>";
         if ($args && $args->{want_delete_link}) {
             $links .=  " | <a id=\"page_delete\" href=\"${base_url}page/"   . $datum->{id} . '/delete"> delete</a>';
         }

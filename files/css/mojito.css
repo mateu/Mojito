@@ -48,10 +48,9 @@ h1 {
     padding-left: 1em;
     padding-right: 1em;
     width: 20%;
-    border: 1px solid #888;
-    background-color: #cafc97; 
-    -moz-border-radius: 10px;
-    border-radius: 10px;
+    border-left: 1px solid #888;
+/*    -moz-border-radius: 10px;
+    border-radius: 10px;  */
     font-size: 0.82em;
 }
 
@@ -70,6 +69,5 @@ nav {
 }
 
 .list_of_links {
-    padding-left: 0.33em;   
     padding-bottom: 0.33em;
 }
