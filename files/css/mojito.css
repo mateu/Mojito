@@ -48,7 +48,7 @@ h1 {
     padding-left: 1em;
     padding-right: 1em;
     width: 20%;
-    border-left: 1px solid #888;
+    border-left: 1px dotted #888;
 /*    -moz-border-radius: 10px;
     border-radius: 10px;  */
     font-size: 0.82em;
