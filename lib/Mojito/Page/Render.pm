@@ -185,7 +185,7 @@ Extract the beginning text substring.
 sub intro_text {
     my ( $self, $html ) = @_;
 
-    my $title_length_limit = 32;
+    my $title_length_limit = 64;
     my ($title) = $html =~ m/(.*)?\n?/;
     return '' if !$title;
     $title = $self->stripper->parse($title);
@@ -203,6 +203,7 @@ sub intro_text {
             }
         }
         $title = join ' ', @title_words;
+        $title .= ' ...';
     }
 
     return $title;
