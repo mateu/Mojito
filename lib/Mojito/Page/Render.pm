@@ -104,7 +104,7 @@ NOTE: We return both the non modified content, and the converted content.
 
 sub format_content {
     my ( $self, $content, $from_format, $to_format ) = @_;
-    if ( !$content ) { die "no content going to format: $to_format"; }
+    if ( !$content ) { die "Error: no content going to format: $to_format"; }
     my $formatted_content;
     if ( $to_format eq 'HTML' ) {
         $formatted_content = $self->format_for_web( $content, $from_format );
