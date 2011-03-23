@@ -24,6 +24,7 @@ $(document).ready(function() {
     }).trigger('change');
 	
 	prettyPrint();
+	sh_highlightDocument();
 	$('#content').keyup(function() {
 		fetchPreview.only_every(on_change_refresh_rate);
 		oneshot_preview(fetchPreview, oneshot_pause);
@@ -102,10 +103,14 @@ fetchPreview = function(extra_action) {
 function resizeEditArea() {
 	// Check that we have an edit_area first.
 	if ( $('#edit_area').length ) {
-		mojito.edit_area_fraction = 0.46;
-		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_fraction);
-		//console.log('resizing edit area to: ' + mojito.edit_width);
+		mojito.edit_area_width_fraction = 0.46;
+		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_width_fraction);
+		mojito.edit_area_height_fraction = 0.85;
+		mojito.edit_height = Math.floor( $(window).height() * mojito.edit_area_height_fraction);
+		console.log('resizing edit area width to: ' + mojito.edit_width);
+		console.log('resizing edit area height to: ' + mojito.edit_height);
 		$('textarea#content').css('width', mojito.edit_width + 'px');
+		$('textarea#content').css('height', mojito.edit_height + 'px');
 	}
 }
 
