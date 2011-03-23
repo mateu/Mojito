@@ -211,18 +211,18 @@ sub view_page_diff {
   <meta charset=utf-8>
   <meta http-equiv="powered by" content="Mojito development version" />
   <title>Mojito Syntax Highlighting - via JavaScript</title>
-<script src=http://localhost/mojito/jquery/jquery_min.js></script>
-<script src=http://localhost/mojito/javascript/render_page.js></script>
-<script src=http://localhost/mojito/javascript/style.js></script>
-<script src=http://localhost/mojito/syntax_highlight/prettify.js></script>
-<script src=http://localhost/mojito/jquery/autoresize_min.js></script>
-<script src=http://localhost/mojito/jquery/jquery-ui-1.8.11.custom.min.js></script>
-<script src=http://localhost/mojito/SHJS/sh_main.min.js></script>
-<script src=http://localhost/mojito/SHJS/sh_diff.min.js></script>
-<link href=http://localhost/mojito/css/ui-lightness/jquery-ui-1.8.11.custom.css type=text/css rel=stylesheet />
-<link href=http://localhost/mojito/syntax_highlight/prettify.css type=text/css rel=stylesheet />
-<link href=http://localhost/mojito/SHJS/sh_rand01.min.css type=text/css rel=stylesheet />
-<link href=http://localhost/mojito/css/mojito.css type=text/css rel=stylesheet />
+<script src=http://missoula.org/mojito/jquery/jquery_min.js></script>
+<script src=http://missoula.org/mojito/javascript/render_page.js></script>
+<script src=http://missoula.org/mojito/javascript/style.js></script>
+<script src=http://missoula.org/mojito/syntax_highlight/prettify.js></script>
+<script src=http://missoula.org/mojito/jquery/autoresize_min.js></script>
+<script src=http://missoula.org/mojito/jquery/jquery-ui-1.8.11.custom.min.js></script>
+<script src=http://missoula.org/mojito/SHJS/sh_main.min.js></script>
+<script src=http://missoula.org/mojito/SHJS/sh_diff.min.js></script>
+<link href=http://missoula.org/mojito/css/ui-lightness/jquery-ui-1.8.11.custom.css type=text/css rel=stylesheet />
+<link href=http://missoula.org/mojito/syntax_highlight/prettify.css type=text/css rel=stylesheet />
+<link href=http://missoula.org/mojito/SHJS/sh_rand01.min.css type=text/css rel=stylesheet />
+<link href=http://missoula.org/mojito/css/mojito.css type=text/css rel=stylesheet />
 
 </head>
 <body class="html_body">
