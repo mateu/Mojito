@@ -11,7 +11,7 @@ with('Mojito::Role::DB');
 
 has dir => (
     is        => 'rw',
-    'default' => sub { '/home/hunter/tmp/repo-dir' },
+    'default' => sub { '/home/hunter/repos/mojito' },
 );
 
 has git => (
@@ -22,7 +22,9 @@ has git => (
 
 sub _build_git {
     my $self = shift;
-    return Git::Wrapper->new( $self->dir );
+    my $git = Git::Wrapper->new( $self->dir );
+    $git->init;
+    return $git;
 }
 
 =head1 Methods
