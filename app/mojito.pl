@@ -88,6 +88,13 @@ use Data::Dumper::Concise;
             return [ 301, [ Location => $mojito->delete_page({id => $id}) ], [] ];
           },
 
+          # Diff a Page
+          sub (GET + /page/*/diff ) {
+            my ( $self, $id ) = @_;
+            my $output = $mojito->view_page_diff({id => $id});
+            [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+          },
+
           sub (GET + /hola/* ) {
             my ( $self, $name ) = @_;
             [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];

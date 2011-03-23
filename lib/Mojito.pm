@@ -105,9 +105,10 @@ sub update_page {
         $page->{feeds} = [@feeds];
     }
 
-    # Save page
+    # Save page to db
     $self->update( $params->{id}, $page );
-
+    # Commit revison to git repo
+    $self->commit_page($page, $params->{id});
     return $self->base_url . 'page/' . $params->{id};
 }
 
@@ -194,9 +195,46 @@ sub view_home_page {
     return $output;
 }
 
+=head2 view_page_diff
+
+View the diff of a page.
+
+=cut
+
+sub view_page_diff {
+    my ( $self, $params ) = @_;
+
+    my $head = '
+<!doctype html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <meta http-equiv="powered by" content="Mojito development version" />
+  <title>Mojito Syntax Highlighting - via JavaScript</title>
+<script src=http://localhost/mojito/jquery/jquery_min.js></script>
+<script src=http://localhost/mojito/javascript/render_page.js></script>
+<script src=http://localhost/mojito/javascript/style.js></script>
+<script src=http://localhost/mojito/syntax_highlight/prettify.js></script>
+<script src=http://localhost/mojito/jquery/autoresize_min.js></script>
+<script src=http://localhost/mojito/jquery/jquery-ui-1.8.11.custom.min.js></script>
+<script src=http://localhost/mojito/SHJS/sh_main.min.js></script>
+<script src=http://localhost/mojito/SHJS/sh_diff.min.js></script>
+<link href=http://localhost/mojito/css/ui-lightness/jquery-ui-1.8.11.custom.css type=text/css rel=stylesheet />
+<link href=http://localhost/mojito/syntax_highlight/prettify.css type=text/css rel=stylesheet />
+<link href=http://localhost/mojito/SHJS/sh_rand01.min.css type=text/css rel=stylesheet />
+<link href=http://localhost/mojito/css/mojito.css type=text/css rel=stylesheet />
+
+</head>
+<body class="html_body">
+';
+    my $diff = '<pre class="sh_diff">' . "\n" . $self->diff_page($params->{id}) . "\n</pre>";
+    my $foot = "\n</body></html>";
+    return $head . $diff . $foot;
+}
+
 =head2 delete_page
 
-Delet a page given a page id.
+Delete a page given a page id.
 Return the URL to recent (maybe home someday?)
 
 =cut
@@ -285,7 +323,7 @@ Some goals and guidelines are:
 =head1 Current Limitations
 
     * No Search
-    * No revision history (only 1 version any any page)
+    * No revision history (only 1 version of any page)
 
 =head1 Authors
 
