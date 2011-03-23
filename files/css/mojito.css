@@ -73,7 +73,7 @@ nav {
 }
 
 /* Wrap text in pre's */
-pre {
+pre.prettyprint {
     overflow: auto;
     overflow-x: auto; /* Use horizontal scroller if needed; for Firefox 2, not
     white-space: pre-wrap; /* css-3 */
