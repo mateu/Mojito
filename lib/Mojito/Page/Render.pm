@@ -28,6 +28,7 @@ has 'stripper' => (
 =head2 render_sections
 
 Turn the sections into something viewable in a HTML browser.
+Be mindful of the section class which we'll use for formatting purposes.
 
 =cut
 
@@ -132,11 +133,7 @@ sub format_for_web {
         when (/^HTML$/i) {
             # pass HTML through as is
         }
-        when (/^h$/i) {
 
-            # Let's do some highlighting
-            $formatted_content = "<pre class='prettyprint'>${content}</pre>";
-        }
         when (/^POD$/i) {
             $formatted_content = $self->pod2html($content);
         }
@@ -146,8 +143,36 @@ sub format_for_web {
         when (/^markdown$/i) {
             $formatted_content = $markdown->markdown($content);
         }
-        when (/^creole/i) {
+        when (/^creole$/i) {
             $formatted_content = creole_parse($content);
+        }
+
+        when (/^h$/i) {
+
+            # Let's do some highlighting
+            $formatted_content = "<pre class='prettyprint'>${content}</pre>";
+        }
+        # More highlighting - language specific
+        when (/^perl$/i) {
+            $formatted_content = "<pre class='sh_perl'>$content</pre>";
+        }
+        when (/^js$/i) {
+            $formatted_content = "<pre class='sh_javascript'>$content</pre>";
+        }
+        when (/^css$/i) {
+            $formatted_content = "<pre class='sh_css'>$content</pre>";
+        }
+        when (/^sql$/i) {
+            $formatted_content = "<pre class='sh_sql'>$content</pre>";
+        }
+        when (/^sh$/i) {
+            $formatted_content = "<pre class='sh_sh'>$content</pre>";
+        }
+        when (/^diff$/i) {
+            $formatted_content = "<pre class='sh_diff'>$content</pre>";
+        }
+        when (/^sh_html$/i) {
+            $formatted_content = "<pre class='sh_html'>$content</pre>";
         }
         default {
             # pass HTML through as is
