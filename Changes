@@ -3,6 +3,8 @@
           - Implicit sections properly added
           
           [Enchantments]
+          - git is in the house (git backend for revisions and simple search/grep)
+            ${base_url}search/$search_word is the URI
           - Multiple wiki language support (textile, markdown, creole)
 
           [View]

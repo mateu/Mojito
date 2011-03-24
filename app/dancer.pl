@@ -58,6 +58,14 @@ post '/page/:id/edit' => sub {
     redirect $mojito->update_page(scalar params);
 };
 
+get '/search/:word' => sub {
+    return $mojito->search(scalar params);
+};
+
+get '/page/:id/diff' => sub {
+    return $mojito->view_page_diff(scalar params);
+};
+
 get '/page/:id/delete' => sub {
     redirect $mojito->delete_page( {id => params->{id}} );
 };

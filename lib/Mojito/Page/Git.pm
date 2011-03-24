@@ -91,7 +91,7 @@ with the count of how many times they matched.
 
 sub search_word {
     my ($self, $search_word) = (shift, shift);
-    warn "** Searching on $search_word";
+#    warn "** Searching on $search_word";
     my @search_hits;
     my $no_hits = 0;
     try {

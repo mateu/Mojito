@@ -97,6 +97,24 @@ sub post {
     $self->response->redirect($redirect_url);
 }
 
+package SearchPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $search_word ) = @_;
+    $self->write($self->request->env->{'mojito'}->search({word => $search_word}));
+}
+
+package DiffPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    my $params;
+    $params->{'id'} = $id;
+    $self->write($self->request->env->{'mojito'}->view_page_diff($params));
+}
+
 package RecentPage;
 use parent qw(Tatsumaki::Handler);
 
@@ -141,6 +159,7 @@ my $app = Tatsumaki::Application->new(
         '/public/page/(\w+)' => 'ViewPagePublic',
         '/page'              => 'CreatePage',
         '/preview'           => 'PreviewPage',
+        '/search/(\w+)'      => 'SearchPage',
         '/public/feed/(\w+)' => 'FeedPage',
     ]
 );

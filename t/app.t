@@ -30,7 +30,7 @@ my @app_files = (
     "$Bin/../app/mojo.pl",   "$Bin/../app/tatsumaki.psgi"
 );
 
-@app_files = ( "$Bin/../app/tatsumaki.psgi" );
+#@app_files = ( "$Bin/../app/tatsumaki.psgi" );
 
 foreach my $app_file (@app_files) {
     my $app = Plack::Util::load_psgi $app_file;
@@ -82,6 +82,11 @@ foreach my $app_file (@app_files) {
         $response = $client_cb->($request);
         is   $response->code,    200, 'get edited page status';
         like $response->content, qr/Perl Rolls/, 'edited page content';
+
+        $request = HTTP::Request->new( GET => "/search/Perl" );
+        $response = $client_cb->($request);
+        is   $response->code,    200, 'search results';
+        like $response->content, qr/Perl Rolls/, 'search hit';
 
         $request = HTTP::Request->new( GET => "/page/${id}/delete");
         $response = $client_cb->($request);
