@@ -101,7 +101,7 @@ use Data::Dumper::Concise;
             my $output = $mojito->search({word => $word});
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
-          
+
           sub ( POST + /search + %* ) {
               my ($self, $params) = @_;
               my $output = $mojito->search($params);
