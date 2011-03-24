@@ -184,8 +184,8 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
     $output =~ s/<input id="submit_save"(.*?>)/<input id="submit_create"$1/;
     $output =~ s/(id="submit_create".*?value=)"Save"/$1"Create"/i;
 
-    # Remove recent area
-    $output =~ s/<section id="recent_area".*?><\/section>//si;
+    # Remove side nav area
+    $output =~ s/<nav id="side">.*?<\/nav>//si;
 
     # Remove wiki_language hidden input (for edit)
     $output =~ s/<input id="wiki_language".*?\/>//sig;
