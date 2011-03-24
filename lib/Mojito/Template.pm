@@ -108,7 +108,7 @@ $js_css
 </header>
 <article id="body_wrapper">
 <nav id="side">
-<section id="search_area"><form action=${base_url}search method=POST><input type="text" name="word" value="" /></form></section><br />
+<section id="search_area"><form action=${base_url}search method=POST><input type="text" name="word" value="Search" onclick="this.value == 'Search' ? this.value = '' : true" /></form></section><br />
 <section id="recent_area"></section>
 </nav>
 </article>
