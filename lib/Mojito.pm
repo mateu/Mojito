@@ -277,7 +277,7 @@ sub delete_page {
 
 =head2 bench
 
-A path for benchmarking to get an basic idea of peformance.
+A path for benchmarking to get an basic idea of performance.
 
 =cut
 
@@ -335,8 +335,8 @@ Mojito is a web document system that allows one to author web pages.
 It has been inspired by MojoMojo which is a mature, stable, responsive and
 feature rich wiki system.  Check MojoMojo out if you're looking for an enterprise
 grade wiki.  Mojito is not attempting to be a wiki, but rather its initial
-goal is to allow an individuals to author HTML5 compliant documents that could be for
-personal or public consumption.
+goal is to enable individuals to easily author HTML5 compliant documents
+whether for for personal or public consumption.
 
 =head1 Goals
 
@@ -352,8 +352,8 @@ Some goals and guidelines are:
 
 =head1 Current Limitations
 
-    * No Search
-    * No revision history (only 1 version of any page)
+    * Single Word Search
+    * revision history doesn't have a web interface yet
 
 =head1 Authors
 
