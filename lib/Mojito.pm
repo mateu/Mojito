@@ -252,7 +252,7 @@ sub search {
         $link_data->{$page_id}->{title} = $page->{title};
         $link_data->{$page_id}->{times_found} = $hit_hashref->{$page_id};
     }
-    my @search_hits = map { "<a href='${base_url}page/$_'>$link_data->{$_}->{title} <span style='font-size: 0.82em;'>($link_data->{$_}->{times_found})</span></a>" } 
+    my @search_hits = map { "<a href='${base_url}page/$_'>$link_data->{$_}->{title} <span style='font-size: 0.82em;'>($link_data->{$_}->{times_found})</span></a>" }
       sort {$link_data->{$b}->{times_found} <=> $link_data->{$a}->{times_found}} keys %{$link_data};
     return join "<br />\n", @search_hits;
 }
