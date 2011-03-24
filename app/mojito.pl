@@ -95,6 +95,13 @@ use Data::Dumper::Concise;
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 
+          # Single word search
+          sub (GET + /search/* ) {
+            my ( $self, $word ) = @_;
+            my $output = $mojito->search({word => $word});
+            [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+          },
+
           sub (GET + /hola/* ) {
             my ( $self, $name ) = @_;
             [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];
