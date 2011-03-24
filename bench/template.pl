@@ -2,10 +2,10 @@ use Benchmark qw(:all);
 use FindBin qw($Bin);
 use lib "$Bin/../data";
 use 5.010;
-use Mojito::TemplateRole;
-my $zoom = TemplateRole->new;
+use Mojito::Template::Zoom;
+my $zoom = Mojito::Template::Zoom->new;
 
-my $count = $ARGV[0] || 1000;
+my $count = $ARGV[0] || 10;
 
 my $edit = '<section>hey</section>';
 my $view = '<h1>Sweet Home Alabama</h1>';
