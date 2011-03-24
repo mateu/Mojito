@@ -148,8 +148,9 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
 # plus the "View" button will be renamed "Done"
     $output =~ s/<input id="submit_save".*?>//sig;
 
-    # Remove recent area and wiki_language (for create only)
-    $output =~ s/<section id="recent_area".*?><\/section>//si;
+    # Remove side, recent area and wiki_language (for create only)
+    $output =~ s/<nav id="side">.*?<\/nav>//si;
+#    $output =~ s/<section id="recent_area".*?><\/section>//si;
     $output =~ s/<div id="wiki_language".*?>.*?<\/div>//si;
 
     # Remove edit and new links
