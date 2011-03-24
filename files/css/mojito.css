@@ -43,13 +43,30 @@ h1 {
 
 #recent_area {
     float: right;
-    margin-top: 2em;
+    border-left: 1px dotted #888;
+    padding-left: 0.5em;
+    width: 100%;
+/*    -moz-border-radius: 10px;
+    border-radius: 10px; */
+}
+
+#search_area {
+    float: right;
+    width: 100%;
+    padding-bottom: 0.5em;
+}
+#search_area input{
+    width: 100%;
+}
+#side {
+    float: right;
+    margin-top: 1em;
     margin-left: 1em;
     padding-left: 1em;
     padding-right: 1em;
     width: 20%;
-    border-left: 1px dotted #888;
-/*    -moz-border-radius: 10px;
+ /*   border-left: 1px dotted #888;
+    -moz-border-radius: 10px;
     border-radius: 10px;  */
     font-size: 0.82em;
 }

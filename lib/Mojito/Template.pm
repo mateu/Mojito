@@ -65,7 +65,14 @@ $js_css
 </form>
 </section>
 <section id="view_area" class="view_area_edit_mode"></section>
+<nav id="side">
+<section id="search_area">
+<form action=${base_url}search method=POST>
+<input type="text" name="word" value="Search" onclick="this.value == 'Search' ? this.value = '' : true"/>
+</form>
+</section><br />
 <section id="recent_area"></section>
+</nav>
 </article>
 <footer>
 <nav id="edit_link" class="edit_link"></nav>
@@ -100,7 +107,10 @@ $js_css
 <nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>
 </header>
 <article id="body_wrapper">
+<nav id="side">
+<section id="search_area"><form action=${base_url}search method=POST><input type="text" name="word" value="" /></form></section><br />
 <section id="recent_area"></section>
+</nav>
 </article>
 <footer>
 <nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>

@@ -32,12 +32,20 @@ my $messages = [
 #        response_type  => 'html',
 #    },
     {
-        name           => 'DiffPage',
-        request_method => 'get',
-        route          => '/page/:id/diff',
-        response       => '$mojito->view_page_diff($params)',
+        name           => 'SearchPage',
+        request_method => 'post',
+        route          => '/search',
+        response       => '$mojito->search($params)',
         response_type  => 'html',
+        status_code    => 200,
     },
+#    {
+#        name           => 'DiffPage',
+#        request_method => 'get',
+#        route          => '/page/:id/diff',
+#        response       => '$mojito->view_page_diff($params)',
+#        response_type  => 'html',
+#    },
 ];
 
 foreach my $message (@{$messages}) {
@@ -48,6 +56,9 @@ foreach my $message (@{$messages}) {
 }
 foreach my $message (@{$messages}) {
     say transform_tatsumaki($message);
+}
+foreach my $message (@{$messages}) {
+    say transform_web_simple($message);
 }
 sub transform_dancer {
     my $message = shift;
@@ -90,7 +101,12 @@ sub transform_mojo {
 #       print Dumper \@holders;
 #       print $place_holders;
     }
-    chomp($place_holders);
+    if ($place_holders) {
+        chomp($place_holders);
+    }
+    else {
+        $place_holders = "# no place holders";
+    }
 
     my $route_body = <<"END_BODY";
 $message->{request_method} '$message->{route}' => sub {
@@ -118,6 +134,26 @@ sub $message->{request_method} {
     \$params->{'id'} = \$id;
     \$self->write($message_response);
 }
+END_BODY
+    return $route_body;
+}
+
+sub transform_web_simple {
+    my $message = shift;
+
+    my $message_response = $message->{response};
+    my $content_type = "['Content-type', ";
+    $content_type .= "'text/html']" if ($message->{response_type} eq 'html');
+    my $request_method = uc($message->{request_method});
+    my $message_route = $message->{route};
+    $message_route .= ' + %' if ($request_method eq 'POST');
+    my $route_body = <<"END_BODY";
+sub ( $request_method + $message_route ) {
+    my (\$self, \$params) = \@_;
+    my \$output = $message_response;
+    [ $message->{status_code}, $content_type, [\$output] ];
+},
+
 END_BODY
     return $route_body;
 }
