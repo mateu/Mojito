@@ -1,8 +1,24 @@
 use strictures 1;
 package Mojito::Filter::Shortcuts;
+use Moo::Role;
+use Mojito::Types;
 use 5.010;
+use Data::Dumper::Concise;
 
-my @shortcuts = (\&cpan_URL);
+with('Mojito::Role::Config');
+
+has shortcuts => (
+    is => 'ro',
+    isa => Mojito::Types::ArrayRef,
+    lazy => 1,
+    builder => '_build_shortcuts',
+);
+sub _build_shortcuts {
+    my $self = shift;
+    my @shortcuts = ('cpan_URL');
+    push @shortcuts, 'fonality_ticket' if ($self->config->{fonality_ticket_url});
+    return \@shortcuts;
+}
 
 =head1 Methods
 
@@ -13,9 +29,9 @@ Expand the available shortcuts into the content.
 =cut
 
 sub expand_shortcuts {
-    my $content = shift;
-    foreach my $shortcut (@shortcuts) {
-        $content = $shortcut->($content);
+    my ($self, $content) = (shift, shift);
+    foreach my $shortcut ( @{$self->shortcuts} ) {
+        $content = $self->${shortcut}(${content});
     }
     return $content;
 }
@@ -27,12 +43,24 @@ Expand the cpan abbreviated shortcut.
 =cut
 
 sub cpan_URL {
-    my ($content) = @_;
+    my ($self, $content) = @_;
     return if !$content;
-
     $content =~ s/{{cpan\s+([^}]*)}}/<a href="http:\/\/search.cpan.org\/perldoc?$1">$1<\/a>/sig;
     return $content;
 }
 
+=head2 fonality_ticket
+
+Expand the fonality ticket abbreviated shortcut.
+
+=cut
+
+sub fonality_ticket {
+    my ($self, $content) = @_;
+    return if !($content || $self->config->{fonality_ticket_url});
+    my $url = $self->config->{fonality_ticket_url};
+    $content =~ s/{{fontic\s+(\d+)[^}]*}}/<a href="${url}${1}">${1}<\/a>/sig;
+    return $content;
+}
 
 1

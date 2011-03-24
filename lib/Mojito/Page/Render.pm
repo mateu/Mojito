@@ -11,6 +11,8 @@ use Pod::Simple::XHTML;
 use HTML::Strip;
 use Data::Dumper::Concise;
 
+with('Mojito::Filter::Shortcuts');
+
 my $textile  = Text::Textile->new;
 my $markdown = Text::Markdown->new;
 my $tmpl     = Mojito::Template->new;
@@ -91,7 +93,7 @@ sub render_body {
     my $rendered_sections = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
-    $rendered_body = Mojito::Filter::Shortcuts::expand_shortcuts($rendered_body);
+    $rendered_body = $self->expand_shortcuts($rendered_body);
     return $rendered_body;
 }
 
