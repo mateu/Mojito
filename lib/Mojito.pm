@@ -232,16 +232,46 @@ sub view_page_diff {
     return $head . $diff . $foot;
 }
 
+=head2 search
+
+Search the documents for a single word.
+
+=cut
+
+sub search {
+    my ( $self, $params ) = @_;
+
+    my $base_url = $self->base_url;
+    my $hit_hashref= $self->search_word($params->{word});
+    return "No matches for: <b>" . $params->{word} . '</b>' if !scalar keys %{$hit_hashref};
+    # Get the full page and extract the title for display.
+    # Rework hit_has from HashRef to HashRef[HashRef] so we can store both hit counts and a title.
+    my $link_data = {};
+    foreach my $page_id (keys %{$hit_hashref}) {
+        my $page = $self->read($page_id);
+        $link_data->{$page_id}->{title} = $page->{title};
+        $link_data->{$page_id}->{times_found} = $hit_hashref->{$page_id};
+    }
+    my @search_hits = map { "<a href='${base_url}page/$_'>$link_data->{$_}->{title} <span style='font-size: 0.82em;'>($link_data->{$_}->{times_found})</span></a>" } 
+      sort {$link_data->{$b}->{times_found} <=> $link_data->{$a}->{times_found}} keys %{$link_data};
+    return join "<br />\n", @search_hits;
+}
+
 =head2 delete_page
 
-Delete a page given a page id.
+Given a page id:
+* Delete it from the mongo DB
+* Remove it from the git repo
 Return the URL to recent (maybe home someday?)
 
 =cut
 
 sub delete_page {
     my ( $self, $params ) = @_;
+
     $self->delete($params->{id});
+    $self->rm_page($params->{id});
+
     return $self->base_url . 'recent';
 }
 

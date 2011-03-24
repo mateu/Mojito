@@ -99,7 +99,9 @@ has gitter => (
     handles => [
         qw(
             commit_page
+            rm_page
             diff_page
+            search_word
           )
     ],
     writer => '_build_gitter',
