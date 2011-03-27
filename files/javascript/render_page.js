@@ -87,6 +87,7 @@ fetchPreview = function(extra_action) {
 		data : data,
 		success : function(response, status) {
 			$('#view_area').html(response.rendered_content);
+			$('#message_area').html(response.message);
 			prettyPrint();
 			sh_highlightDocument();
 	    },

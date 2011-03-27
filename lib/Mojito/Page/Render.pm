@@ -39,8 +39,9 @@ sub render_sections {
 
     my ( @formatted_document_sections );
     foreach my $section ( @{ $doc->{sections} } ) {
+#        warn Dumper $section;
         my $from_format = $section->{class} || $doc->{default_format};
-        $from_format = $doc->{default_format} if ($section->{class} eq 'Implicit');
+        $from_format = $doc->{default_format} if ($section->{class} && ($section->{class} eq 'Implicit'));
         my $to_format = 'HTML';
         my $formatted_section = $self->format_content( $section->{content}, $from_format, $to_format );
         push @formatted_document_sections, $formatted_section;

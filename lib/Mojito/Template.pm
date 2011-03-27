@@ -49,6 +49,7 @@ $js_css
 <nav id="edit_link" class="edit_link"></nav>
 <nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>
 </header>
+<section id="message_area"></section>
 <article id="body_wrapper">
 <section id="edit_area">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">

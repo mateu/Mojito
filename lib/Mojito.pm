@@ -56,6 +56,7 @@ sub preview_page {
     $self->parser->page($params->{content});
     $self->parser->default_format($params->{wiki_language});
     my $page_struct = $self->page_structure;
+#    warn Dumper $page_struct;
     if (   $params->{extra_action}
         && ( $params->{extra_action} eq 'save' )
         && ( $params->{'mongo_id'} ) )
@@ -75,7 +76,7 @@ sub preview_page {
     }
 
     my $rendered_content = $self->render_body($page_struct);
-    my $response_href = { rendered_content => $rendered_content };
+    my $response_href = { rendered_content => $rendered_content, message => $page_struct->{message} };
 
     return $response_href;
 }

@@ -98,3 +98,9 @@ pre.prettyprint {
     word-wrap: break-word; /* Internet Explorer 5.5+ */
     white-space : normal; /* crucial for IE 6, maybe 7? */
 }
+
+#message_area {
+    color: sienna;
+    font-size: .92em;
+    font-style: italic;
+}
