@@ -186,25 +186,14 @@ Wrap up the getting of sections process.
 sub build_sections {
     my $self = shift;
 
-# TODO: Deal with nested sections gracefully.
+    # Deal with nested sections gracefully by adding a message 
+    # to bubble up to the view and display in the #message_area.
     if ( $self->has_nested_section ) {
-#        warn "page: ", $self->page;
-#        die "Damn: Haz Nested Sections.  Nested sections are not supported";
-
-# return Array[]HashRef] with error when we have a nested <sx>
         $self->messages( [ @{$self->messages}, 'haz nested sexes'] );
-#        return [
-#            {
-#                status => 'ERROR',
-#                message => 'nested section',
-#                content => 'empty',
-#            }
-#        ];
     }
-#    else {
-        my $page = $self->add_implicit_sections;
-        return $self->parse_sections($page);
-#    }
+    my $page = $self->add_implicit_sections;
+
+    return $self->parse_sections($page);
 }
 
 =head2 build_page_structure
