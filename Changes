@@ -1,9 +1,11 @@
 {{$NEXT}}
+
+0.09      2011-03-24 22:46:23 America/Denver
           [Remedies]
           - Implicit sections properly added
           
           [Enchantments]
-          - git is in the house (git backend for revisions and simple search/grep)
+          - git is in the house (git backend for revisions and simple search via git grep)
             ${base_url}search/$search_word is the URI
           - Multiple wiki language support (textile, markdown, creole)
 
