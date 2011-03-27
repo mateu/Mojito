@@ -11,7 +11,8 @@ use Mojito::Page::Parse;
 my $parser = Mojito::Page::Parse->new(page => $Fixture::nested_section);
 isa_ok($parser, 'Mojito::Page::Parse');
 ok($parser->has_nested_section,  'nested section');
-dies_ok { $parser->sections } 'Build nested sections';
+$parser->sections;
+is( $parser->message_string, 'haz nested sexes', 'nested sex message');
 
 # Change content to not be nested
 $parser->page($Fixture::not_nested_section);

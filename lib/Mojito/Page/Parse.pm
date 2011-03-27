@@ -186,7 +186,7 @@ Wrap up the getting of sections process.
 sub build_sections {
     my $self = shift;
 
-    # Deal with nested sections gracefully by adding a message 
+    # Deal with nested sections gracefully by adding a message
     # to bubble up to the view and display in the #message_area.
     if ( $self->has_nested_section ) {
         $self->messages( [ @{$self->messages}, 'haz nested sexes'] );
@@ -218,8 +218,6 @@ sub build_page_structure {
         # e.g. ->sections can set a 'nested sections' message.
         message        => $self->message_string,
     };
-    warn "flipando";
-    warn  Dumper $return;
     return $return;
 }
 
