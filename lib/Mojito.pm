@@ -16,6 +16,16 @@ Base of the application used for creating internal links.
 
 has base_url => ( is => 'rw', );
 
+=head2 username
+
+Authenticated (Digest Auth) user name (aka REMOTE_USER)
+
+=cut
+
+has username => (
+    is => 'rw',
+);
+
 has bench_fixture => ( is => 'ro', lazy => 1, builder => '_build_bench_fixture');
 
 =head1 Methods
@@ -108,7 +118,9 @@ sub update_page {
     # Save page to db
     $self->update( $params->{id}, $page );
     # Commit revison to git repo
-    $self->commit_page($page, $params->{id});
+    # add username to params so it can used in the commit
+    $params->{username} = $self->username;
+    $self->commit_page($page, $params);
     return $self->base_url . 'page/' . $params->{id};
 }
 
@@ -249,7 +261,7 @@ sub search {
     my $link_data = {};
     foreach my $page_id (keys %{$hit_hashref}) {
         my $page = $self->read($page_id);
-        $link_data->{$page_id}->{title} = $page->{title};
+        $link_data->{$page_id}->{title} = $page->{title}||'no title';
         $link_data->{$page_id}->{times_found} = $hit_hashref->{$page_id};
     }
     my @search_hits = map { "<a href='${base_url}page/$_'>$link_data->{$_}->{title} <span style='font-size: 0.82em;'>($link_data->{$_}->{times_found})</span></a>" }

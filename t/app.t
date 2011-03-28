@@ -30,7 +30,7 @@ my @app_files = (
     "$Bin/../app/mojo.pl",   "$Bin/../app/tatsumaki.psgi"
 );
 
-#@app_files = ( "$Bin/../app/tatsumaki.psgi" );
+#@app_files = ( "$Bin/../app/mojito.pl" );
 
 foreach my $app_file (@app_files) {
     my $app = Plack::Util::load_psgi $app_file;
@@ -74,7 +74,10 @@ foreach my $app_file (@app_files) {
         $response = $client_cb->($request);
         is $response->code, 200, 'edit page status';
 
-        $request = POST "/page/${id}/edit", [content => "h1. Perl Rolls", wiki_language => 'textile' ];
+        $request = POST "/page/${id}/edit", [
+            content => "h1. Perl Rolls", 
+            wiki_language => 'textile', 
+            commit_message => 'note the flexibity of Perl',];
         $response = $client_cb->($request);
         like $response->code, qr/^(?:301|302)$/, 'post edit page redirect';
 

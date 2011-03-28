@@ -61,6 +61,7 @@ $js_css
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <input id="wiki_language" name="wiki_language" type="hidden" form="editForm" value="" />
     <textarea id="content"  name="content" rows=32 required="required"/></textarea>
+    <input id="commit_message" name="commit_message" value="too lazy" />
     <input id="submit_save" name="submit" type="submit" value="Save" style="font-size: 66.7%;" />
     <input id="submit_view" name="submit" type="submit" value="Done" style="font-size: 66.7%;" />
 </form>
@@ -146,7 +147,6 @@ s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
 s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
 
 # An Experiment in Design: take out the save button, because we have autosave every few seconds
-# plus the "View" button will be renamed "Done"
     $output =~ s/<input id="submit_save".*?>//sig;
 
     # Remove side, recent area and wiki_language (for create only)
