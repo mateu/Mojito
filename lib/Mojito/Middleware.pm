@@ -7,7 +7,10 @@ sub call {
     my ( $self, $env ) = @_;
     my $base_url = $env->{SCRIPT_NAME} || '/';
     $base_url =~ s/([^\/])$/$1\//;
-    $env->{"mojito"} = Mojito->new( base_url => $base_url );
+    $env->{"mojito"} = Mojito->new( 
+        base_url => $base_url, 
+        username => $env->{REMOTE_USER} 
+    );
     $self->app->($env);
 }
 
