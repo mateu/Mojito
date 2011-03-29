@@ -80,9 +80,14 @@ Remove a page from the repo (done when deleting a page from the DB)
 sub rm_page {
     my ( $self, $page_id ) = @_;
 
-    $self->git->rm( {}, ${page_id} );
-    $self->git->commit( { message => "Delete page" }, $page_id );
-
+    try {
+        $self->git->rm( {}, ${page_id} );
+        $self->git->commit( { message => "Delete page" }, $page_id );
+    }
+    catch {
+        warn "Try delete page: $page_id, but had problems: $_";  
+    };
+    
 }
 
 =head2 diff_page
