@@ -15,9 +15,14 @@ with('Mojito::Role::Config');
 
 has dir => (
     is        => 'rw',
-    'default' => sub { $_[0]->config->{git_repo} },
+    lazy => 1,
+    builder => '_build_dir',
 );
-
+sub _build_dir {
+    die "You must have a 'git_repo' path in your conf file. e.g. git_repo => '/user/you/repos/mojito'" 
+      if !$_[0]->config->{git_repo};
+     $_[0]->config->{git_repo};
+}
 has git => (
     is      => 'ro',
     lazy    => 1,
