@@ -88,10 +88,12 @@ use Data::Dumper::Concise;
             return [ 301, [ Location => $mojito->delete_page({id => $id}) ], [] ];
           },
 
-          # Diff a Page
-          sub (GET + /page/*/diff ) {
-            my ( $self, $id ) = @_;
-            my $output = $mojito->view_page_diff({id => $id});
+          # Diff a Page: $m and $n are the number of ^ we'll use from HEAD.
+          # e.g diff/3/1 would mean git diff HEAD^^^ HEAD^ $page_id
+          sub (GET + /page/*/diff/*/* ) {
+            my ( $self, $id, $m, $n ) = @_;
+            
+            my $output = $mojito->view_page_diff({id => $id, m => $m, n => $n});
             [ 200, [ 'Content-type', 'text/html' ], [$output] ];
           },
 

@@ -50,6 +50,10 @@ sub create_page {
     $page_struct->{body_html} = $self->render_body($page_struct);
     $page_struct->{title}     = $self->intro_text( $page_struct->{body_html} );
     my $id = $self->create($page_struct);
+    $params->{id} = $id;
+    # Put into repo
+    $params->{username} = $self->username;
+    $self->commit_page($page_struct, $params);
 
     return $self->base_url . 'page/' . $id . '/edit';
 }
@@ -239,7 +243,7 @@ sub view_page_diff {
 </head>
 <body class="html_body">
 ';
-    my $diff = '<pre class="sh_diff">' . "\n" . $self->diff_page($params->{id}) . "\n</pre>";
+    my $diff = '<pre class="sh_diff">' . "\n" . $self->diff_page($params->{id}, $params->{m}, $params->{n}) . "\n</pre>";
     my $foot = "\n</body></html>";
     return $head . $diff . $foot;
 }

@@ -83,13 +83,22 @@ sub rm_page {
 =head2 diff_page
 
 Get the diff between two versions of a page.
+Diff a Page: $m and $n are the number of ^ we'll use from HEAD.
+Example:
+
+    diff/3/1 would mean git diff HEAD^^^ HEAD^ $page_id
 
 =cut
 
 sub diff_page {
-    my ( $self, $page_id ) = @_;
-
-    my @diff = $self->git->diff( {}, "HEAD^..HEAD", ${page_id} );
+    my ( $self, $page_id, $m, $n ) = @_;
+    
+    # Defaults
+    $m //= 1;
+    $n //= 0;
+    my $base = ('^') x $m;
+    my $place = ('^') x $n;
+    my @diff = $self->git->diff( {}, "HEAD${base}..HEAD${place}", ${page_id} );
     my $diff = join "\n", @diff;
 
     return $diff;
