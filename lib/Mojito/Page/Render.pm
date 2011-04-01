@@ -4,6 +4,7 @@ use 5.010;
 use Moo;
 use Mojito::Template;
 use Mojito::Filter::Shortcuts;
+use Mojito::Filter::MojoMojo::Converter;
 use Text::Textile qw(textile);
 use Text::Markdown;
 use Text::WikiCreole;
@@ -12,6 +13,7 @@ use HTML::Strip;
 use Data::Dumper::Concise;
 
 with('Mojito::Filter::Shortcuts');
+with('Mojito::Role::Config');
 
 my $textile  = Text::Textile->new;
 my $markdown = Text::Markdown->new;
@@ -95,6 +97,10 @@ sub render_body {
     my $rendered_body = join "\n", @{$rendered_sections};
 
     $rendered_body = $self->expand_shortcuts($rendered_body);
+    # Convert MojoMojo content if needed
+    if ($self->config->{convert_mojomojo}) {
+       $rendered_body = Mojito::Filter::MojoMojo::Converter->new( content => $rendered_body )->convert_content;
+    }
     return $rendered_body;
 }
 
