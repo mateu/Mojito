@@ -1,4 +1,11 @@
 {{$NEXT}}
+          [Additions]
+          - arbitrary diff potential (implemented for Web::Simple)
+          - MojoMojo table of contents support
+          - MojoMojo syntax highlight support (class=prettyprint)
+          
+          [Refinements]
+          - the css of both syntax highlighters: prettyprint and SHJS, has been refined
 
 0.09      2011-03-24 22:46:23 America/Denver
           [Remedies]
