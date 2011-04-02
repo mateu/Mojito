@@ -1,12 +1,12 @@
 /* Pretty printing styles. Used with prettify.js. */
 
-.str { color: #080; }
-.kwd { color: #008; }
-.com { color: darkgreen; }
-.typ { color: #606; }
-.lit { color: #066; }
-.pun { color: #555555; }
-.pln { color: #000; }
+.str { color: darkblue; }
+.kwd { color: blue; }
+.com { color: darkgreen; font-style: italic;}
+.typ { color: sienna; }
+.lit { color: darkorange; }
+.pun { color: purple; }
+.pln { color: black; }
 .tag { color: #008; }
 .atn { color: #606; }
 .atv { color: #080; }

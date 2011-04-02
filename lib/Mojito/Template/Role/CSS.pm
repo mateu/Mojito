@@ -15,8 +15,8 @@ has css => (
 sub _build_css {
     [
       'css/ui-lightness/jquery-ui-1.8.11.custom.css',
-      'syntax_highlight/prettify.css',
-      'SHJS/sh_rand01.min.css',
+      'syntax_highlight/prettify_mojito.css',
+      'SHJS/sh_mojito.css',
       'css/mojito.css',
     ];
 }
