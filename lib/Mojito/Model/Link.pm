@@ -164,6 +164,29 @@ sub view_selectable_page_list {
     return $list_title . $list;
 }
 
+=head2 view_sortable_page_list
+
+View the pages in a collection, ready to be sorted.
+
+=cut
+
+sub view_sortable_page_list {
+    my ($self, $args) = (shift, shift);
+
+    my $base_url = $self->base_url;
+    my $link_data = $self->get_collection_link_data($args->{collection_id});
+    my $name_of_page_collection = $self->name_of_page_collection;
+    my $list_title =<<"EOH";
+    <header id='collections_index' style='font-weight: bold;'>
+    ORDER (drag-n-drop) pages in the collection:  
+    <span style='color: darkblue; font-size: 1.33em;'>$name_of_page_collection</i></span>
+    </header>
+EOH
+    my $list = $self->create_sortable_page_list($link_data, $name_of_page_collection) || "No Documents yet.  Get to <a href='${base_url}page'>writing!</a>";
+
+    return $list_title . $list;
+}
+
 =head2 create_selectable_page_list
 
 Given link data (doc id and title) and possibly some $args then create hyperlinks
@@ -188,6 +211,38 @@ sub create_selectable_page_list {
     </ul>
     <div id="hidden_params"><input type="hidden" name="collected_page_ids" id="collected_page_ids" value="" /></div>
     <input type=submit name=collect value="Create Collection"/>
+    </form>
+    </section>
+
+EOH
+    
+    return $list;
+}
+
+=head2 create_sortable_page_list
+
+Create a sortable list of the pages in a collection.
+This is how we impose order to collection of pages.
+
+=cut
+
+sub create_sortable_page_list {
+    my ($self, $link_data, $collection_name) = (shift, shift, shift);
+
+    my $base_url = $self->base_url;
+    my $list;
+    foreach my $datum (@{$link_data}) {
+        $list .= "<li id='$datum->{id}'>$datum->{title}</li>\n";
+    }
+    $list =<<"EOH";
+    <section id='sortable'>
+    <form action='' method=POST>
+    <input type="hidden" name="collection_name" id="collection_name" value="${collection_name}" />
+    <ol>
+    ${list}
+    </ol>
+    <div id="hidden_params"><input type="hidden" name="collected_page_ids" id="collected_page_ids" value="" /></div>
+    <input type=submit name=collect value="Order Collection"/>
     </form>
     </section>
 

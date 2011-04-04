@@ -302,6 +302,19 @@ sub collect {
     return $self->base_url . 'collections';
 }
 
+=head2 sort_collection
+
+Store a sorted list of pages. 
+Return the /collections URL to which we'll redirect.
+
+=cut
+
+sub sort_collection {
+    my ( $self, $params ) = @_;
+    $self->collector->create($params);
+    return $self->base_url . 'collections';
+}
+
 =head2 delete_page
 
 Given a page id:

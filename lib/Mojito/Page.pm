@@ -88,6 +88,7 @@ has tmpl => (
           collect_page_form
           collections_index
           collection_page
+          sort_collection_form
           fillin_create_page
           fillin_edit_page
           )

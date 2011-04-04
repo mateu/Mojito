@@ -173,6 +173,18 @@ sub _build_collections_index {
     return $self->wrap_page($list->view_collections_index);
 }
 
+=head2 sort_collection_form
+
+A form to sort a collection of pages.
+
+=cut
+
+sub sort_collection_form {
+    my ($self, $collection_id) = (shift, shift);
+    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
+    return $self->wrap_page($list->view_sortable_page_list({ collection_id => $collection_id }));
+}
+
 =head2 collection_page
 
 Given a collection id, show a list of belonging pages.
