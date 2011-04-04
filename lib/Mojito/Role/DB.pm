@@ -23,11 +23,13 @@ has 'collection' => (
     is => 'ro',
     lazy => 1,
     builder => '_build_collection',
+    clearer => 'clear_collection',
 );
 has 'collection_name' => (
     is => 'rw',
     lazy => 1,
     default => sub { 'notes' },
+    clearer => 'clear_collection_name',
 );
 
 sub _build_conn {
