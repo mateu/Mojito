@@ -34,22 +34,18 @@ sub create {
     my $page_ids = $params->{collected_page_ids};
     my @page_ids = split ',', $page_ids;
     $params->{collected_page_ids} = \@page_ids;
-#    my $collection_name = $params->{collection_name};
     # add save time as last_modified and created
     $params->{last_modified} = $params->{created} = time();
 
     my $collection = $self->collection->find_one({ collection_name  => $params->{collection_name} });
     my $oid;
     if ( $oid = $collection->{_id} ) {
-        warn "!! UPDATE OID: ", Dumper $oid;
             $self->collection->update( { '_id' => $oid }, $params );
     } 
     else {
-        warn "CREATE";
         $oid = $self->collection->save($params);
     }
-    warn "collection: ", Dumper $collection;
-    warn "creating page ", $oid->value, " at: ", time();
+#    warn "creating page ", $oid->value, " at: ", time();
     return $oid->value;
 }
 
