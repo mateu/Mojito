@@ -49,7 +49,7 @@ sub get_collections {
 
 =head2 get_collection_pages
 
-Get the pages belonging to a particualr collection.
+Get the pages belonging to a particular collection.
 NOTE: We get the list of page ids from the collection collected_page_ids value.
 Then we find all documents corresponding to those ids.
 
