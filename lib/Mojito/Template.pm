@@ -131,6 +131,8 @@ $js_css
 <style></style>
 </head>
 <body class="html_body">
+<section id="message_area"></section>
+<article id="body_wrapper">
 START_HTML
 
     return $page_start;
@@ -140,6 +142,7 @@ sub _build_page_wrap_end {
 
     my $page_end =<<'END_HTML';
 
+</article>
 </body>
 </html>
 END_HTML
