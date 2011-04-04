@@ -132,6 +132,19 @@ use Data::Dumper::Concise;
               my $output = $mojito->collection_page($collection_id);
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
+          
+          sub ( GET + /collection/*/sort ) {
+              my ($self, $collection_id) = @_;
+              my $output = $mojito->sort_collection_form($collection_id);
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },
+
+          sub ( POST + /collection/*/sort + %* ) {
+              my ($self, $id, $params) = @_;
+              $params->{id} = $id;
+              my $redirect_url = $mojito->sort_collection($params);
+              return [ 301, [ Location => $redirect_url ], [] ];
+          },
 
           sub (GET + /hola/* ) {
             my ( $self, $name ) = @_;
