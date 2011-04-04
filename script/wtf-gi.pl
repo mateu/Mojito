@@ -2,6 +2,12 @@ use strictures 1;
 use 5.010;
 use Data::Dumper::Concise;
 
+=head1 Usage
+
+    perl -Ilib script/wtf-gi.pl
+    
+=cut
+
 my $messages = [
 #    {
 #        name           => 'ViewPage',
@@ -31,14 +37,14 @@ my $messages = [
 #        response       => '$mojito->search($params)',
 #        response_type  => 'html',
 #    },
-    {
-        name           => 'SearchPage',
-        request_method => 'post',
-        route          => '/search',
-        response       => '$mojito->search($params)',
-        response_type  => 'html',
-        status_code    => 200,
-    },
+#    {
+#        name           => 'SearchPage',
+#        request_method => 'post',
+#        route          => '/search',
+#        response       => '$mojito->search($params)',
+#        response_type  => 'html',
+#        status_code    => 200,
+#    },
 #    {
 #        name           => 'DiffPage',
 #        request_method => 'get',
@@ -46,6 +52,38 @@ my $messages = [
 #        response       => '$mojito->view_page_diff($params)',
 #        response_type  => 'html',
 #    },
+#    {
+#        name           => 'CollectPage',
+#        request_method => 'get',
+#        route          => '/collect',
+#        response       => '$mojito->collect_page_form($params)',
+#        response_type  => 'html',
+#        status_code    => 200,
+#    },
+#    {
+#        name           => 'CollectPage',
+#        request_method => 'post',
+#        route          => '/collect',
+#        response       => '$mojito->collect($params)',
+#        response_type  => 'html',
+#        status_code    => 200,
+#    },
+    {
+        name           => 'CollectionsIndex',
+        request_method => 'get',
+        route          => '/collections',
+        response       => '$mojito->collections_index()',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'CollectionPage',
+        request_method => 'get',
+        route          => '/collection/:id',
+        response       => '$mojito->collection_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
 ];
 
 foreach my $message (@{$messages}) {
@@ -146,7 +184,7 @@ sub transform_web_simple {
     $content_type .= "'text/html']" if ($message->{response_type} eq 'html');
     my $request_method = uc($message->{request_method});
     my $message_route = $message->{route};
-    $message_route .= ' + %' if ($request_method eq 'POST');
+    $message_route .= ' + %*' if ($request_method eq 'POST');
     my $route_body = <<"END_BODY";
 sub ( $request_method + $message_route ) {
     my (\$self, \$params) = \@_;

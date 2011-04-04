@@ -273,6 +273,35 @@ sub search {
     return join "<br />\n", @search_hits;
 }
 
+=head2 collect
+
+Collect documents.  The id for each document submitted will be put into
+a list of document ids stored in the 'collection' collection.  Yeah, that
+may seem strange at first, but the idea is we want to put allow for arbitrary
+sets of documents from the notes collection.  We construct these sets by creating
+a list (array) of the corresponding document ids and inserting this "document"
+into the "collection" collection.  
+
+For example, the Beer collection document could look like:
+
+    { 
+        collection_name => 'Beer',
+        documents       => [$some_doc_id, $another_doc_id, .. $last_doc_id]
+        permissions     => { owner => 'rwx', group=> 'r', world => 'r' }
+    }
+
+where the doc ids are the usual mongodb auto-generated id.
+
+Return the /collections URL to which we'll redirect.
+
+=cut
+
+sub collect {
+    my ( $self, $params ) = @_;
+    $self->collector->create($params);
+    return $self->base_url . 'collections';
+}
+
 =head2 delete_page
 
 Given a page id:

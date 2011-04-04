@@ -110,6 +110,29 @@ use Data::Dumper::Concise;
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
 
+          sub ( GET + /collect ) {
+              my ($self, $params) = @_;
+              my $output = $mojito->collect_page_form($params);
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },
+
+          sub ( POST + /collect + %* ) {
+              my ($self, $params) = @_;
+              my $redirect_url = $mojito->collect($params);
+              return [ 301, [ Location => $redirect_url ], [] ];
+          },
+
+          sub ( GET + /collections ) {
+              my ($self, $params) = @_;
+              my $output = $mojito->collections_index();
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },
+          sub ( GET + /collection/* ) {
+              my ($self, $collection_id) = @_;
+              my $output = $mojito->collection_page($collection_id);
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },
+
           sub (GET + /hola/* ) {
             my ( $self, $name ) = @_;
             [ 200, [ 'Content-type', 'text/plain' ], ["Ola $name"] ];

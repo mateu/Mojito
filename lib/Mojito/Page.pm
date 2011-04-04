@@ -25,6 +25,7 @@ use Mojito::Page::CRUD;
 use Mojito::Page::Git;
 use Mojito::Template;
 use Mojito::Model::Link;
+use Mojito::Collection::CRUD;
 
 # roles
 
@@ -67,6 +68,16 @@ has editer => (
     writer => '_build_edit',
 );
 
+has collector => (
+    is      => 'ro',
+    isa     => sub { die "Need a Collection::CRUD object" unless $_[0]->isa('Mojito::Collection::CRUD') },
+    handles => [
+        qw(
+          )
+    ],
+    writer => '_build_collect',
+);
+
 has tmpl => (
     is      => 'ro',
     isa     => sub { die "Need a Template object" unless $_[0]->isa('Mojito::Template') },
@@ -74,6 +85,9 @@ has tmpl => (
         qw(
           template
           home_page
+          collect_page_form
+          collections_index
+          collection_page
           fillin_create_page
           fillin_edit_page
           )
@@ -104,7 +118,7 @@ has gitter => (
             search_word
           )
     ],
-    writer => '_build_gitter',
+    writer => '_build_git',
 );
 =head1 Methods
 
@@ -122,7 +136,8 @@ sub BUILD {
     $self->_build_parse(Mojito::Page::Parse->new($constructor_args_href));
     $self->_build_render(Mojito::Page::Render->new($constructor_args_href));
     $self->_build_edit(Mojito::Page::CRUD->new( $constructor_args_href));
-    $self->_build_gitter(Mojito::Page::Git->new( $constructor_args_href));
+    $self->_build_collect(Mojito::Collection::CRUD->new( $constructor_args_href));
+    $self->_build_git(Mojito::Page::Git->new( $constructor_args_href));
     $self->_build_template(Mojito::Template->new( $constructor_args_href));
     $self->_build_link(Mojito::Model::Link->new( $constructor_args_href));
 
