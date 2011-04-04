@@ -229,7 +229,6 @@ This is how we impose order to collection of pages.
 sub create_sortable_page_list {
     my ($self, $link_data, $collection_name) = (shift, shift, shift);
 
-    my $base_url = $self->base_url;
     my $list;
     foreach my $datum (@{$link_data}) {
         $list .= "<li id='$datum->{id}'>$datum->{title}</li>\n";
