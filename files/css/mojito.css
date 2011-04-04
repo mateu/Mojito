@@ -54,7 +54,7 @@ h1 {
 #selectable_page_list .ui-selecting { background: #FECA40; }
 #selectable_page_list .ui-selected { background: #F39814; color: white; }
 #selectable_page_list { list-style-type: none; margin: 0; padding: 0; width: 100%; }
-#selectable_page_list li { margin: 3px; padding: 0.4em; font-size: 1.4em; height: 18px; }
+#selectable_page_list li { margin: 2px; padding: 2px; font-size: 1.08em; }
 
 #search_area {
     float: right;
