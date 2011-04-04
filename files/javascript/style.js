@@ -14,4 +14,13 @@ $(document).ready(function() {
 			$("#collected_page_ids").attr('value', page_ids_string);
 		}
     });
+    
+    //Sortable - via jQuery UI
+	$( "#sortable ol" ).sortable({
+		stop: function() {
+			var page_ids_string = $('#sortable ol').sortable('toArray');
+			$("#collected_page_ids").attr('value', page_ids_string);
+		}
+	});
+	$( "#sortable" ).disableSelection();
 });
