@@ -13,11 +13,13 @@ has 'db_name' => (
     is => 'rw',
     lazy => 1,
     default => sub { 'mojito' },
+    clearer => 'clear_db_name',
 );
 has 'db' => (
     is => 'ro',
     lazy => 1,
     builder => '_build_db',
+    clearer => 'clear_db',
 );
 has 'collection' => (
     is => 'ro',
