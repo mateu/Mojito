@@ -1,6 +1,9 @@
 {{$NEXT}}
           [Additions]
-          - arbitrary diff potential (implemented for Web::Simple)
+          - Collections: selectable and sortable
+            routes implemented for Web::Simple
+          - arbitrary diff potential
+            route implemented for Web::Simple
           - MojoMojo table of contents support
           - MojoMojo syntax highlight support (class=prettyprint)
           
