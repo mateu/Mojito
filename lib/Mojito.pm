@@ -157,12 +157,14 @@ sub view_page {
     my $page          = $self->read( $params->{id} );
     my $rendered_page = $self->render_page($page);
     my $links         = $self->get_most_recent_links;
+    my $collections   = $self->view_collections_index;
 
     # Change class on view_area when we're in view mode.
-    $rendered_page =~
-      s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-    $rendered_page =~
-      s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+    $rendered_page =~ s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+    # Fill-in recent area
+    $rendered_page =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
+    # Fill-in collections area
+    $rendered_page =~ s/(<section\s+id="collections_area".*?>)<\/section>/$1${collections}<\/section>/si;
 
     return $rendered_page;
 }

@@ -99,6 +99,7 @@ $js_css
 <input type="text" name="word" value="Search" onclick="this.value == 'Search' ? this.value = '' : true"/>
 </form>
 </section><br />
+<section id="collections_area"></section>
 <section id="recent_area"></section>
 </nav>
 </article>

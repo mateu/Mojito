@@ -259,10 +259,10 @@ Get the links for the documents belonging to a particular feed.
 sub view_collections_index {
     my ($self, $args) = @_;
 
+    $args->{route} = '/collection/';
     my $base_url = $self->base_url;
     my $link_data = $self->get_collections_index_link_data;
-    my $list_title = '<span id="collections_index" style="font-weight: bold;">List of available collections</span><br />' . "\n";
-    $args->{route} = '/collection/';
+    my $list_title = '<span id="collections_index" style="font-weight: bold;">Page collections</span>' . "\n";
     my $list = $self->create_generic_list_of_links($link_data, $args) || "No Collections yet.  Get to <a href='${base_url}/collect'>creating them!</a>";
 
     return $list_title . $list;
@@ -338,7 +338,8 @@ sub create_generic_list_of_links {
     foreach my $datum (@{$link_data}) {
         push @links, "<a href=\"${base_href}" . $datum->{id} . '">' . $datum->{title} . "</a>";
     }
-    return join "<br />\n", '<section id="list_of_links">', @links, '</section>';
+    my $links = join "<br />\n", @links;
+    my $return = '<section id="list_of_links">' .  $links . '</section>';
 }
 
 =head2 BUILD

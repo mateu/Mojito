@@ -51,6 +51,16 @@ h1 {
     border-radius: 10px; */
 }
 
+#collections_area {
+    float: right;
+    border-left: 1px dotted #888;
+    padding-left: 0.5em;
+    width: 100%;
+/*    background-color: #cafc97;
+    -moz-border-radius: 10px;
+    border-radius: 10px; */
+}
+
 #selectable_page_list .ui-selecting { background: #FECA40; }
 #selectable_page_list .ui-selected { background: #F39814; color: white; }
 #selectable_page_list { list-style-type: none; margin: 0; padding: 0; width: 100%; }
