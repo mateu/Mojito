@@ -262,8 +262,8 @@ sub view_collections_index {
     $args->{route} = '/collection/';
     my $base_url = $self->base_url;
     my $link_data = $self->get_collections_index_link_data;
-    my $list_title = '<span id="collections_index" style="font-weight: bold;">Page collections</span>' . "\n";
-    my $list = $self->create_generic_list_of_links($link_data, $args) || "No Collections yet.  Get to <a href='${base_url}/collect'>creating them!</a>";
+    my $list_title = "<span id='collections_index' style='font-weight: bold;'>Page collections:</span> <a href='${base_url}collect'>create</a><br />\n";
+    my $list = $self->create_generic_list_of_links($link_data, $args) || "No Collections yet.  Get to <a href='${base_url}collect'>creating them!</a>";
 
     return $list_title . $list;
 }
