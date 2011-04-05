@@ -31,6 +31,7 @@ Currently it's just the <pre lang="$lang"> to <pre class="prettyprint">
 sub convert_content {
     my ($self) = (shift);
 
+    return if !$self->content;
     $self->$_ for qw/ pre_lang toc /;
     return $self->content;
 }
