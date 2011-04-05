@@ -9,7 +9,7 @@ has content => (
     is       => 'rw',
     required => 1,
 );
-has original_content => ( is => 'ro', );
+has original_content => ( is => 'rw', );
 has html_toc => (
     is => 'ro',
     lazy => 1,
