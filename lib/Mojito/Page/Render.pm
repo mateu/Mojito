@@ -183,6 +183,9 @@ sub format_for_web {
         when (/^sh_html$/i) {
             $formatted_content = "<pre class='sh_html'>$content</pre>";
         }
+        when (/^note$/i) {
+            $formatted_content = "<div class='note'>$content</div>";
+        }
         default {
             # pass HTML through as is
         }
