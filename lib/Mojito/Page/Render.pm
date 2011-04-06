@@ -61,6 +61,7 @@ Make a page for viewing in the browser.
 sub render_page {
     my ( $self, $doc ) = @_;
 
+    return 'page is not available' if !$doc;
     # Give the tmpl object a base url first before asking for the html template.
     my $base_url = $self->base_url;
     $tmpl->base_url($base_url);
