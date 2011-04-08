@@ -14,12 +14,12 @@
 pre.prettyprint { 
 	padding: 7px; 
 	background-color: ivory;
-	border: 1px dotted sienna; 
+	border: 1px solid sienna; 
 	-moz-border-radius: 10px;
     border-radius: 10px;
     /* andale mono, lucidatypewriter, courier new,  */
     font-family: andale mono, courier;
-    font-size: 0.76em;
+    font-size: 0.82em;
 
 /* Specify class=linenums on a pre to get line numbering */
 ol.linenums { margin-top: 0; margin-bottom: 0 } /* IE indents via margin-left */
