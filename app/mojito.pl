@@ -51,7 +51,7 @@ use Data::Dumper::Concise;
           # LIST Pages in chrono order
           sub (GET + /recent ) {
             my ($self) = @_;
-            my $links = $mojito->get_most_recent_links({want_delete_link => 1});
+            my $links = $mojito->recent_links;
             [ 200, [ 'Content-type', 'text/html' ], [$links] ];
           },
 

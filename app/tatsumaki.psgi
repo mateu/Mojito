@@ -11,11 +11,7 @@ use Data::Dumper::Concise;
 
 sub get {
     my ($self) = @_;
-    my $mojito = $self->request->env->{'mojito'};
-    my $output = $mojito->home_page;
-    my $links  = $mojito->get_most_recent_links;
-    $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
-    $self->write($output);
+    $self->write($self->request->env->{'mojito'}->view_home_page);
 }
 
 package HolaNameHandler;
@@ -120,7 +116,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ($self) = @_;
-    my $links = $self->request->env->{'mojito'}->get_most_recent_links({want_delete_link => 1});
+    my $links = $self->request->env->{'mojito'}->recent_links;
     $self->write($links);
 }
 

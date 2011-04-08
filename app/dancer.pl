@@ -71,7 +71,7 @@ get '/page/:id/delete' => sub {
 };
 
 get '/recent' => sub {
-    return $mojito->get_most_recent_links({want_delete_link => 1});
+    return $mojito->recent_links;
 };
 
 get '/' => sub {

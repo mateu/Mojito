@@ -34,6 +34,12 @@ has 'collections_index' => (
     builder => '_build_collections_index',
 );
 
+has 'recent_links' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_recent_links',
+);
+
 has js_css_html => (
     is => 'ro',
     isa => Mojito::Types::NoRef,
@@ -172,6 +178,12 @@ sub _build_collections_index {
     my $self = shift;
     my $list = Mojito::Model::Link->new(base_url => $self->base_url);
     return $self->wrap_page($list->view_collections_index);
+}
+
+sub _build_recent_links {
+    my $self = shift;
+    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
+    return $self->wrap_page($list->get_most_recent_links({want_delete_link => 1}));
 }
 
 =head2 sort_collection_form

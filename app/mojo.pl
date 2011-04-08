@@ -93,8 +93,7 @@ get '/page/:id/diff/:m/:n' => sub {
 };
 
 get '/recent' => sub {
-    $_[0]->render( text =>
-          $_[0]->mojito->get_most_recent_links( { want_delete_link => 1 } ) );
+    $_[0]->render( text => $_[0]->mojito->recent_links );
 };
 
 get '/' => sub {
