@@ -101,20 +101,28 @@ my $messages = [
         response_type  => 'redirect',
         status_code    => 301,
     },
+    {
+        name           => 'DiffPage',
+        route          => '/;page/:id/diff/:m/:n',
+        request_method => 'get',
+        response       => '$mojito->diff_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },    
 ];
 
-#foreach my $message ( @{$messages} ) {
-#    say transform_mojo($message);
-#}
+foreach my $message ( @{$messages} ) {
+    say transform_mojo($message);
+}
 #foreach my $message ( @{$messages} ) {
 #    say transform_dancer($message);
 #}
 #foreach my $message ( @{$messages} ) {
 #    say transform_tatsumaki($message);
 #}
-foreach my $message ( @{$messages} ) {
-    say transform_web_simple($message);
-}
+#foreach my $message ( @{$messages} ) {
+#    say transform_web_simple($message);
+#}
 
 sub transform_dancer {
     my $message = shift;
