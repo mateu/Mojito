@@ -85,6 +85,7 @@ has tmpl => (
         qw(
           template
           home_page
+          recent_links
           collect_page_form
           collections_index
           collection_page
