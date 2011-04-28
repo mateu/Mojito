@@ -1,3 +1,5 @@
+use strictures 1;
+use Test::More;
 use WWW::Mechanize;
 use Mojito::Page::Publish;
 use 5.010;
@@ -11,4 +13,6 @@ BEGIN {
 }
 
 my $pub = Mojito::Page::Publish->new(target_page => 'hunter/mi-test', content => 'Visca el Barça');
-$pub->publish;
+ok($pub->publish);
+
+done_testing();

@@ -75,7 +75,7 @@ sub publish {
     $mech->form_with_fields('body');
     $mech->field( body => $self->content );
     $mech->click_button( value => 'Save' );
-    return;
+    return $mech->success;
 }
 
 1
