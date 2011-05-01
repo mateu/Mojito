@@ -79,13 +79,13 @@ use Data::Dumper::Concise;
             $params->{id} = $id;
             my $redirect_url = $mojito->update_page($params);
 
-            return [ 301, [ Location => $redirect_url ], [] ];
+            [ 301, [ Location => $redirect_url ], [] ];
           },
 
           # DELETE a Page
           sub (GET + /page/*/delete ) {
             my ( $self, $id ) = @_;
-            return [ 301, [ Location => $mojito->delete_page({id => $id}) ], [] ];
+            [ 301, [ Location => $mojito->delete_page({id => $id}) ], [] ];
           },
 
           # Diff a Page: $m and $n are the number of ^ we'll use from HEAD.
@@ -119,7 +119,7 @@ use Data::Dumper::Concise;
           sub ( POST + /collect + %* ) {
               my ($self, $params) = @_;
               my $redirect_url = $mojito->collect($params);
-              return [ 301, [ Location => $redirect_url ], [] ];
+              [ 301, [ Location => $redirect_url ], [] ];
           },
 
           sub ( GET + /collections ) {
@@ -143,7 +143,14 @@ use Data::Dumper::Concise;
               my ($self, $id, $params) = @_;
               $params->{id} = $id;
               my $redirect_url = $mojito->sort_collection($params);
-              return [ 301, [ Location => $redirect_url ], [] ];
+              [ 301, [ Location => $redirect_url ], [] ];
+          },
+
+          sub ( POST + /publish + %* ) {
+              my ($self, $params) = @_;
+              my $response_href = $mojito->publish_page($params);
+              my $JSON_response = JSON::encode_json($response_href);
+              [ 200, [ 'Content-type', 'application/json' ], [$JSON_response] ];
           },
 
           sub (GET + /hola/* ) {
