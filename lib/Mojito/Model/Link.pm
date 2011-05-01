@@ -262,7 +262,7 @@ sub view_collections_index {
     $args->{route} = '/collection/';
     my $base_url = $self->base_url;
     my $link_data = $self->get_collections_index_link_data;
-    my $list_title = "<span id='collections_index' style='font-weight: bold;'>Page collections:</span> <a href='${base_url}collect'>create</a><br />\n";
+    my $list_title = "<span id='collections_index' style='font-weight: bold;'>Page Collections:</span> <a href='${base_url}collect'>create one</a><br />\n";
     my $list = $self->create_generic_list_of_links($link_data, $args) || "No Collections yet.  Get to <a href='${base_url}collect'>creating them!</a>";
 
     return $list_title . $list;
@@ -336,7 +336,7 @@ sub create_generic_list_of_links {
     my $base_href = $base_url . $route;
     my @links;
     foreach my $datum (@{$link_data}) {
-        push @links, "<a href=\"${base_href}" . $datum->{id} . '">' . $datum->{title} . "</a>";
+        push @links, '&middot; ' . "<a href=\"${base_href}" . $datum->{id} . '">' . $datum->{title} . "</a>";
     }
     my $links = join "<br />\n", @links;
     my $return = '<section id="list_of_links">' .  $links . '</section>';
