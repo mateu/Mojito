@@ -65,6 +65,8 @@ sub render_page {
     # Give the tmpl object a base url first before asking for the html template.
     my $base_url = $self->base_url;
     $tmpl->base_url($base_url);
+    # Give the template a page id if it exists
+    $tmpl->page_id($doc->{'_id'});
     my $page = $tmpl->template;
 
     if (my $title = $doc->{title}) {
