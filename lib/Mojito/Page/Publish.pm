@@ -20,22 +20,24 @@ with('Mojito::Role::DB');
 with('Mojito::Role::Config');
 
 has target_base_url => (
-    is      => 'ro',
+    is      => 'rw',
     default => sub { $_[0]->config->{MM_base_url} },
 );
 has user => (
-    is      => 'ro',
+    is      => 'rw',
     default => sub { $_[0]->config->{MM_user} },
 );
 has password => (
-    is      => 'ro',
+    is      => 'rw',
     default => sub { $_[0]->config->{MM_password} },
 );
 has source_page => ( is => 'rw', );
 has target_page => ( is => 'rw', );
 has content     => (
     is       => 'rw',
-    required => 1,
+);
+has page_id => (
+    is => 'rw',
 );
 has mech => (
     is      => 'ro',
