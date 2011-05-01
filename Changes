@@ -1,14 +1,22 @@
 {{$NEXT}}
-          [Additions]
+          [Enchantments]
           - Collections: selectable and sortable
             routes implemented for Web::Simple
           - arbitrary diff potential
+            route implemented for Web::Simple
+          - Publish to MojoMojo
             route implemented for Web::Simple
           - MojoMojo table of contents support
           - MojoMojo syntax highlight support (class=prettyprint)
           
           [Refinements]
           - the css of both syntax highlighters: prettyprint and SHJS, has been refined
+          - user name and email added to git commits
+          
+          [Remedies]
+          - Web::Simple app/mojito.pl is becoming verse in utf8 (Tatsu remains, 
+            Dancer and Mojo already got it going on.)
+          - preserve title during auto-save
 
 0.09      2011-03-24 22:46:23 America/Denver
           [Remedies]
