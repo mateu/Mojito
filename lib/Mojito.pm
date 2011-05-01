@@ -85,6 +85,7 @@ sub preview_page {
 # TODO: add title, page and body html to page_struct like above.
 #       Do we even need these two branches given that we're autosaving now.
 # TODO: on new page, insert to get an id then update to that from the start
+        $page_struct->{title} = $params->{page_title}||'no title';
         $self->update( $params->{'mongo_id'}, $page_struct );
     }
 
@@ -139,9 +140,8 @@ sub edit_page_form {
 
     my $page             = $self->read( $params->{id} );
     my $rendered_content = $self->render_body($page);
-    my $source           = $page->{page_source};
 
-    return $self->fillin_edit_page( $source, $rendered_content, $params->{id}, $page->{default_format} );
+    return $self->fillin_edit_page( $page, $rendered_content, $params->{id} );
 }
 
 =head2 view_page
@@ -333,6 +333,28 @@ sub delete_page {
     $self->rm_page($params->{id});
 
     return $self->base_url . 'recent';
+}
+
+=head2 publish_page
+
+Publish a page - Currently this means POST to a MM instance.
+
+=cut
+
+sub publish_page {
+    my ( $self, $params ) = @_;
+    
+     my $doc = $self->read($params->{id});
+     my $content = $doc->{page_source};
+     $self->publisher->content($content);
+     $self->publisher->target_base_url($params->{target_base_url});
+     $self->publisher->target_page($params->{name});
+     $self->publisher->user($params->{user});
+     $self->publisher->password($params->{password});
+     my $result = $self->publisher->publish;
+     # return redirect location
+     my $redirect_url =  $self->publisher->target_base_url .  $self->publisher->target_page;
+     my $response_href = { redirect_url => $redirect_url, result => $result };
 }
 
 =head2 bench
