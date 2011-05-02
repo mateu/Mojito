@@ -5,7 +5,7 @@ use Mojito::Page::Publish;
 
 has publisher => (
     is => 'ro',
-    isa => sub { die "Need a Collection::CRUD object" unless $_[0]->isa('Mojito::Page::Publish') },
+    isa => sub { die "Need a Page::Publish object" unless $_[0]->isa('Mojito::Page::Publish') },
     lazy => 1,
     builder => '_build_publisher',
 );

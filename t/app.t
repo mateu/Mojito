@@ -77,7 +77,7 @@ foreach my $app_file (@app_files) {
         $request = POST "/page/${id}/edit", [
             content => "h1. Perl Rolls", 
             wiki_language => 'textile', 
-            commit_message => 'note the flexibity of Perl',];
+            commit_message => 'note the flexibility of Perl',];
         $response = $client_cb->($request);
         like $response->code, qr/^(?:301|302)$/, 'post edit page redirect';
 
