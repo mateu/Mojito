@@ -92,6 +92,47 @@ get '/page/:id/diff/:m/:n' => sub {
     );
 };
 
+get '/collect' => sub {
+    my ($self) = (shift);
+    $self->render( text => $self->mojito->collect_page_form );
+};
+
+post '/collect' => sub {
+    my ($self) = (shift);
+    $self->redirect_to($self->mojito->collect($self->req->params->to_hash));
+};
+
+get '/collection/:id' => sub {
+    my ($self) = (shift);
+    my $params;
+    $params->{id} = $self->param('id');
+    $self->render( text => $self->mojito->collection_page($params) );
+};
+
+get '/collections' => sub {
+    my ($self) = (shift);
+    $self->render( text => $self->mojito->collections_index );
+};
+
+get '/collection/:id/sort' => sub {
+    my ($self) = (shift);
+    my $params;
+    $params->{id} = $self->param('id');
+    $self->render( text => $self->mojito->sort_collection_form($params) );
+};
+
+post '/collection/:id/sort' => sub {
+    my ($self) = (shift);
+    my $params = $self->req->params->to_hash;
+    $params->{id} = $self->param('id');
+    $self->redirect_to($self->mojito->sort_collection($params));
+};
+
+post '/publish' => sub {
+    my ($self) = (shift);
+    $self->render( json => $self->mojito->publish_page($self->req->params->to_hash) );
+};
+
 get '/recent' => sub {
     $_[0]->render( text => $_[0]->mojito->recent_links );
 };

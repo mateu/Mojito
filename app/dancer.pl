@@ -62,6 +62,10 @@ get '/search/:word' => sub {
     return $mojito->search(scalar params);
 };
 
+get '/page/:id/diff/:m/:n' => sub {
+    return $mojito->diff_page(scalar params);
+};
+
 get '/page/:id/diff' => sub {
     return $mojito->view_page_diff(scalar params);
 };
@@ -72,6 +76,34 @@ get '/page/:id/delete' => sub {
 
 get '/recent' => sub {
     return $mojito->recent_links;
+};
+
+get '/collect' => sub {
+    return $mojito->collect_page_form(scalar params);
+};
+
+post '/collect' => sub {
+    redirect $mojito->collect(scalar params);
+};
+
+get '/collection/:id' => sub {
+    return $mojito->collection_page(scalar params);
+};
+
+get '/collections' => sub {
+    return $mojito->collections_index;
+};
+
+get '/collection/:id/sort' => sub {
+    return $mojito->sort_collection_form(scalar params);
+};
+
+post '/collection/:id/sort' => sub {
+    redirect $mojito->sort_collection(scalar params);
+};
+
+post '/publish' => sub {
+    to_json( $mojito->publish_page(scalar params) );
 };
 
 get '/' => sub {
