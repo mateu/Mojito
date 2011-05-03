@@ -1,8 +1,10 @@
 {{$NEXT}}
+
+0.10      2011-05-02 21:27:52 America/Boise
           [Enchantments]
-          - Collections: creatble, selectable and sortable
+          - Collections: creatable, selectable and sortable
           - arbitrary diff potential
-          - Publish to MojoMojo
+          - Publish to MojoMojo feature
           - MojoMojo table of contents support
           - MojoMojo syntax highlight support (class=prettyprint)
           
