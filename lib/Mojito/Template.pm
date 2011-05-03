@@ -204,9 +204,9 @@ A form to sort a collection of pages.
 =cut
 
 sub sort_collection_form {
-    my ($self, $collection_id) = (shift, shift);
+    my ($self, $params) = (shift, shift);
     my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_sortable_page_list({ collection_id => $collection_id }));
+    return $self->wrap_page($list->view_sortable_page_list({ collection_id => $params->{id} }));
 }
 
 =head2 collection_page
@@ -216,9 +216,9 @@ Given a collection id, show a list of belonging pages.
 =cut
 
 sub collection_page {
-    my ($self, $collection_id) = (shift, shift);
+    my ($self, $params) = (shift, shift);
     my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_collection_page({ collection_id => $collection_id }));
+    return $self->wrap_page($list->view_collection_page({ collection_id => $params->{id} }));
 }
 
 sub _build_home_page {

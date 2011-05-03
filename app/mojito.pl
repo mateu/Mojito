@@ -111,8 +111,8 @@ use Data::Dumper::Concise;
           },
 
           sub ( GET + /collect ) {
-              my ($self, $params) = @_;
-              my $output = $mojito->collect_page_form($params);
+              my ($self, ) = @_;
+              my $output = $mojito->collect_page_form();
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
 
@@ -129,13 +129,13 @@ use Data::Dumper::Concise;
           },
           sub ( GET + /collection/* ) {
               my ($self, $collection_id) = @_;
-              my $output = $mojito->collection_page($collection_id);
+              my $output = $mojito->collection_page({id => $collection_id});
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
           
           sub ( GET + /collection/*/sort ) {
               my ($self, $collection_id) = @_;
-              my $output = $mojito->sort_collection_form($collection_id);
+              my $output = $mojito->sort_collection_form({id => $collection_id});
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
 
