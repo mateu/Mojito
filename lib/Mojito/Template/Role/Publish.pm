@@ -19,7 +19,8 @@ has publish_form => (
 );
 sub _build_publish_form {
     my $self = shift;
-    
+  
+    return if not defined $self->publisher->target_base_url;  
     my $target_base_url = $self->publisher->target_base_url;
     my $user = $self->publisher->user;
     my $password = $self->publisher->password;

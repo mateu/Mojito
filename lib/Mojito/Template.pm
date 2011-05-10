@@ -71,7 +71,7 @@ sub _build_template {
     my $js_css = $self->js_css_html;
     my $page_id = $self->page_id||'';
     my $publish_form = '';
-    $publish_form = $self->publish_form if $page_id;
+    $publish_form = $self->publish_form||'' if $page_id;
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html>
