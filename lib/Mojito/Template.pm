@@ -89,6 +89,7 @@ $js_css
 <nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>
 </header>
 <section id="message_area"></section>
+<section id="collection_nav_area"></section>
 <article id="body_wrapper">
 <input type="hidden" id ="page_id" name="page_id" value="$page_id" />
 <section id="edit_area">

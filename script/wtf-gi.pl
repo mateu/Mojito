@@ -128,6 +128,22 @@ my $messages = [
         response_type  => 'json',
         status_code    => 200,
     },
+    {
+        name           => 'CollectedPage',
+        route          => '/collection/:collection_id/page/:page_id',
+        request_method => 'get',
+        response       => '$mojito->view_page_collected($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'MergeCollection',
+        route          => '/collection/:collection_id/export',
+        request_method => 'get',
+        response       => '$mojito->merge_collection($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
 ];
 
 sub get_messages_by_name {

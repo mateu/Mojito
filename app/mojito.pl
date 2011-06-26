@@ -145,6 +145,15 @@ use Data::Dumper::Concise;
               my $redirect_url = $mojito->sort_collection($params);
               [ 301, [ Location => $redirect_url ], [] ];
           },
+          sub ( GET + /collection/*/page/* ) {
+              my ($self, $collection_id, $page_id) = @_;
+              my $params =  {
+                  collection_id => $collection_id,
+                  page_id => $page_id
+              };
+              my $output = $mojito->view_page_collected($params);
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },
 
           sub ( POST + /publish + %* ) {
               my ($self, $params) = @_;

@@ -103,6 +103,7 @@ has linker => (
             get_most_recent_links
             get_feed_links
             view_collections_index
+            view_collection_nav
           )
     ],
     writer => '_build_link',

@@ -197,6 +197,40 @@ sub view_page_public {
     return $rendered_page;
 }
 
+=head2 view_page_collected
+
+Given a page id and a collection id we retrieve the collected page source
+from the db and return it as an HTML rendered page to the browser.  This method 
+is much like the view_page() method, but is setup for viewing pages in a collection
+with a collection navigation: next, previous, index (toc)
+
+=cut
+
+sub view_page_collected {
+    my ( $self, $params ) = @_;
+
+    my $page          = $self->read( $params->{page_id} );
+    my $rendered_page = $self->render_page($page);
+
+    # Change class on view_area when we're in view mode.
+    $rendered_page =~
+      s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+
+    # Strip out Edit and New links (even though they are Auth::Digest Protected)
+    # Remove edit, new links and the recent area
+    $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
+    $rendered_page =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
+    $rendered_page =~ s/<section id="recent_area".*?><\/section>//si;
+    $rendered_page =~ s/<section id="publish_area">.*?<\/section>//si;
+    $rendered_page =~ s/<section id="collections_area"><\/section>//si;
+    $rendered_page =~ s/<section id="search_area">.*?<\/section>//si;
+    # Fill-in collection navigation area
+    my $collection_nav = $self->view_collection_nav( $params );
+    $rendered_page =~ s/(<section\s+id="collection_nav_area".*?>)<\/section>/$1${collection_nav}<\/section>/si;
+
+    return $rendered_page;
+}
+
 =head2 view_home_page
 
 Create the view for the base of the application.

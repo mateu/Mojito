@@ -32,5 +32,5 @@ my $mojito_auth = Mojito::Auth->new(
 
 my $id = $mojito_auth->add_user;
 
-say 'Added user: ', $mojito_auth->username, " with id: $id";
+say "\nAdded user: ", $mojito_auth->username, " with id: $id\n";
 
