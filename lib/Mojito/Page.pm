@@ -23,6 +23,7 @@ use Mojito::Page::Parse;
 use Mojito::Page::Render;
 use Mojito::Page::CRUD;
 use Mojito::Page::Git;
+use Mojito::Page::Publish;
 use Mojito::Template;
 use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
@@ -71,10 +72,7 @@ has editer => (
 has collector => (
     is      => 'ro',
     isa     => sub { die "Need a Collection::CRUD object" unless $_[0]->isa('Mojito::Collection::CRUD') },
-    handles => [
-        qw(
-          )
-    ],
+    handles => [ qw( ) ],
     writer => '_build_collect',
 );
 
@@ -105,6 +103,7 @@ has linker => (
             get_most_recent_links
             get_feed_links
             view_collections_index
+            view_collection_nav
           )
     ],
     writer => '_build_link',
@@ -123,6 +122,14 @@ has gitter => (
     ],
     writer => '_build_git',
 );
+
+has publisher => (
+    is      => 'ro',
+    isa     => sub { die "Need a PagePublish object" unless $_[0]->isa('Mojito::Page::Publish') },
+    handles => [ qw( ) ],
+    writer => '_build_publish',
+);
+
 =head1 Methods
 
 =head2 BUILD
@@ -143,7 +150,7 @@ sub BUILD {
     $self->_build_git(Mojito::Page::Git->new( $constructor_args_href));
     $self->_build_template(Mojito::Template->new( $constructor_args_href));
     $self->_build_link(Mojito::Model::Link->new( $constructor_args_href));
-
+    $self->_build_publish(Mojito::Page::Publish->new( $constructor_args_href));
 }
 
 1

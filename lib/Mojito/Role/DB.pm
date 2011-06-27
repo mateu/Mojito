@@ -48,4 +48,17 @@ sub _build_collection  {
     my $collection_name = $self->collection_name;
     $self->db->${collection_name};
 }
+
+=head1 Methods
+
+=head2 BUILD
+
+Set a test DB when RELEASE_TESTING
+
+=cut
+
+sub BUILD {
+    my ($self) = (shift);
+    $self->db_name('mojito_test') if $ENV{RELEASE_TESTING};
+}
 1;

@@ -11,7 +11,7 @@ use Data::Dumper::Concise;
 
 sub get {
     my ($self) = @_;
-    $self->write($self->request->env->{'mojito'}->view_home_page);
+    $self->write( $self->request->env->{'mojito'}->view_home_page );
 }
 
 package HolaNameHandler;
@@ -41,7 +41,9 @@ sub get {
 
 sub post {
     my ($self) = @_;
-    my $redirect_url = $self->request->env->{'mojito'}->create_page( $self->request->parameters );
+    my $redirect_url =
+      $self->request->env->{'mojito'}
+      ->create_page( $self->request->parameters );
     $self->response->redirect($redirect_url);
 }
 
@@ -64,7 +66,7 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->write($self->request->env->{'mojito'}->view_page({ id => $id }));
+    $self->write( $self->request->env->{'mojito'}->view_page( { id => $id } ) );
 }
 
 package ViewPagePublic;
@@ -72,7 +74,8 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->write($self->request->env->{'mojito'}->view_page_public({ id => $id }));
+    $self->write(
+        $self->request->env->{'mojito'}->view_page_public( { id => $id } ) );
 }
 
 package EditPage;
@@ -80,7 +83,8 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->write($self->request->env->{'mojito'}->edit_page_form({id => $id}));
+    $self->write(
+        $self->request->env->{'mojito'}->edit_page_form( { id => $id } ) );
 }
 
 sub post {
@@ -89,7 +93,7 @@ sub post {
     my $params = $self->request->parameters;
     $params->{id} = $id;
     my $redirect_url = $self->request->env->{'mojito'}->update_page($params);
-    
+
     $self->response->redirect($redirect_url);
 }
 
@@ -98,17 +102,26 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $search_word ) = @_;
-    $self->write($self->request->env->{'mojito'}->search({word => $search_word}));
+    $self->write(
+        $self->request->env->{'mojito'}->search( { word => $search_word } ) );
+}
+
+package LastDiffPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ($self) = (shift);
+    $self->write(
+        $self->request->env->{'mojito'}->view_page_diff( { id => $_[0] } ) );
 }
 
 package DiffPage;
 use parent qw(Tatsumaki::Handler);
 
 sub get {
-    my ( $self, $id ) = @_;
-    my $params;
-    $params->{'id'} = $id;
-    $self->write($self->request->env->{'mojito'}->view_page_diff($params));
+    my ($self) = (shift);
+    $self->write( $self->request->env->{'mojito'}
+          ->view_page_diff( { id => $_[0], m => $_[1], n => $_[2] } ) );
 }
 
 package RecentPage;
@@ -124,7 +137,7 @@ package FeedPage;
 use parent qw(Tatsumaki::Handler);
 
 sub get {
-    my ($self, $feed) = @_;
+    my ( $self, $feed ) = @_;
     my $links = $self->request->env->{'mojito'}->get_feed_links($feed);
     $self->write($links);
 }
@@ -134,7 +147,66 @@ use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
-    $self->response->redirect($self->request->env->{mojito}->delete_page({id => $id}));
+    $self->response->redirect(
+        $self->request->env->{mojito}->delete_page( { id => $id } ) );
+}
+
+package CollectPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, ) = @_;
+    $self->write( $self->request->env->{'mojito'}->collect_page_form );
+}
+
+sub post {
+    my ( $self, ) = @_;
+    my $redirect_url = $self->request->env->{'mojito'}->collect($self->request->parameters);
+    $self->response->redirect($redirect_url);
+}
+package CollectionPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $params->{id} = $id;
+    $self->write($self->request->env->{'mojito'}->collection_page($params));
+}
+
+package CollectionsIndex;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my $self = (shift);
+    $self->write($self->request->env->{'mojito'}->collections_index);
+}
+
+package SortCollection;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $params->{id} = $id;
+    $self->write($self->request->env->{'mojito'}->sort_collection_form($params));
+}
+
+sub post {
+    my ($self, $id) = @_;
+    $params->{id} = $id;
+    @{$params}{ keys %{$self->request->parameters} } = values %{$self->request->parameters};
+    my $redirect_url = $self->request->env->{'mojito'}->sort_collection($params);
+    $self->response->redirect($redirect_url);
+}
+
+package PublishPage;
+use parent qw(Tatsumaki::Handler);
+use Data::Dumper::Concise;
+
+sub post {
+    my ($self, ) = @_;
+    my $json = JSON::encode_json( $self->request->env->{'mojito'}->publish_page($self->request->parameters) );
+    warn "JSON: ", Dumper $json;
+    $self->write($json);
 }
 
 package main;
@@ -145,28 +217,35 @@ use Data::Dumper::Concise;
 
 my $app = Tatsumaki::Application->new(
     [
-        '/'                  => 'MainHandler',
-        '/hola/(\w+)'        => 'HolaNameHandler',
-        '/bench'             => 'BenchHandler',
-        '/recent'            => 'RecentPage',
-        '/page/(\w+)/edit'   => 'EditPage',
-        '/page/(\w+)/delete' => 'DeletePage',
-        '/page/(\w+)'        => 'ViewPage',
-        '/public/page/(\w+)' => 'ViewPagePublic',
-        '/page'              => 'CreatePage',
-        '/preview'           => 'PreviewPage',
-        '/search/(\w+)'      => 'SearchPage',
-        '/public/feed/(\w+)' => 'FeedPage',
+        '/'                            => 'MainHandler',
+        '/hola/(\w+)'                  => 'HolaNameHandler',
+        '/bench'                       => 'BenchHandler',
+        '/recent'                      => 'RecentPage',
+        '/page/(\w+)/edit'             => 'EditPage',
+        '/page/(\w+)/delete'           => 'DeletePage',
+        '/page/(\w+)'                  => 'ViewPage',
+        '/public/page/(\w+)'           => 'ViewPagePublic',
+        '/page'                        => 'CreatePage',
+        '/preview'                     => 'PreviewPage',
+        '/search/(\w+)'                => 'SearchPage',
+        '/public/feed/(\w+)'           => 'FeedPage',
+        '/page/(\w+)/diff/(\w+)/(\w+)' => 'DiffPage',
+        '/page/(\w+)/diff'             => 'LastDiffPage',
+        '/collection/(\w+)/sort'       => 'SortCollection',
+        '/collection/(\w+)'            => 'CollectionPage',
+        '/collections'                 => 'CollectionsIndex',
+        '/collect'                     => 'CollectPage',
+        '/publish'                     => 'PublishPage',
     ]
 );
 
 builder {
-    enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ } 
-      "Auth::Digest", 
-      realm => "Mojito", 
-      secret => Mojito::Auth::_secret,
+    enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
+    "Auth::Digest",
+      realm           => "Mojito",
+      secret          => Mojito::Auth::_secret,
       password_hashed => 1,
-      authenticator => Mojito::Auth->new->digest_authen_cb;
+      authenticator   => Mojito::Auth->new->digest_authen_cb;
     enable "+Mojito::Middleware";
     enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
 

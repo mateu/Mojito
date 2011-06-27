@@ -7,6 +7,7 @@ use Data::Dumper::Concise;
 
 with('Mojito::Template::Role::Javascript');
 with('Mojito::Template::Role::CSS');
+with('Mojito::Template::Role::Publish');
 
 has 'template' => (
     is      => 'rw',
@@ -14,7 +15,11 @@ has 'template' => (
     builder => '_build_template',
 );
 
-has base_url => ( is => 'rw', );
+has 'page_id' => (
+    is => 'rw',
+);
+
+has 'base_url' => ( is => 'rw', );
 
 has 'home_page' => (
     is      => 'rw',
@@ -64,6 +69,9 @@ sub _build_template {
     my $base_url  = $self->base_url;
     my $mojito_version = $self->config->{VERSION};
     my $js_css = $self->js_css_html;
+    my $page_id = $self->page_id||'';
+    my $publish_form = '';
+    $publish_form = $self->publish_form||'' if $page_id;
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html>
@@ -81,7 +89,9 @@ $js_css
 <nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>
 </header>
 <section id="message_area"></section>
+<section id="collection_nav_area"></section>
 <article id="body_wrapper">
+<input type="hidden" id ="page_id" name="page_id" value="$page_id" />
 <section id="edit_area">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <div id="wiki_language">
@@ -92,6 +102,7 @@ $js_css
     </div>
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <input id="wiki_language" name="wiki_language" type="hidden" form="editForm" value="" />
+    <input id="page_title" name="page_title" type="hidden" form="editForm" value="" />
     <textarea id="content"  name="content" rows=32 required="required"/></textarea>
     <input id="commit_message" name="commit_message" value="commit message" onclick="this.value == 'commit message' ? this.value = '' : true"/>
     <input id="submit_save" name="submit" type="submit" value="Save" style="font-size: 66.7%;" />
@@ -105,6 +116,7 @@ $js_css
 <input type="text" name="word" value="Search" onclick="this.value == 'Search' ? this.value = '' : true"/>
 </form>
 </section><br />
+<section id="publish_area">$publish_form</section>
 <section id="collections_area"></section>
 <section id="recent_area"></section>
 </nav>
@@ -116,7 +128,7 @@ $js_css
 </body>
 </html>
 END_HTML
-
+    $edit_page =~ s/<script><\/script>/<script>mojito.base_url = '${base_url}';<\/script>/s;
     return $edit_page;
 }
 
@@ -193,9 +205,9 @@ A form to sort a collection of pages.
 =cut
 
 sub sort_collection_form {
-    my ($self, $collection_id) = (shift, shift);
+    my ($self, $params) = (shift, shift);
     my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_sortable_page_list({ collection_id => $collection_id }));
+    return $self->wrap_page($list->view_sortable_page_list({ collection_id => $params->{id} }));
 }
 
 =head2 collection_page
@@ -205,9 +217,9 @@ Given a collection id, show a list of belonging pages.
 =cut
 
 sub collection_page {
-    my ($self, $collection_id) = (shift, shift);
+    my ($self, $params) = (shift, shift);
     my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_collection_page({ collection_id => $collection_id }));
+    return $self->wrap_page($list->view_collection_page({ collection_id => $params->{id} }));
 }
 
 sub _build_home_page {
@@ -256,7 +268,11 @@ Get the contents of the edit page proper given the starting template and some da
 =cut
 
 sub fillin_edit_page {
-    my ( $self, $page_source, $page_view, $mongo_id, $wiki_language ) = @_;
+    my ( $self, $page, $page_view, $mongo_id ) = @_;
+
+    my $page_source   = $page->{page_source}; 
+    my $wiki_language = $page->{default_format}; 
+    my $page_title   = $page->{title}||'no title'; 
 
     my $output   = $self->template;
     my $base_url = $self->base_url;
@@ -264,6 +280,7 @@ sub fillin_edit_page {
 s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
     $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
     $output =~ s/(<input id="wiki_language".*?value=)""/$1"${wiki_language}"/si;
+    $output =~ s/(<input id="page_title".*?value=)""/$1"${page_title}"/si;
     $output =~
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
     $output =~
@@ -283,6 +300,11 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
 
     # body with no style
     $output =~ s/<body.*?>/<body>/si;
+    
+    # Give the page a title
+    if ($page_title) {
+       $output =~ s/<title>.*?<\/title>/<title>${page_title}<\/title>/si;
+    }
 
     return $output;
 }

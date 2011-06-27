@@ -19,9 +19,9 @@ $(document).ready(function() {
 		clearTimeout(resizeTimer);
 		resizeTimer = setTimeout(resizeEditArea, 100);
 	});
-	$('textarea#content').autoResize({ 
-	    extraSpace : 60
-    }).trigger('change');
+//	$('textarea#content').autoResize({ 
+//	    extraSpace : 60
+//    }).trigger('change');
 	
 	prettyPrint();
 	sh_highlightDocument();
@@ -63,6 +63,7 @@ function got_content() {
 fetchPreview = function(extra_action) {
 	var content = $('textarea#content').val();
 	var mongo_id = $('#mongo_id').val();
+	var page_title = $('#page_title').val();
 	// Get wiki language from selected form value on create
 	var wiki_language = $('#wiki_language input:radio:checked').val();
 	if (!wiki_language) {
@@ -73,6 +74,7 @@ fetchPreview = function(extra_action) {
 	var data = { 
 			 content: content,
 			 mongo_id: mongo_id,
+			 page_title: page_title,
 			 wiki_language: wiki_language,
 			 extra_action: extra_action
 		   };
@@ -80,7 +82,7 @@ fetchPreview = function(extra_action) {
 	if (!content || content.match(/^\s+$/)) {
 		return false;
 	}
-
+	mojito.preview_url = mojito.base_url + 'preview'; 
 	var ajaxOptions = {
 		type : 'POST',
 		url  : mojito.preview_url,
@@ -92,7 +94,7 @@ fetchPreview = function(extra_action) {
 			sh_highlightDocument();
 	    },
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			alert("Error: " + textStatus + " thrown: " + errorThrown); 
+			$('#message_area').html("JS Error: " + textStatus + " thrown: " + errorThrown);
 		},
 		dataType : 'json'
 	};

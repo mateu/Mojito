@@ -1,90 +1,109 @@
 use strictures 1;
 use 5.010;
+use Getopt::Long;
 use Data::Dumper::Concise;
 
 =head1 Usage
 
-    perl -Ilib script/wtf-gi.pl
+    perl -Ilib script/wtf-gi.pl --name PublishPage --transform web_simple
     
 =cut
 
+my ( $name, $transform );
+
+my $result = GetOptions(
+    'name|n=s'      => \$name,
+    'transform|t=s' => \$transform,
+);
+
+# prefix tranform
+$transform = 'transform_' . $transform;
+
 my $messages = [
 
-    #    {
-    #        name           => 'ViewPage',
-    #        request_method => 'get',
-    #        route          => '/page/:id',
-    #        response       => '$mojito->view_page($params)',
-    #        response_type  => 'html'
-    #    },
-    #    {
-    #        name           => 'EditPage',
-    #        request_method => 'get',
-    #        route          => '/page/:id/edit',
-    #        response       => '$mojito->edit_page_form($params)',
-    #        response_type  => 'html',
-    #    },
-    #    {
-    #        name           => 'EditPage',
-    #        request_method => 'post',
-    #        route          => '/page/:id/edit',
-    #        response       => '$mojito->edit_page($params)',
-    #        response_type  => 'redirect',
-    #    },
-    #    {
-    #        name           => 'SearchPage',
-    #        request_method => 'get',
-    #        route          => '/search/:word',
-    #        response       => '$mojito->search($params)',
-    #        response_type  => 'html',
-    #    },
-    #    {
-    #        name           => 'SearchPage',
-    #        request_method => 'post',
-    #        route          => '/search',
-    #        response       => '$mojito->search($params)',
-    #        response_type  => 'html',
-    #        status_code    => 200,
-    #    },
-    #    {
-    #        name           => 'DiffPage',
-    #        request_method => 'get',
-    #        route          => '/page/:id/diff',
-    #        response       => '$mojito->view_page_diff($params)',
-    #        response_type  => 'html',
-    #    },
-    #    {
-    #        name           => 'CollectPage',
-    #        request_method => 'get',
-    #        route          => '/collect',
-    #        response       => '$mojito->collect_page_form($params)',
-    #        response_type  => 'html',
-    #        status_code    => 200,
-    #    },
-    #    {
-    #        name           => 'CollectPage',
-    #        request_method => 'post',
-    #        route          => '/collect',
-    #        response       => '$mojito->collect($params)',
-    #        response_type  => 'html',
-    #        status_code    => 200,
-    #    },
-    #    {
-    #        name           => 'CollectionsIndex',
-    #        route          => '/collections',
-    #        request_method => 'get',
-    #        response       => '$mojito->collections_index()',
-    #        response_type  => 'html',
-    #        status_code    => 200,
-    #    },
-    #    {
-    #        name           => 'CollectionPage',
-    #        route          => '/collection/:id',
-    #        request_method => 'get',
-    #        response       => '$mojito->collection_page($params)',
-    #        response_type  => 'html',
-    #        status_code    => 200,
-    #    },
+    {
+        name           => 'ViewPage',
+        request_method => 'get',
+        route          => '/page/:id',
+        response       => '$mojito->view_page($params)',
+        response_type  => 'html'
+    },
+    {
+        name           => 'EditPage',
+        request_method => 'get',
+        route          => '/page/:id/edit',
+        response       => '$mojito->edit_page_form($params)',
+        response_type  => 'html',
+    },
+    {
+        name           => 'EditPage',
+        request_method => 'post',
+        route          => '/page/:id/edit',
+        response       => '$mojito->edit_page($params)',
+        response_type  => 'redirect',
+    },
+    {
+        name           => 'SearchPage',
+        request_method => 'get',
+        route          => '/search/:word',
+        response       => '$mojito->search($params)',
+        response_type  => 'html',
+    },
+    {
+        name           => 'SearchPage',
+        request_method => 'post',
+        route          => '/search',
+        response       => '$mojito->search($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'LastDiffPage',
+        request_method => 'get',
+        route          => '/page/:id/diff',
+        response       => '$mojito->view_page_diff($params)',
+        response_type  => 'html',
+    },
+    {
+        name           => 'DiffPage',
+        route          => '/page/:id/diff/:m/:n',
+        request_method => 'get',
+        response       => '$mojito->diff_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'CollectPage',
+        request_method => 'get',
+        route          => '/collect',
+        response       => '$mojito->collect_page_form($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'CollectPage',
+        request_method => 'post',
+        route          => '/collect',
+        response       => '$mojito->collect($params)',
+        response_type  => 'redirect',
+        status_code    => 301,
+    },
+    {
+        name           => 'CollectionsIndex',
+        route          => '/collections',
+        request_method => 'get',
+        response       => '$mojito->collections_index()',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'CollectionPage',
+        route          => '/collection/:id',
+        request_method => 'get',
+        response       => '$mojito->collection_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
     {
         name           => 'SortCollection',
         route          => '/collection/:id/sort',
@@ -102,27 +121,65 @@ my $messages = [
         status_code    => 301,
     },
     {
-        name           => 'DiffPage',
-        route          => '/;page/:id/diff/:m/:n',
+        name           => 'PublishPage',
+        route          => '/publish',
+        request_method => 'post',
+        response       => '$mojito->publish_page($params)',
+        response_type  => 'json',
+        status_code    => 200,
+    },
+    {
+        name           => 'CollectedPage',
+        route          => '/collection/:collection_id/page/:page_id',
         request_method => 'get',
-        response       => '$mojito->diff_page($params)',
+        response       => '$mojito->view_page_collected($params)',
         response_type  => 'html',
         status_code    => 200,
-    },    
+    },
+    {
+        name           => 'MergeCollection',
+        route          => '/collection/:collection_id/export',
+        request_method => 'get',
+        response       => '$mojito->merge_collection($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
 ];
 
-foreach my $message ( @{$messages} ) {
-    say transform_mojo($message);
+sub get_messages_by_name {
+    my $name          = shift;
+    my @pages         = grep { $_->{name} =~ m/^$name$/ } @{$messages};
+    my $message_count = scalar @pages;
+    die "NEED exactly one or two messages by name. Found ", $message_count
+      if ( $message_count != 1 && $message_count != 2 );
+    return \@pages;
 }
-#foreach my $message ( @{$messages} ) {
-#    say transform_dancer($message);
-#}
-#foreach my $message ( @{$messages} ) {
-#    say transform_tatsumaki($message);
-#}
-#foreach my $message ( @{$messages} ) {
-#    say transform_web_simple($message);
-#}
+
+my %transforms = (
+    transform_web_simple => \&transform_web_simple,
+    transform_dancer     => \&transform_dancer,
+    transform_mojo       => \&transform_mojo,
+    transform_tatsumaki  => \&transform_tatsumaki,
+);
+
+sub transform_message_by_framework {
+    my ( $message, $framework ) = ( shift, shift );
+    my $transformer = 'transform_' . $framework;
+    say $transforms{$transformer}->($message);
+}
+
+if ($name) {
+    $messages = get_messages_by_name($name);
+}
+if ($transform) {
+    %transforms =
+      map { $_, $transforms{$_} } grep { $_ eq $transform; } keys %transforms;
+}
+foreach my $message ( @{$messages} ) {
+    foreach my $transform ( keys %transforms ) {
+        say $transforms{$transform}->($message);
+    }
+}
 
 sub transform_dancer {
     my $message = shift;
@@ -134,10 +191,13 @@ sub transform_dancer {
     elsif ( $message->{response_type} eq 'redirect' ) {
         $response = 'redirect ' . $message->{response};
     }
+    elsif ( $message->{response_type} =~ m/json/i ) {
+      $response = 'to_json( ' . $message->{response} . ' )';
+    }
+    $response =~ s/\$params/scalar params/;
 
     my $route_body = <<"END_BODY";
 $message->{request_method} '$message->{route}' => sub {
-    my \$params = scalar params;
     $response;
 };
 END_BODY
@@ -149,13 +209,16 @@ sub transform_mojo {
     my $message = shift;
 
     my $message_response = $message->{response};
-    $message_response =~ s/\$//;
+    $message_response =~ s/\$/\$self->/;
     my $response;
     if ( $message->{response_type} eq 'html' ) {
         $response = '$self->render( text => $self->' . $message_response . ' )';
     }
     elsif ( $message->{response_type} eq 'redirect' ) {
         $response = '$self->redirect_to(' . $message_response . ')';
+    }
+    elsif ( $message->{response_type} =~ m/json/i ) {
+        $response = '$self->render( json => $self' . $message_response . ' )';
     }
     my $place_holders;
     if ( my @holders = $message->{route} =~ m/\/\:(\w+)/ ) {
@@ -193,17 +256,56 @@ sub transform_tatsumaki {
 
     my $message_response = $message->{response};
     $message_response =~ s/\$mojito/\$self->request->env->{'mojito'}/;
-    my $route_body = <<"END_BODY";
+    my $message_route = $message->{route};
+    my ( $args, $params ) = route_handler( $message->{route}, 'tatsumaki' );
+    my $request_params;
+    $request_params =
+'@{$params}{ keys %{$self->request->parameters} } = values %{$self->request->parameters};'
+      if ( $message->{request_method} =~ m/post/i );
+    my $route_body;
+
+    if ( $message->{response_type} eq 'redirect' ) {
+        $route_body = <<"END_BODY";
 package $message->{name};
 use parent qw(Tatsumaki::Handler);
 
 sub $message->{request_method} {
-    my ( \$self, \$id ) = \@_;
-    my \$params;
-    \$params->{'id'} = \$id;
+    my (\$self, $args) = \@_;
+    $params
+    $request_params
+    my \$redirect_url = $message_response;
+    \$self->response->redirect(\$redirect_url);
+}
+END_BODY
+    }
+    elsif ( $message->{response_type} =~ m/json/i ) {
+        $route_body = <<"END_BODY";
+package $message->{name};
+use parent qw(Tatsumaki::Handler);
+
+sub $message->{request_method} {
+    my (\$self, $args) = \@_;
+    \$self->response->content_type('application/json');
+    \$self->write(
+        JSON::encode_json(
+           $message_response; 
+        )
+    );
+}
+END_BODY
+    }
+    else {
+        $route_body = <<"END_BODY";
+package $message->{name};
+use parent qw(Tatsumaki::Handler);
+
+sub $message->{request_method} {
+    my ( \$self, $args ) = \@_;
+    $params
     \$self->write($message_response);
 }
 END_BODY
+    }
     return $route_body;
 }
 
@@ -215,10 +317,24 @@ sub transform_web_simple {
     $content_type .= "'text/html']" if ( $message->{response_type} eq 'html' );
     my $request_method = uc( $message->{request_method} );
     my $message_route  = $message->{route};
-    my ($args, $params) = route_handler($message_route, 'simple');
+    my ( $args, $params ) = route_handler( $message_route, 'simple' );
     $message_route =~ s/\:\w+/*/g;
     $message_route .= ' + %*' if ( $request_method eq 'POST' );
-    my $route_body = <<"END_BODY";
+    my $route_body;
+
+    if ( $message->{response_type} eq 'redirect' ) {
+        $route_body = <<"END_BODY";
+sub ( $request_method + $message_route ) {
+    my (\$self, $args) = \@_;
+    $params
+    my \$redirect_url = $message_response;
+    [ 301, [ Location => \$redirect_url ], [] ];
+},
+
+END_BODY
+    }
+    else {
+        $route_body = <<"END_BODY";
 sub ( $request_method + $message_route ) {
     my (\$self, $args) = \@_;
     $params
@@ -227,26 +343,27 @@ sub ( $request_method + $message_route ) {
 },
 
 END_BODY
+    }
     return $route_body;
 }
 
 sub route_handler {
     my ( $route, $framework ) = ( shift, shift );
 
-    my ($args, $params);
+    my ( $args, $params );
     given ($framework) {
-        when (/simple/i) {
+        when (/simple|tatsumaki/i) {
+
             # find placeholders
             my @place_holders = $route =~ m/\:(\w+)/ig;
             my @args = map { '$' . $_ } @place_holders;
             $args = join ', ', @args;
-            my @params = map { '$params->{' . $_ . '} = $' . $_ . ';' } @place_holders;
+            my @params =
+              map { '$params->{' . $_ . '} = $' . $_ . ';' } @place_holders;
             $params = join "\n    ", @params;
-#            say "args: $args; params: $params";
-        }
-        when (/tatsu/i) {
-            
+
+            #say "args: $args; params: $params";
         }
     }
-    return ($args, $params);
+    return ( $args, $params );
 }

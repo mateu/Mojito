@@ -85,6 +85,7 @@ sub preview_page {
 # TODO: add title, page and body html to page_struct like above.
 #       Do we even need these two branches given that we're autosaving now.
 # TODO: on new page, insert to get an id then update to that from the start
+        $page_struct->{title} = $params->{page_title}||'no title';
         $self->update( $params->{'mongo_id'}, $page_struct );
     }
 
@@ -139,9 +140,8 @@ sub edit_page_form {
 
     my $page             = $self->read( $params->{id} );
     my $rendered_content = $self->render_body($page);
-    my $source           = $page->{page_source};
 
-    return $self->fillin_edit_page( $source, $rendered_content, $params->{id}, $page->{default_format} );
+    return $self->fillin_edit_page( $page, $rendered_content, $params->{id} );
 }
 
 =head2 view_page
@@ -193,6 +193,40 @@ sub view_page_public {
     $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
     $rendered_page =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
     $rendered_page =~ s/<section id="recent_area".*?><\/section>//si;
+
+    return $rendered_page;
+}
+
+=head2 view_page_collected
+
+Given a page id and a collection id we retrieve the collected page source
+from the db and return it as an HTML rendered page to the browser.  This method 
+is much like the view_page() method, but is setup for viewing pages in a collection
+with a collection navigation: next, previous, index (toc)
+
+=cut
+
+sub view_page_collected {
+    my ( $self, $params ) = @_;
+
+    my $page          = $self->read( $params->{page_id} );
+    my $rendered_page = $self->render_page($page);
+
+    # Change class on view_area when we're in view mode.
+    $rendered_page =~
+      s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
+
+    # Strip out Edit and New links (even though they are Auth::Digest Protected)
+    # Remove edit, new links and the recent area
+    $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
+    $rendered_page =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
+    $rendered_page =~ s/<section id="recent_area".*?><\/section>//si;
+    $rendered_page =~ s/<section id="publish_area">.*?<\/section>//si;
+    $rendered_page =~ s/<section id="collections_area"><\/section>//si;
+    $rendered_page =~ s/<section id="search_area">.*?<\/section>//si;
+    # Fill-in collection navigation area
+    my $collection_nav = $self->view_collection_nav( $params );
+    $rendered_page =~ s/(<section\s+id="collection_nav_area".*?>)<\/section>/$1${collection_nav}<\/section>/si;
 
     return $rendered_page;
 }
@@ -333,6 +367,28 @@ sub delete_page {
     $self->rm_page($params->{id});
 
     return $self->base_url . 'recent';
+}
+
+=head2 publish_page
+
+Publish a page - Currently this means POST to a MM instance.
+
+=cut
+
+sub publish_page {
+    my ( $self, $params ) = @_;
+    
+     my $doc = $self->read($params->{id});
+     my $content = $doc->{page_source};
+     $self->publisher->content($content);
+     $self->publisher->target_base_url($params->{target_base_url});
+     $self->publisher->target_page($params->{name});
+     $self->publisher->user($params->{user});
+     $self->publisher->password($params->{password});
+     my $result = $self->publisher->publish;
+     # return redirect location
+     my $redirect_url =  $self->publisher->target_base_url .  $self->publisher->target_page;
+     my $response_href = { redirect_url => $redirect_url, result => $result };
 }
 
 =head2 bench
