@@ -138,7 +138,7 @@ my $messages = [
     },
     {
         name           => 'MergeCollection',
-        route          => '/collection/:collection_id/export',
+        route          => '/collection/:collection_id/merge',
         request_method => 'get',
         response       => '$mojito->merge_collection($params)',
         response_type  => 'html',

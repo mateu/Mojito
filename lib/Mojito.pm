@@ -351,6 +351,27 @@ sub sort_collection {
     return $self->base_url . 'collections';
 }
 
+=head2 merge_collection
+
+Given a collection id, we concatentate all its page into one.
+
+=cut
+
+sub merge_collection {
+    my ( $self, $params ) = @_;
+
+    # Get the page ids for the collection.
+    my $collection_struct = $self->collector->read($params->{collection_id});
+    my @page_ids = @{$collection_struct->{collected_page_ids}};
+    my $merged_bodies;
+    foreach my $page_id (@page_ids) {
+        my $page          = $self->read($page_id);
+        $merged_bodies .= $self->render_body($page);
+    }
+
+    return $self->wrap_page($merged_bodies);
+}
+
 =head2 delete_page
 
 Given a page id:

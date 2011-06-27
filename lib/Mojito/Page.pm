@@ -90,6 +90,7 @@ has tmpl => (
           sort_collection_form
           fillin_create_page
           fillin_edit_page
+          wrap_page
           )
     ],
     writer => '_build_template',
