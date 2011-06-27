@@ -85,7 +85,7 @@ sub rm_page {
         $self->git->commit( { message => "Delete page" }, $page_id );
     }
     catch {
-        warn "Try delete page: $page_id, but had problems: $_";  
+        warn "Tried to delete page: $page_id, but had problems: $_";  
     };
     
 }
