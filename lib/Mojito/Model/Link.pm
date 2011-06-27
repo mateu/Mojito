@@ -197,6 +197,7 @@ Given link data (doc id and title) and possibly some $args then create hyperlink
 sub create_selectable_page_list {
     my ($self, $link_data) = (shift, shift);
 
+    return if !$link_data;
     my $base_url = $self->base_url;
     my $list;
     foreach my $datum (@{$link_data}) {
