@@ -91,6 +91,7 @@ sub _build_next_page_route {
     # Are we focused on last => index
     # Are we focused on any other page => focus + 1
     my $focus = $self->focus_page_number;
+warn "index page id empty: " if !$self->index_page_id;
     my $collection_route = 'collection/' . $self->index_page_id;
     my $next;
     if ($focus == -1) {
@@ -155,7 +156,7 @@ has 'index_page_id' => (
     lazy => 1,
     builder => '_build_index_page_id',
 );
-sub _build_index_page_id { $_[0]->collection->{id} }
+sub _build_index_page_id { $_[0]->collection->{_id} }
 
 has 'index_page_number' => (
     is => 'ro',
