@@ -20,7 +20,14 @@ my $result = GetOptions(
 $transform = 'transform_' . $transform;
 
 my $messages = [
-
+    {
+        name           => 'DeleteCollection',
+        request_method => 'get',
+        route          => '/collection/:id/delete',
+        response       => '$mojito->delete_collection($params)',
+        response_type  => 'redirect',
+        status_code    => 301,
+    },
     {
         name           => 'ViewPage',
         request_method => 'get',
@@ -152,10 +159,12 @@ my $messages = [
 
 sub get_messages_by_name {
     my $name          = shift;
+    
     my @pages         = grep { $_->{name} =~ m/^$name$/ } @{$messages};
     my $message_count = scalar @pages;
     die "NEED exactly one or two messages by name. Found ", $message_count
       if ( $message_count != 1 && $message_count != 2 );
+      
     return \@pages;
 }
 

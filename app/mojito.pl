@@ -164,7 +164,13 @@ use Data::Dumper::Concise;
              my $output = $mojito->merge_collection($params);
              [ 200, ['Content-type', 'text/html'], [$output] ];
           },
-          
+
+          sub ( GET + /collection/*/delete ) {
+              my ($self, $id) = @_;
+              my $redirect_url = $mojito->delete_collection({ id => $id });
+              [ 301, [ Location => $redirect_url ], [] ];
+          },
+
           sub ( POST + /publish + %* ) {
               my ($self, $params) = @_;
               my $response_href = $mojito->publish_page($params);

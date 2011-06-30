@@ -372,6 +372,20 @@ sub merge_collection {
     return $self->wrap_page($merged_bodies);
 }
 
+=head2 delete_collection
+
+Given a collection id:
+* Delete it from the mongo DB
+Return the URL to of the collections index 
+
+=cut
+
+sub delete_collection {
+    my ( $self, $params ) = @_;
+    $self->collector->delete($params->{id});
+    return $self->base_url . 'collections';
+}
+
 =head2 delete_page
 
 Given a page id:
