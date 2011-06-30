@@ -18,8 +18,8 @@ use Plack::Builder;
 use Digest::MD5;
 
 builder {
-  # enable 'Debug';
-  enable 'Debug', panels =>['Profiler::NYTProf'];
+  enable 'Debug';
+  #enable 'Debug', panels =>['Profiler::NYTProf'];
   enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ } 
   "Auth::Digest", 
   realm => "SecuredRealm", 
