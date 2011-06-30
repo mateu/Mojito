@@ -26,7 +26,8 @@ my $messages = [
         request_method => 'get',
         route          => '/page/:id',
         response       => '$mojito->view_page($params)',
-        response_type  => 'html'
+        response_type  => 'html',
+        status_code    => 200,
     },
     {
         name           => 'EditPage',
@@ -34,6 +35,7 @@ my $messages = [
         route          => '/page/:id/edit',
         response       => '$mojito->edit_page_form($params)',
         response_type  => 'html',
+        status_code    => 200,
     },
     {
         name           => 'EditPage',
@@ -41,6 +43,7 @@ my $messages = [
         route          => '/page/:id/edit',
         response       => '$mojito->edit_page($params)',
         response_type  => 'redirect',
+        status_code    => 302,
     },
     {
         name           => 'SearchPage',
@@ -48,6 +51,7 @@ my $messages = [
         route          => '/search/:word',
         response       => '$mojito->search($params)',
         response_type  => 'html',
+        status_code    => 200,
     },
     {
         name           => 'SearchPage',
