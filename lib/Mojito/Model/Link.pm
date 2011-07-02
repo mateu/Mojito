@@ -362,9 +362,9 @@ sub view_collection_nav {
     my $nav_fragment =<<"EOH";
     $js
    <div style="float:right;">
-    <a accesskey='p' href="${previous_page_URL}">&lt; &lt; Previous</a> |
-    <a accesskey='i' href="${index_page_URL}">Index</a> |
-    <a accesskey='n' href="${next_page_URL}">Next &gt;&gt;</a>
+    <a accesskey='p' href="${previous_page_URL}" title='[p]'>&lt; &lt; Previous</a> |
+    <a accesskey='i' href="${index_page_URL}" title='[i]'>Index</a> |
+    <a accesskey='n' href="${next_page_URL}" title='[n]'>Next &gt;&gt;</a>
     </div>
 EOH
 
