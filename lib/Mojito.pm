@@ -360,16 +360,21 @@ Given a collection id, we concatentate all its page into one.
 sub merge_collection {
     my ( $self, $params ) = @_;
 
+    use Mojito::Filter::MojoMojo::Converter;
     # Get the page ids for the collection.
     my $collection_struct = $self->collector->read($params->{collection_id});
     my @page_ids = @{$collection_struct->{collected_page_ids}};
-    my $merged_bodies;
+    my $rendered_bodies;
     foreach my $page_id (@page_ids) {
-        my $page          = $self->read($page_id);
-        $merged_bodies .= $self->render_body($page);
+        $rendered_bodies .= $self->render_body($self->read($page_id));
     }
-
-    return $self->wrap_page($merged_bodies);
+    my $collection_title = $collection_struct->{collection_name};
+    $collection_title = "<h1 class='collection_title'>$collection_title</h1>";
+    my $toc = "\n{{toc 1-}}\n";
+    $rendered_bodies =  $collection_title . $toc . $rendered_bodies;
+    my $convert = Mojito::Filter::MojoMojo::Converter->new( content => $rendered_bodies );
+    $convert->toc;
+    return $self->wrap_page($convert->content);
 }
 
 =head2 delete_collection
