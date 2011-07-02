@@ -29,6 +29,11 @@ has 'stripper' => (
     builder => '_build_stripper',
 );
 
+has 'to_format' => (
+    is => 'rw',
+    'default' => sub { 'HTML' },
+);
+
 =head2 render_sections
 
 Turn the sections into something viewable in a HTML browser.
@@ -41,15 +46,21 @@ sub render_sections {
 
     my ( @formatted_document_sections );
     foreach my $section ( @{ $doc->{sections} } ) {
-#        warn Dumper $section;
-        my $from_format = $section->{class} || $doc->{default_format};
-        $from_format = $doc->{default_format} if ($section->{class} && ($section->{class} eq 'Implicit'));
-        my $to_format = 'HTML';
-        my $formatted_section = $self->format_content( $section->{content}, $from_format, $to_format );
-        push @formatted_document_sections, $formatted_section;
+        push @formatted_document_sections, $self->render_section($section, $doc->{default_format});
     }
 
     return \@formatted_document_sections;
+}
+
+sub render_section {
+    my ($self, $section, $default_format) = @_;
+    
+    # The class of section is used to determine what the source code format is for the section.
+    # We want to use this knowledge when we render to HTML.
+    my $from_format = ($section->{class} && ($section->{class} ne 'Implicit'))
+                        ? $section->{class} 
+                        : $default_format;
+    return $self->render_content( $section->{content}, $from_format, $self->to_format );
 }
 
 =head2 render_page
@@ -107,39 +118,37 @@ sub render_body {
     return $rendered_body;
 }
 
-=head2 format_content
+=head2 render_content
 
-Given some $content, a source and target format then get the coversion started.
-
-NOTE: We return both the non modified content, and the converted content.
+Given some $content, a source and target format, convert the source to the target.
+Example: textile => HTML
 
 =cut
 
-sub format_content {
+sub render_content {
     my ( $self, $content, $from_format, $to_format ) = @_;
-    if ( !$content ) { die "Error: no content going to format: $to_format"; }
+   
+    if ( !$content ) { die "Error: no content going from: $from_format to: $to_format"; }
     my $formatted_content;
+    
+    # TODO: This should be a dispatch table
+    # In addition to HTML we'd like epub and PDF outputs
     if ( $to_format eq 'HTML' ) {
         $formatted_content = $self->format_for_web( $content, $from_format );
     }
 
-    return $formatted_content;
+    return $formatted_content; 
 }
 
 =head2 format_for_web
 
 Given some content and its format, let's convert it to HTML.
 
-NOTE: We return both the non modified content, and the converted content.
-
 =cut
 
 sub format_for_web {
     my ( $self, $content, $from_language ) = @_;
 
-# TODO: we have language highlighters and wiki languages.
-# The highlighters are to be handled by javascript.
-# We could provide a shortcut syntax such: <sx c=h> to represent <pre class="prettyprint">
     my $formatted_content = $content;
     given ($from_language) {
         when (/^HTML$/i) {
