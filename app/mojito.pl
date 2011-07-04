@@ -133,6 +133,12 @@ use Data::Dumper::Concise;
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
           
+          sub ( GET + /public/collection/* ) {
+              my ($self, $collection_id) = @_;
+              my $output = $mojito->collection_page({public => 1, id => $collection_id});
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },     
+ 
           sub ( GET + /collection/*/sort ) {
               my ($self, $collection_id) = @_;
               my $output = $mojito->sort_collection_form({id => $collection_id});
@@ -156,6 +162,17 @@ use Data::Dumper::Concise;
               [ 200, ['Content-type', 'text/html'], [$output] ];
           },
           
+          sub ( GET + /public/collection/*/page/* ) {
+              my ($self, $collection_id, $page_id) = @_;
+              my $params =  {
+                  public        => 1,
+                  collection_id => $collection_id,
+                  page_id       => $page_id
+              };
+              my $output = $mojito->view_page_collected($params);
+              [ 200, ['Content-type', 'text/html'], [$output] ];
+          },
+          
           sub ( GET + /collection/*/merge ) {
              my ($self, $collection_id) = @_;
              my $params = {
@@ -170,7 +187,17 @@ use Data::Dumper::Concise;
               my $redirect_url = $mojito->delete_collection({ id => $id });
               [ 301, [ Location => $redirect_url ], [] ];
           },
-
+          
+          sub ( GET + /collection/*/epub ) {
+              my $output = $mojito->epub_collection({ collection_id => $_[1] });
+              [ 200, 
+                [
+                    'Content-type'        => 'application/octet-stream',
+                    'Content-Disposition' => 'attachment; filename=test.epub',
+                ],  
+                [ $output ] ];
+          },
+          
           sub ( POST + /publish + %* ) {
               my ($self, $params) = @_;
               my $response_href = $mojito->publish_page($params);
