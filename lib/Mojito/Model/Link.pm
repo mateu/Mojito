@@ -355,9 +355,14 @@ sub view_collection_nav {
         collection_id => $params->{collection_id}, 
         focus_page_id => $params->{page_id},
     );
-    my $next_page_URL     = $self->base_url . $presenter->next_page_route;
-    my $previous_page_URL = $self->base_url . $presenter->previous_page_route;
-    my $index_page_URL    = $self->base_url . $presenter->index_page_route;
+    
+    # Handle public collections
+    my $base_url = $self->base_url;
+    $base_url .= 'public/' if $params->{public};
+
+    my $next_page_URL     = $base_url . $presenter->next_page_route;
+    my $previous_page_URL = $base_url . $presenter->previous_page_route;
+    my $index_page_URL    = $base_url . $presenter->index_page_route;
     my $js = $self->collection_nav_js( $next_page_URL, $previous_page_URL, $index_page_URL);
     my $nav_fragment =<<"EOH";
     $js
