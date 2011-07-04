@@ -218,7 +218,10 @@ Given a collection id, show a list of belonging pages.
 
 sub collection_page {
     my ($self, $params) = (shift, shift);
-    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
+
+    my $base_url = $self->base_url;
+    $base_url .= 'public/' if $params->{public};
+    my $list = Mojito::Model::Link->new(base_url => $base_url);
     return $self->wrap_page($list->view_collection_page({ collection_id => $params->{id} }));
 }
 
