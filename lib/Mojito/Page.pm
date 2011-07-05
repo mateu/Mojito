@@ -119,6 +119,7 @@ has gitter => (
             rm_page
             diff_page
             search_word
+            get_author_for
           )
     ],
     writer => '_build_git',

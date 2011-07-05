@@ -142,4 +142,26 @@ sub search_word {
     return \%hit_hash;
 }
 
+=head2 get_author_for
+
+Given a page id find the author of the last commit.
+
+=cut
+
+sub get_author_for {
+    my ($self, $page_id) = (shift, shift);
+    
+    my $author = "Author Unkown";
+    try {
+        my @log = $self->git->log( {}, ${page_id} );
+        $author = $log[0]->author;
+        $author =~ s/\s+\<.*\>//;
+    }
+    catch {
+        warn "Could not git log for page: ${page_id}"; 
+    };
+
+    return $author;
+}
+
 1

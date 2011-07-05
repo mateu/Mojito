@@ -336,7 +336,17 @@ Return the /collections URL to which we'll redirect.
 
 sub collect {
     my ( $self, $params ) = @_;
-    $self->collector->create($params);
+    
+    # Create page in DB
+    $params->{id}= $self->collector->create($params);
+   
+    # Put into repo
+    $params->{username} = $self->username;
+    my $page_source = join "\n", @{$params->{collected_page_ids}};
+    $page_source .= "\n";
+    my $page_struct = { page_source => $page_source };
+    $self->commit_page($page_struct, $params);
+
     return $self->base_url . 'collections';
 }
 
@@ -377,7 +387,7 @@ sub merge_collection {
     my $convert = Mojito::Filter::MojoMojo::Converter->new( content => $rendered_bodies );
     $convert->toc;
 
-    return $self->wrap_page($convert->content);
+    return $self->wrap_page($convert->content, $collection_struct->{collection_name});
 }
 
 =head2 delete_collection
@@ -397,7 +407,7 @@ sub delete_collection {
 sub epub_collection {
     my ($self, $params) = @_;
     
-    my $authors = 'Mateu Hunter';         
+    my $authors = $self->get_author_for($params->{collection_id});
 
     my $collection_html = $self->merge_collection($params);
     # Strip out HTML::TOC
@@ -414,6 +424,7 @@ sub epub_collection {
                                      . $params->{collection_id} 
                                      . '.epub');
     my $converter = $self->tmpl->config->{ebook_converter};  
+    return if !(-e $converter);
     my $rv = `$converter $tmp_html_file $tmp_epub_file --authors "${authors}"  --level2-toc //h:h2 --level1-toc //h:h1 --extra-css ".html_body {background-color: white;}"`;
     open my $epub_file, '<', $tmp_epub_file or die "Can't open epub file: $tmp_epub_file";
     my $epub;
