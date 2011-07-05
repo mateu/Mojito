@@ -16,10 +16,13 @@ has 'config' => (
 
 Read the configuration file.  (technique pilfered from Mojo::Server::Hypntoad).
 Config file is looked for in three locations:
+
     ENV
     lib/Mojito/conf/mojito_local.conf
     lib/Mojito/conf/mojito.conf
+
 The first location that exists is used.
+NOTE: This means the configuration is not the UNION of all available config files.
 
 =cut
 
