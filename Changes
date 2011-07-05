@@ -1,4 +1,9 @@
 {{$NEXT}}
+          [Enchantments]
+          - Collections: 
+            - delete
+            - navigation: next, previous, index
+            - merge
 
 0.10      2011-05-02 21:27:52 America/Boise
           [Enchantments]
