@@ -1,11 +1,9 @@
-#!/usr/bin/env perl
 use Mojolicious::Lite;
-use lib '../lib';
 use Mojito;
 use Mojito::Auth;
 use Plack::Builder;
-use Data::Dumper::Concise;
 use JSON;
+use Data::Dumper::Concise;
 
 # Make a shortcut the the mojito app object
 app->helper(

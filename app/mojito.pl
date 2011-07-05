@@ -1,6 +1,4 @@
-#!/usr/bin/env perl
 use Web::Simple 'MojitoApp';
-use lib '../lib';
 use Mojito;
 use Mojito::Auth;
 use JSON;

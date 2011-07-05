@@ -1,11 +1,7 @@
-#!/usr/bin/env perl
 use Dancer;
-use Dancer::Plugin::Ajax;
 use Plack::Builder;
-use lib '../lib';
 use Mojito;
 use Mojito::Auth;
-
 use Data::Dumper::Concise;
 
 #set 'log_path'  => '/tmp';

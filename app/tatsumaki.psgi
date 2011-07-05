@@ -7,7 +7,6 @@ use JSON;
 
 package MainHandler;
 use parent qw(Tatsumaki::Handler);
-use Data::Dumper::Concise;
 
 sub get {
     my ($self) = @_;
@@ -200,12 +199,10 @@ sub post {
 
 package PublishPage;
 use parent qw(Tatsumaki::Handler);
-use Data::Dumper::Concise;
 
 sub post {
     my ($self, ) = @_;
     my $json = JSON::encode_json( $self->request->env->{'mojito'}->publish_page($self->request->parameters) );
-    warn "JSON: ", Dumper $json;
     $self->write($json);
 }
 
@@ -213,7 +210,6 @@ package main;
 use Plack::Builder;
 use Mojito;
 use Mojito::Auth;
-use Data::Dumper::Concise;
 
 my $app = Tatsumaki::Application->new(
     [
