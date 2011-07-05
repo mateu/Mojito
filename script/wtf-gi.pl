@@ -21,6 +21,14 @@ $transform = 'transform_' . $transform;
 
 my $messages = [
     {
+        name           => 'EPubCollection',
+        request_method => 'get',
+        route          => '/collection/:id/epub',
+        response       => '$mojito->epub_collection($params)',
+        response_type  => 'application/octet-stream',
+        status_code    => 200,
+    },
+    {
         name           => 'DeleteCollection',
         request_method => 'get',
         route          => '/collection/:id/delete',
