@@ -189,11 +189,13 @@ use Data::Dumper::Concise;
           },
           
           sub ( GET + /collection/*/epub ) {
-              my $output = $mojito->epub_collection({ collection_id => $_[1] });
+              my ($self, $collection_id) = (shift, shift);
+
+              my $output = $mojito->epub_collection({ collection_id => $collection_id });
               [ 200, 
                 [
                     'Content-type'        => 'application/octet-stream',
-                    'Content-Disposition' => 'attachment; filename=test.epub',
+                    'Content-Disposition' => "attachment; filename=collection_${collection_id}.epub",
                 ],  
                 [ $output ] ];
           },

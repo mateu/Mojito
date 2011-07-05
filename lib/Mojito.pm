@@ -1,6 +1,8 @@
 use strictures 1;
 package Mojito;
 use Moo;
+use Path::Class;
+use File::Spec;
 
 use Data::Dumper::Concise;
 
@@ -374,6 +376,7 @@ sub merge_collection {
     $rendered_bodies =  $collection_title . $toc . $rendered_bodies;
     my $convert = Mojito::Filter::MojoMojo::Converter->new( content => $rendered_bodies );
     $convert->toc;
+
     return $self->wrap_page($convert->content);
 }
 
@@ -389,6 +392,35 @@ sub delete_collection {
     my ( $self, $params ) = @_;
     $self->collector->delete($params->{id});
     return $self->base_url . 'collections';
+}
+
+sub epub_collection {
+    my ($self, $params) = @_;
+    
+    my $authors = 'Mateu Hunter';         
+
+    my $collection_html = $self->merge_collection($params);
+    # Strip out HTML::TOC
+    $collection_html =~ s/<div class="toc">.*?<\/div>//sig;
+    
+    my $tmp_html_file = Path::Class::file(File::Spec->tmpdir, 'collection_' 
+                                     . $params->{collection_id} 
+                                     . '.html');
+    open my $html_file, '>', $tmp_html_file or die "Can't open html file: $tmp_html_file";
+    print $html_file $collection_html;
+    close $html_file;
+
+    my $tmp_epub_file = Path::Class::file(File::Spec->tmpdir, 'collection_' 
+                                     . $params->{collection_id} 
+                                     . '.epub');
+    my $converter = $self->tmpl->config->{ebook_converter};  
+    my $rv = `$converter $tmp_html_file $tmp_epub_file --authors "${authors}"  --level2-toc //h:h2 --level1-toc //h:h1 --extra-css ".html_body {background-color: white;}"`;
+    open my $epub_file, '<', $tmp_epub_file or die "Can't open epub file: $tmp_epub_file";
+    my $epub;
+    while (<$epub_file>) {
+        $epub .= $_;
+    }
+    return $epub;
 }
 
 =head2 delete_page
