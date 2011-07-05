@@ -151,7 +151,7 @@ Given a page id find the author of the last commit.
 sub get_author_for {
     my ($self, $page_id) = (shift, shift);
     
-    my $author = "Author Unkown";
+    my $author = "Author Unknown";
     try {
         my @log = $self->git->log( {}, ${page_id} );
         $author = $log[0]->author;
