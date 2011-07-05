@@ -3,7 +3,7 @@
           - Collections: 
             - delete
             - navigation: next, previous, index
-            - merge
+            - merge, epub
 
 0.10      2011-05-02 21:27:52 America/Boise
           [Enchantments]
