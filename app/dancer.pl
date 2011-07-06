@@ -86,6 +86,12 @@ get '/collection/:id' => sub {
     return $mojito->collection_page(scalar params);
 };
 
+get '/public/collection/:id' => sub {
+    my $params = scalar params;
+    $params->{public} = 1;
+    return $mojito->collection_page($params);
+};
+
 get '/collections' => sub {
     return $mojito->collections_index;
 };
@@ -103,7 +109,9 @@ get '/collection/:collection_id/page/:page_id' => sub {
 };
           
 get '/public/collection/:collection_id/page/:page_id' => sub {
-    $mojito->view_page_collected(scalar params);
+    my $params = scalar params;
+    $params->{public} = 1;
+    $mojito->view_page_collected($params);
 };
           
 get  '/collection/:collection_id/merge' => sub {

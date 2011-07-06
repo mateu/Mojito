@@ -107,6 +107,14 @@ get '/collection/:id' => sub {
     $self->render( text => $self->mojito->collection_page($params) );
 };
 
+get '/public/collection/:id' => sub {
+    my ($self) = (shift);
+    my $params;
+    $params->{id} = $self->param('id');
+    $params->{public} = 1;
+    $self->render( text => $self->mojito->collection_page($params) );
+};
+
 get '/collections' => sub {
     my ($self) = (shift);
     $self->render( text => $self->mojito->collections_index );
