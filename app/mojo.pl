@@ -162,7 +162,7 @@ get  '/collection/:collection_id/merge' => sub {
 
 get '/collection/:collection_id/delete' => sub {
     my ($self) = shift;
-    my $redirect_url = $self->mojito->delete_collection({ id => $self->param('collection_id') });
+    my $redirect_url = $self->mojito->delete_collection({ collection_id => $self->param('collection_id') });
     $self->redirect_to($redirect_url);
 };
 

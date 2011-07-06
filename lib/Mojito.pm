@@ -400,7 +400,7 @@ Return the URL to of the collections index
 
 sub delete_collection {
     my ( $self, $params ) = @_;
-    $self->collector->delete($params->{id});
+    $self->collector->delete($params->{collection_id});
     return $self->base_url . 'collections';
 }
 

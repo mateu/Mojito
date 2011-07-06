@@ -181,8 +181,8 @@ use Data::Dumper::Concise;
           },
 
           sub ( GET + /collection/*/delete ) {
-              my ($self, $id) = @_;
-              my $redirect_url = $mojito->delete_collection({ id => $id });
+              my ($self, $collection_id) = @_;
+              my $redirect_url = $mojito->delete_collection({ collection_id => $collection_id });
               [ 301, [ Location => $redirect_url ], [] ];
           },
           
