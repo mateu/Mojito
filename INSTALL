@@ -18,8 +18,6 @@ STEP 2: Edit mojito_local.conf
   from your Mojito checkout
 * set git repo to a path where the owner of the mojito web app process can write (www-data?)
 
-TODO: Add starman example
-
 STEP 3: Run script/add_user.pl
   REASON: add a user (or more) to the authentication database (mojito.users collection).
           These users will be able to login and make edits.  In, addition, their info
