@@ -124,6 +124,14 @@ my $messages = [
         status_code    => 200,
     },
     {
+        name           => 'PublicCollectionPage',
+        route          => '/public/collection/:id',
+        request_method => 'get',
+        response       => '$mojito->collection_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
         name           => 'SortCollection',
         route          => '/collection/:id/sort',
         request_method => 'get',
@@ -150,6 +158,14 @@ my $messages = [
     {
         name           => 'CollectedPage',
         route          => '/collection/:collection_id/page/:page_id',
+        request_method => 'get',
+        response       => '$mojito->view_page_collected($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
+        name           => 'PublicCollectedPage',
+        route          => '/public/collection/:collection_id/page/:page_id',
         request_method => 'get',
         response       => '$mojito->view_page_collected($params)',
         response_type  => 'html',
@@ -279,7 +295,7 @@ sub transform_tatsumaki {
     $message_response =~ s/\$mojito/\$self->request->env->{'mojito'}/;
     my $message_route = $message->{route};
     my ( $args, $params ) = route_handler( $message->{route}, 'tatsumaki' );
-    my $request_params;
+    my $request_params = '';
     $request_params =
 '@{$params}{ keys %{$self->request->parameters} } = values %{$self->request->parameters};'
       if ( $message->{request_method} =~ m/post/i );
