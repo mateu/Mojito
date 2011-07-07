@@ -1,4 +1,3 @@
-### app.psgi
 use Tatsumaki::Error;
 use Tatsumaki::Application;
 use Tatsumaki::HTTPClient;
@@ -163,11 +162,22 @@ sub post {
     my $redirect_url = $self->request->env->{'mojito'}->collect($self->request->parameters);
     $self->response->redirect($redirect_url);
 }
+
 package CollectionPage;
 use parent qw(Tatsumaki::Handler);
 
 sub get {
     my ( $self, $id ) = @_;
+    $params->{id} = $id;
+    $self->write($self->request->env->{'mojito'}->collection_page($params));
+}
+
+package PublicCollectionPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $id ) = @_;
+    $params->{public} = 1;
     $params->{id} = $id;
     $self->write($self->request->env->{'mojito'}->collection_page($params));
 }
@@ -195,6 +205,69 @@ sub post {
     @{$params}{ keys %{$self->request->parameters} } = values %{$self->request->parameters};
     my $redirect_url = $self->request->env->{'mojito'}->sort_collection($params);
     $self->response->redirect($redirect_url);
+}
+
+package MergeCollection;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $collection_id ) = @_;
+    $self->write($self->request->env->{'mojito'}->merge_collection( {collection_id => $collection_id} ));
+}
+
+package EPubCollection;
+use parent qw(Tatsumaki::Handler);
+
+# Overriding this class method to prevent get_chunk from Encoding the binary file.
+sub get_chunk { $_[1] } 
+
+sub get {
+    my ( $self, $collection_id ) = @_;
+    
+    $params->{collection_id} = $collection_id;
+    $self->response->headers([
+        'content-type'        => 'application/epub+zip',
+        'content_disposition' => "attachment; filename=collection_${collection_id}.epub"
+    ]);
+    my $epub_doc = $self->request->env->{'mojito'}->epub_collection($params);
+#-mxh: binary() will work in future version in place of re-defining get_chunk()
+#    $self->binary(1);
+    $self->write($epub_doc);
+
+}
+
+package DeleteCollection;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ($self, $collection_id) = @_;
+    my $redirect_url = $self->request->env->{'mojito'}->delete_collection({ collection_id => $collection_id });
+    $self->response->redirect($redirect_url);
+}
+
+package CollectedPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $collection_id, $page_id ) = @_;
+    $self->write($self->request->env->{'mojito'}->view_page_collected(
+    { 
+        collection_id => $collection_id, 
+        page_id => $page_id
+    }));
+}
+
+package PublicCollectedPage;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $collection_id, $page_id ) = @_;
+    $self->write($self->request->env->{'mojito'}->view_page_collected(
+    { 
+        public        => 1,
+        collection_id => $collection_id, 
+        page_id       => $page_id
+    }));
 }
 
 package PublishPage;
@@ -227,7 +300,13 @@ my $app = Tatsumaki::Application->new(
         '/public/feed/(\w+)'           => 'FeedPage',
         '/page/(\w+)/diff/(\w+)/(\w+)' => 'DiffPage',
         '/page/(\w+)/diff'             => 'LastDiffPage',
+        '/public/collection/(\w+)/page/(\w+)' => 'PublicCollectedPage',
+        '/public/collection/(\w+)'     => 'PublicCollectionPage',
+        '/collection/(\w+)/page/(\w+)' => 'CollectedPage',
         '/collection/(\w+)/sort'       => 'SortCollection',
+        '/collection/(\w+)/merge'      => 'MergeCollection',
+        '/collection/(\w+)/delete'     => 'DeleteCollection',
+        '/collection/(\w+)/epub'       => 'EPubCollection',
         '/collection/(\w+)'            => 'CollectionPage',
         '/collections'                 => 'CollectionsIndex',
         '/collect'                     => 'CollectPage',
@@ -247,5 +326,3 @@ builder {
 
     $app;
 };
-
-#return $app;
