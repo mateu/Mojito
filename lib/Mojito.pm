@@ -535,7 +535,7 @@ It has been inspired by MojoMojo which is a mature, stable, responsive and
 feature rich wiki system.  Check MojoMojo out if you're looking for an enterprise
 grade wiki.  Mojito is not attempting to be a wiki, but rather its initial
 goal is to enable individuals to easily author HTML5 compliant documents
-whether for for personal or public consumption.
+whether for personal or public consumption.
 
 =head1 Goals
 
@@ -551,7 +551,7 @@ Some goals and guidelines are:
 
 =head1 Current Limitations
 
-    * Single Word Search
+    * single word search
     * revision history doesn't have a web interface yet
 
 =head1 Authors
