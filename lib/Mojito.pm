@@ -425,7 +425,8 @@ sub epub_collection {
                                      . '.epub');
     my $converter = $self->tmpl->config->{ebook_converter};  
     return if !(-e $converter);
-    my $rv = `$converter $tmp_html_file $tmp_epub_file --authors "${authors}"  --level2-toc //h:h2 --level1-toc //h:h1 --extra-css ".html_body {background-color: white;}"`;
+    # TODO Handle Exceptions
+    `converter $tmp_html_file $tmp_epub_file --authors "${authors}"  --level2-toc //h:h2 --level1-toc //h:h1 --extra-css ".html_body {background-color: white;}"`;
     open my $epub_file, '<', $tmp_epub_file or die "Can't open epub file: $tmp_epub_file";
     my $epub;
     while (<$epub_file>) {
