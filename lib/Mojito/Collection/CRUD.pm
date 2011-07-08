@@ -32,20 +32,24 @@ sub create {
     # We don't need to store the form submit value
     delete $params->{collect};
     my $page_ids = $params->{collected_page_ids};
-    my @page_ids = split ',', $page_ids;
-    $params->{collected_page_ids} = \@page_ids;
+    
+    # NOTE: The $page_ids input can come in two different forms: 
+    # - String:   "$page_id1,$page_id2,...$page_id_n";
+    # - ArrayRef: [$page_id1,$page_id2,..., $page_id_n];
+    $params->{collected_page_ids} = [split ',', $page_ids] if (!ref($page_ids));
+    
     # add save time as last_modified and created
     $params->{last_modified} = $params->{created} = time();
 
     my $collection = $self->collection->find_one({ collection_name  => $params->{collection_name} });
     my $oid;
     if ( $oid = $collection->{_id} ) {
-            $self->collection->update( { '_id' => $oid }, $params );
+        $self->collection->update( { '_id' => $oid }, $params );
     } 
     else {
-        $oid = $self->collection->save($params);
+        $oid = $self->collection->insert($params);
     }
-#    warn "creating page ", $oid->value, " at: ", time();
+    
     return $oid->value;
 }
 
@@ -73,7 +77,6 @@ sub update {
     my $oid = MongoDB::OID->new( value => $params->{id} );
     $params->{last_modified} = time();
 
-    #say "CRUD updating page at: ", time();
     $self->collection->update( { '_id' => $oid }, $params );
 }
 
