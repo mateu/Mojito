@@ -10,7 +10,9 @@ To copy a collection over from one mojito db to another.
 =cut
 
 # This is where we copy FROM
-my $app = Mojito->new();
+say "DB host:port to copy FROM:";
+my $from_db_host = <STDIN>;
+my $app = Mojito->new( db_host => $from_db_host );
 say "DB host:port to copy TO:";
 my $to_db_host = <STDIN>;
 
