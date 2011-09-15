@@ -1,13 +1,13 @@
 use strictures 1;
 package Mojito::Template::Role::CSS;
 use Moo::Role;
-use Mojito::Types;
+use MooX::Types::MooseLike qw(:all);
 
 with('Mojito::Role::Config');
 
 has css => (
     is => 'ro',
-    isa => Mojito::Types::ArrayRef,
+    isa => ArrayRef,
     lazy => 1,
     builder => '_build_css',
 );
@@ -23,7 +23,7 @@ sub _build_css {
 
 has css_html => (
     is => 'ro',
-    isa => Mojito::Types::ArrayRef,
+    isa => ArrayRef,
     lazy => 1,
     builder => '_build_css_html',
 );

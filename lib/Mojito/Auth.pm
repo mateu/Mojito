@@ -3,7 +3,7 @@ use strictures 1;
 package Mojito::Auth;
 use Moo;
 use Digest::MD5;
-use Mojito::Types;
+use MooX::Types::MooseLike qw(:all);
 
 use Data::Dumper::Concise;
 
@@ -15,35 +15,35 @@ with 'Mojito::Role::DB';
 
 has 'first_name' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'last_name' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'email' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'username' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'realm' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'password' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'env' => (
     is  => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
 );
 has 'digest_authen_cb' => (
     is      => 'ro',
-    isa     => Mojito::Types::CodeRef,
+    isa     => CodeRef,
     lazy    => 1,
     builder => '_build_digest_authen_cb',
 );

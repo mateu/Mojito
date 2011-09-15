@@ -1,13 +1,13 @@
 use strictures 1;
 package Mojito::Collection::Present;
 use Moo;
-use Mojito::Types;
+use MooX::Types::MooseLike qw(:all);
 use Mojito::Collection::CRUD;
 use List::MoreUtils qw/ first_index /;
 
 has 'collection' => (
     is => 'ro',
-    isa => Mojito::Types::HashRef,
+    isa => HashRef,
     lazy => 1,
     builder => '_build_collection',
 );
@@ -19,13 +19,13 @@ sub _build_collection {
 
 has 'collection_id' => (
     is => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
     required => 1,
 );
 
 has 'page_ids' => (
     is => 'ro',
-    isa => Mojito::Types::ArrayRef,
+    isa => ArrayRef,
     lazy => 1,
     builder => '_build_page_ids',
 );
@@ -43,7 +43,7 @@ has 'focus_page_id'  => (
 
 has 'focus_page_number' => (
     is => 'rw',
-    isa => Mojito::Types::Int,
+    isa => Int,
     builder => '_build_focus_page_number', 
 );
 sub _build_focus_page_number {

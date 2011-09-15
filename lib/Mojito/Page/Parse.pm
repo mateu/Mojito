@@ -2,25 +2,25 @@ use strictures 1;
 package Mojito::Page::Parse;
 use 5.010;
 use Moo;
-use Mojito::Types;
+use MooX::Types::MooseLike qw(:all);
 
 use Data::Dumper::Concise;
 
 # This is the page source
 has 'page' => (
     is       => 'rw',
-    isa      => Mojito::Types::NoRef,
+    isa      => NoRef,
 #    required => 1,
 );
 has 'sections' => (
     is      => 'ro',
-    isa     => Mojito::Types::AHRef,
+    isa     => AHRef,
     lazy    => 1,
     builder => 'build_sections',
 );
 has 'page_structure' => (
     is      => 'rw',
-    isa     => Mojito::Types::HashRef,
+    isa     => HashRef,
     lazy    => 1,
     builder => 'build_page_structure',
 );
@@ -34,42 +34,42 @@ has 'page_structure' => (
 #);
 has 'default_format' => (
     is => 'rw',
-    isa     => Mojito::Types::NoRef,
+    isa     => NoRef,
     lazy => 1,
     default => sub { 'HTML' },
 );
 has 'created' => (
     is  => 'ro',
-    isa => Mojito::Types::Int,
+    isa => Int,
 );
 has 'last_modified' => (
     is      => 'ro',
-    isa     => Mojito::Types::Int,
+    isa     => Int,
     default => sub { time() },
 );
 has 'section_open_regex' => (
     is      => 'ro',
-    isa     => Mojito::Types::RegexpRef,
+    isa     => RegexpRef,
     default => sub { qr/<sx\.[^>]+>/ },
 );
 has 'section_close_regex' => (
     is      => 'ro',
-    isa     => Mojito::Types::RegexpRef,
+    isa     => RegexpRef,
     default => sub { qr(</sx>) },
 );
 has 'debug' => (
     is      => 'rw',
-    isa     => Mojito::Types::Bool,
+    isa     => Bool,
     default => sub { 0 },
 );
 has 'messages' => (
     is => 'rw',
-    isa => Mojito::Types::ArrayRef,
+    isa => ArrayRef,
     default => sub { [] },
 );
 has 'message_string' => (
     is => 'ro',
-    isa => Mojito::Types::NoRef(),
+    isa => NoRef,
     lazy => 1,
     builder => '_build_message_string',
 );

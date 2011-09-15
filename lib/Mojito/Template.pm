@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Template;
 use Moo;
-use Mojito::Types;
+use MooX::Types::MooseLike qw(:all);
 use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
 use Data::Dumper::Concise;
@@ -48,7 +48,7 @@ has 'recent_links' => (
 
 has js_css_html => (
     is => 'ro',
-    isa => Mojito::Types::NoRef,
+    isa => NoRef,
     default => sub { my $self = shift; join "\n", @{$self->javascript_html}, @{$self->css_html} }
 );
 

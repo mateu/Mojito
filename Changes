@@ -1,4 +1,7 @@
 {{$NEXT}}
+		[Refinements]
+		- Made Mojito::Types into its own distribution (MooX::Types::MooseLike)
+		  and use that instead
 
 0.11      2011-07-07 21:36:14 America/Denver
           [Enchantments]

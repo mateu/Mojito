@@ -1,14 +1,14 @@
 use strictures 1;
 package Mojito::Template::Role::Javascript;
 use Moo::Role;
-use Mojito::Types;
+use MooX::Types::MooseLike qw(:all);
 use Data::Dumper::Concise;
 
 with('Mojito::Role::Config');
 
 has javascripts => (
     is => 'ro',
-    isa => Mojito::Types::ArrayRef,
+    isa => ArrayRef,
     lazy => 1,
     builder => '_build_javascripts',
 );
@@ -36,7 +36,7 @@ sub _build_javascripts {
 
 has javascript_html => (
     is => 'ro',
-    isa => Mojito::Types::ArrayRef,
+    isa => ArrayRef,
     lazy => 1,
     builder => '_build_javascript_html',
 );
