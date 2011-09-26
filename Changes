@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.12      2011-09-26 16:48:22 America/Denver
 		[Refinements]
 		- Made Mojito::Types into its own distribution (MooX::Types::MooseLike)
 		  and use that instead
