@@ -5,6 +5,8 @@ use Mojito::Model::Doc;
 use Mojito::Collection::Present;
 use Data::Dumper::Concise;
 
+with('Mojito::Role::Config');
+
 has base_url => ( is => 'rw', );
 
 has name_of_page_collection => (
@@ -119,6 +121,9 @@ $args should be a HashRef of options
 sub get_most_recent_links {
     my ($self, $args) = @_;
 
+    # Let's limit the amount of recent links we show
+    # if we've set a limit in our config.
+    $args->{last_link_number} = $self->config->{last_link_number};
     my $base_url = $self->base_url;
     my $link_data = $self->get_most_recent_link_data;
     my $link_title = '<span id="recent_articles_label" style="font-weight: bold;">Recent Articles</span><br />' . "\n";
@@ -307,12 +312,14 @@ sub create_list_of_links {
     my $base_url = $self->base_url;
     $base_url .= 'public/' if $args->{want_public_link};
     my $links;
+    my $i = 1; my $limit = $args->{last_link_number};
     foreach my $datum (@{$link_data}) {
         $links .= "<div class='list_of_links'>&middot; <a href=\"${base_url}page/" . $datum->{id} . '">' . $datum->{title} . "</a>";
         if ($args && $args->{want_delete_link}) {
             $links .=  " | <span style='font-size: 0.88em;'><a href=\"${base_url}page/"   . $datum->{id} . '/delete"> delete</a></span>';
         }
         $links .= "</div>\n";
+        last if ($limit && ($i == $limit)); $i++;
     }
     $links = "<section id='list_of_links'>\n${links}\n</section>" if defined $links;
     return $links;

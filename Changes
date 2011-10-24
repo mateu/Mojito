@@ -1,4 +1,10 @@
 {{$NEXT}}
+          [Remedies]
+          - publish.t was running on smokers when it should not
+          
+          [Refinements]
+          - Limit number of recent articles displayed via 
+            'last_link_number' config option
 
 0.12      2011-09-26 16:48:22 America/Denver
           [Refinements]
