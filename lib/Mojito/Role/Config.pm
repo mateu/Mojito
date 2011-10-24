@@ -1,7 +1,8 @@
 use strictures 1;
 package Mojito::Role::Config;
 use Moo::Role;
-use MooX::Types::MooseLike qw(:all);
+# Let dzil (Makefile.PL) know that we need at least version 0.02
+use MooX::Types::MooseLike 0.02 qw(:all);
 use Cwd qw/ abs_path /;
 use Dir::Self;
 
