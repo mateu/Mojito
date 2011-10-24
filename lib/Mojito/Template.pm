@@ -48,7 +48,7 @@ has 'recent_links' => (
 
 has js_css_html => (
     is => 'ro',
-    isa => NoRef,
+    isa => Value,
     default => sub { my $self = shift; join "\n", @{$self->javascript_html}, @{$self->css_html} }
 );
 

@@ -19,7 +19,7 @@ sub _build_collection {
 
 has 'collection_id' => (
     is => 'ro',
-    isa => NoRef,
+    isa => Value,
     required => 1,
 );
 
