@@ -37,6 +37,7 @@ li.L3,
 li.L5,
 li.L7,
 li.L9 { background: #fff }
+}
 
 @media print {
   .str { color: #060; }
