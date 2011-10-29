@@ -158,7 +158,7 @@ sub view_page {
 
     my $page          = $self->read( $params->{id} );
     my $rendered_page = $self->render_page($page);
-    my $links         = $self->get_most_recent_links;
+    my $links         = $self->get_recent_links;
     my $collections   = $self->view_collections_index;
 
     # Change class on view_area when we're in view mode.
@@ -243,7 +243,7 @@ sub view_home_page {
     my $self = shift;
 
     my $output = $self->home_page;
-    my $links  = $self->get_most_recent_links;
+    my $links  = $self->get_recent_links;
     $output =~ s/(<section\s+id="recent_area".*?>)<\/section>/$1${links}<\/section>/si;
 
     return $output;

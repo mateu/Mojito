@@ -111,14 +111,14 @@ sub get_link_data {
     return $link_data;
 }
 
-=head2 get_most_recent_links
+=head2 get_recent_links
 
 Turn the data into HTML
 $args should be a HashRef of options
 
 =cut
 
-sub get_most_recent_links {
+sub get_recent_links {
     my ($self, $args) = @_;
 
     # Let's limit the amount of recent links we show
