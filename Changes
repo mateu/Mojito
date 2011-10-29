@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+0.14      2011-10-29 16:19:49 America/Denver
+          [Refinements]
+          - Config read only once on app startup now
+          - Configs merged with a precendence
+          [Remedies]
+          - require verison 0.02 of MooX::Types::MooseLike
+
 0.13      2011-10-24 08:31:15 America/Denver
           [Remedies]
           - publish.t was running on smokers when it should not
