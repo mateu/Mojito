@@ -1,17 +1,25 @@
-use Web::Simple 'MojitoApp';
+package MojitoApp;
+use Web::Simple;
 use Mojito;
 use Mojito::Auth;
+use Mojito::Model::Config;
+# Build the config once and for all
+my %mojito_config = %{Mojito::Model::Config->new->config};
 use JSON;
-
+use Plack::Builder;
 use Data::Dumper::Concise;
-
-{
-    package MojitoApp;
-    use Plack::Builder;
+    
+    # Web::Simple using default_config to merge the config in.
+    sub default_config {
+        %mojito_config;
+    }
 
     sub dispatch_request {
         my ( $self, $env ) = @_;
+        
         my $mojito = $env->{mojito};
+        # Pass the config along
+        $mojito->config($self->config);
 
         # A Benchmark URI
         sub (GET + /bench ) {
@@ -240,12 +248,10 @@ use Data::Dumper::Concise;
               secret => Mojito::Auth::_secret,
               password_hashed => 1,
               authenticator => Mojito::Auth->new->digest_authen_cb;
-            enable "+Mojito::Middleware";
+            enable "+Mojito::Middleware", config => {$self->default_config};
             enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
-
             $app;
         };
     };
-}
 
-MojitoApp->run_if_script;
+__PACKAGE__->run_if_script;

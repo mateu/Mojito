@@ -2,12 +2,12 @@ use strictures 1;
 package Mojito::Role::Config;
 use Moo::Role;
 # Let dzil (Makefile.PL) know that we need at least version 0.02
-use MooX::Types::MooseLike 0.02 qw(:all);
+use MooX::Types::MooseLike 0.02 qw(HashRef);
 use Cwd qw/ abs_path /;
 use Dir::Self;
 
 has 'config' => (
-    is  => 'ro',
+    is  => 'rw',
     isa => HashRef,
     lazy => 1,
     builder => '_build_config',
@@ -28,7 +28,7 @@ NOTE: This means the configuration is not the UNION of all available config file
 =cut
 
 sub _build_config {
-
+	
     my $conf_file  = abs_path(__DIR__ . '/../conf/mojito.conf');
     my $local_conf = abs_path(__DIR__ . '/../conf/mojito_local.conf');
     # See if a local conf exists
