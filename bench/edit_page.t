@@ -8,6 +8,7 @@ use Fixture;
 use Mojito::Page::Parse;
 use Mojito::Page::CRUD;
 use Mojito::Page::Render;
+use Mojito::Model::Link;
 use Data::Dumper::Concise;
 use Time::HiRes qw/ time /;
 
@@ -15,7 +16,7 @@ my $start = time;
 #my $parser = Mojito::Page::Parse->new(page => $Fixture::implicit_section);
 #my $page_struct = $parser->page_structure;
 #
-my $editer = Mojito::Page::CRUD->new;
+my $linker = Mojito::Model::Link->new;
 #my $id = $editer->create($page_struct);
 ##say "id: $id";
 #$id = '4d532f9651683bd673000000';
@@ -23,11 +24,11 @@ my $editer = Mojito::Page::CRUD->new;
 #say Dumper $doc;
 #say "title: ", $doc->{title};
 
-my $cursor = $editer->get_most_recent_docs;
+my $cursor = $linker->get_most_recent_docs;
 while (my $doc = $cursor->next) {
     say "title: ", $doc->{title}, "id: ", $doc->{_id}, " last_modified: ", $doc->{last_modified};
 }
-my $links = $editer->get_most_recent_links;
+my $links = $linker->recent_links;
 say "Links: ", Dumper $links;
 
 
