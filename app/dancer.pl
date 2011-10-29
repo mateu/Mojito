@@ -2,6 +2,7 @@ use Dancer;
 use Plack::Builder;
 use Mojito;
 use Mojito::Auth;
+use Mojito::Model::Config;
 use Data::Dumper::Concise;
 
 #set 'log_path'  => '/tmp';
@@ -149,7 +150,7 @@ builder {
       secret => Mojito::Auth::_secret,
       password_hashed => 1,
       authenticator => Mojito::Auth->new->digest_authen_cb;
-    enable "+Mojito::Middleware";
+    enable "+Mojito::Middleware", config => Mojito::Model::Config->new->config;
     enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
 
     dance;
