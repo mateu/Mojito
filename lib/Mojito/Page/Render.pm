@@ -5,7 +5,7 @@ use Moo;
 use Mojito::Template;
 use Mojito::Filter::Shortcuts;
 use Mojito::Filter::MojoMojo::Converter;
-use Text::Textile qw(textile);
+use Text::Textile;
 use Text::Markdown;
 use Text::WikiCreole;
 use Pod::Simple::XHTML;
@@ -15,9 +15,22 @@ use Data::Dumper::Concise;
 with('Mojito::Filter::Shortcuts');
 with('Mojito::Role::Config');
 
-my $textile  = Text::Textile->new;
-my $markdown = Text::Markdown->new;
-my $tmpl     = Mojito::Template->new;
+has tmpl => (
+    is => 'ro',
+    lazy => 1,
+    # pass the config
+    'default' => sub { Mojito::Template->new(config => shift->config) },
+);
+has textile => (
+    is => 'ro',
+    lazy => 1,
+    'default' => sub { Text::Textile->new },
+);
+has markdown => (
+    is => 'ro',
+    lazy => 1,
+    'default' => sub { return Text::Markdown->new }
+);
 
 has base_url => ( is => 'rw', );
 
@@ -75,10 +88,10 @@ sub render_page {
     return 'page is not available' if !$doc;
     # Give the tmpl object a base url first before asking for the html template.
     my $base_url = $self->base_url;
-    $tmpl->base_url($base_url);
+    $self->tmpl->base_url($base_url);
     # Give the template a page id if it exists
-    $tmpl->page_id($doc->{'_id'});
-    my $page = $tmpl->template;
+    $self->tmpl->page_id($doc->{'_id'});
+    my $page = $self->tmpl->template;
 
     if (my $title = $doc->{title}) {
        $page =~ s/<title>.*?<\/title>/<title>${title}<\/title>/si;
@@ -159,10 +172,10 @@ sub format_for_web {
             $formatted_content = $self->pod2html($content);
         }
         when (/^textile$/i) {
-            $formatted_content = $textile->process($content);
+            $formatted_content = $self->textile->process($content);
         }
         when (/^markdown$/i) {
-            $formatted_content = $markdown->markdown($content);
+            $formatted_content = $self->markdown->markdown($content);
         }
         when (/^creole$/i) {
             $formatted_content = creole_parse($content);
