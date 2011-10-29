@@ -4,11 +4,11 @@ use Moo;
 use MooX::Types::MooseLike qw(:all);
 use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
+use Mojito::Page::Publish;
 use Data::Dumper::Concise;
 
 with('Mojito::Template::Role::Javascript');
 with('Mojito::Template::Role::CSS');
-with('Mojito::Template::Role::Publish');
 
 has 'template' => (
     is      => 'rw',
@@ -49,6 +49,7 @@ has 'recent_links' => (
 has js_css_html => (
     is => 'ro',
     isa => Value,
+    lazy => 1,
     default => sub { my $self = shift; join "\n", @{$self->javascript_html}, @{$self->css_html} }
 );
 
@@ -65,8 +66,9 @@ sub _build_template {
     my $mojito_version = $self->config->{VERSION};
     my $js_css = $self->js_css_html;
     my $page_id = $self->page_id||'';
+    my $publisher = Mojito::Page::Publish->new(config => $self->config);
     my $publish_form = '';
-    $publish_form = $self->publish_form||'' if $page_id;
+    $publish_form = $publisher->publish_form||'' if $page_id;
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html>
@@ -190,7 +192,7 @@ sub _build_collections_index {
 sub _build_recent_links {
     my $self = shift;
     my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->get_most_recent_links({want_delete_link => 1}));
+    return $self->wrap_page($list->get_recent_links({want_delete_link => 1}));
 }
 
 =head2 sort_collection_form
