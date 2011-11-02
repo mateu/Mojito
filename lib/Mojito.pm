@@ -192,10 +192,15 @@ sub view_page_public {
 
     # Strip out Edit and New links (even though they are Auth::Digest Protected)
     # Remove edit, new links and the recent area
-    $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
-    $rendered_page =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
-    $rendered_page =~ s/<section id="recent_area".*?><\/section>//si;
-
+    my @nav = qw/edit_link new_link/;
+    foreach my $nav (@nav) {
+        $rendered_page =~ s/<nav id="$nav".*?><\/nav>//sig;
+    }
+    my @areas = qw/recent search collections publish/;
+    foreach my $area (@areas) {
+        $rendered_page =~ s/<section id="${area}_area".*?><\/section>//si;
+    }
+    
     return $rendered_page;
 }
 
