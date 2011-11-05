@@ -46,6 +46,11 @@ has 'recent_links' => (
     builder => '_build_recent_links',
 );
 
+has 'wiki_language_selection' => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_wiki_language_selection',
+);
 has js_css_html => (
     is => 'ro',
     isa => Value,
@@ -64,6 +69,7 @@ sub _build_template {
 
     my $base_url  = $self->base_url;
     my $mojito_version = $self->config->{VERSION};
+    my $wiki_language_selection = $self->wiki_language_selection;
     my $js_css = $self->js_css_html;
     my $page_id = $self->page_id||'';
     my $publisher = Mojito::Page::Publish->new(config => $self->config);
@@ -92,10 +98,7 @@ $js_css
 <section id="edit_area">
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <div id="wiki_language">
-        <input type="radio" id="textile"  name="wiki_language" value="textile" checked="checked" /><label for="textile">textile</label>
-        <input type="radio" id="markdown" name="wiki_language" value="markdown" /><label for="markdown">markdown</label>
-        <input type="radio" id="creole"   name="wiki_language" value="creole" /><label for="creole">creole</label>
-        <input type="radio" id="html"     name="wiki_language" value="html" /><label for="html">html</label>
+        $wiki_language_selection
     </div>
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <input id="wiki_language" name="wiki_language" type="hidden" form="editForm" value="" />
@@ -128,6 +131,22 @@ END_HTML
     $edit_page =~ s/<script><\/script>/<script>mojito.base_url = '${base_url}';<\/script>/s;
     return $edit_page;
 }
+
+sub _build_wiki_language_selection {
+    my ($self) = @_;
+    
+    my $selection;
+    my $default_wiki_language =$self->config->{default_wiki_language}||'markdown';
+    foreach my $language (qw/textile markdown creole html/) {
+        if ($language =~ m/$default_wiki_language/) {
+            $selection .= qq{<input type="radio" id="$language"  name="wiki_language" value="$language" checked="checked" /><label for="$language">$language</label>};
+        }
+        else {
+            $selection .= qq{<input type="radio" id="$language"  name="wiki_language" value="$language" /><label for="$language">$language</label>};
+        }
+    }
+    return $selection;
+ }
 
 
 sub page_wrap_start {

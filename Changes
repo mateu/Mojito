@@ -1,9 +1,13 @@
 {{$NEXT}}
+          [Refinements]
+          - make default wiki language configurable with 
+            default_wiki_language => 'my_preference'. 
+            Choices are: textile, markdown, creole and html
 
 0.14      2011-10-29 16:19:49 America/Denver
           [Refinements]
           - Config read only once on app startup now
-          - Configs merged with a precendence
+          - Configs merged with a precedence
           [Remedies]
           - require verison 0.02 of MooX::Types::MooseLike
 
