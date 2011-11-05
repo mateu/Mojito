@@ -191,10 +191,10 @@ pre.prettyprint {
 }
 /* #sortable li span { position: absolute; margin-left: -1.3em; } */
 div.note {
-    max-width: 20em;
+    display: inline-block;
     background-color: #ffff9c;
     margin-left: -1em;
-    padding: 3px;
+    padding: 5px;
     border: 1px solid #cccccc;
     -moz-border-radius: 5px;
     border-radius: 5px;
