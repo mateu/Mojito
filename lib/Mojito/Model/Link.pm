@@ -90,18 +90,17 @@ Given a MongoDB cursor OR ArrayRef of documents then create the link data.
 
 sub get_link_data {
     my ($self, $cursor) = @_;
-
     my $link_data;
     if ( ref($cursor) eq 'MongoDB::Cursor' ) {
         while ( my $doc = $cursor->next ) {
-            my $title = $doc->{title} || $doc->{collection_name} || 'no title';
+            my $title = $doc->{title}||$doc->{collection_name}||'no title';
             push @{$link_data}, { id => $doc->{'_id'}->value, title => $title };
         }
     }
     elsif ( ref($cursor) eq 'ARRAY' ) {
         foreach my $doc (@{$cursor}) {
-            my $title = $doc->{title}  || 'no title';
-            push @{$link_data}, { id => $doc->{'_id'}, title => $title };
+            my $title = $doc->{title}||$doc->{collection_name}||'no title';
+            push @{$link_data}, { id => $doc->{'_id'}||$doc->{id}, title => $title };
         }
     }
     else {
@@ -336,7 +335,7 @@ but in a more general manner than create_list_of_links().
 
 sub create_generic_list_of_links {
     my ($self, $link_data, $args) = @_;
-
+    
     my $base_url = $self->base_url;
     my $route = $args->{route}||die 'Need a route to create a generic list of links';
     # make sure $route doesn't start with a '/'

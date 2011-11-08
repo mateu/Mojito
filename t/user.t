@@ -1,7 +1,6 @@
 use strictures 1;
 use Test::More;
 use Mojito::Auth;
-use 5.010;
 use Data::Dumper::Concise;
 BEGIN {
     if (!$ENV{RELEASE_TESTING}) {

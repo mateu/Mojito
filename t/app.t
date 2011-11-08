@@ -27,10 +27,10 @@ BEGIN {
 
 }
 my %framework_scripts = (
-    dancer     => 'dancer.pl',
     web_simple => 'mojito.pl',
-    mojo       => 'mojo.pl',
-    tatsumaki  => 'tatsumaki.psgi'
+#    dancer     => 'dancer.pl',
+#    mojo       => 'mojo.pl',
+#    tatsumaki  => 'tatsumaki.psgi'
 );
 my $base_path = "$Bin/../app/";
 my @app_files = map { $base_path . $framework_scripts{$_} } keys %framework_scripts;

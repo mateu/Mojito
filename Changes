@@ -1,7 +1,12 @@
 {{$NEXT}}
+          [Enchantments]
+          - New document storage option of DBM::Deep
+            To enable it, add the following to your configuration:
+              document_storage  => 'Deep',
+              dbm_deep_filepath => '/path/to/your/mojito-deep.db',
           [Refinements]
           - make default wiki language configurable with 
-            default_wiki_language => 'my_preference'. 
+            default_wiki_language => $my_choice. 
             Choices are: textile, markdown, creole and html
 
 0.14      2011-10-29 16:19:49 America/Denver
