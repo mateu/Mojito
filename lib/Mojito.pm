@@ -182,26 +182,8 @@ like the view_page() method is setup for public pages
 
 sub view_page_public {
     my ( $self, $params ) = @_;
-
     my $page          = $self->read( $params->{id} );
-    my $rendered_page = $self->render_page($page);
-
-    # Change class on view_area when we're in view mode.
-    $rendered_page =~
-      s/(<section\s+id="view_area").*?>/$1 class="view_area_view_mode">/si;
-
-    # Strip out Edit and New links (even though they are Auth::Digest Protected)
-    # Remove edit, new links and the recent area
-    my @nav = qw/edit_link new_link/;
-    foreach my $nav (@nav) {
-        $rendered_page =~ s/<nav id="$nav".*?><\/nav>//sig;
-    }
-    my @areas = qw/recent search collections publish/;
-    foreach my $area (@areas) {
-        $rendered_page =~ s/<section id="${area}_area".*?><\/section>//si;
-    }
-    
-    return $rendered_page;
+    return $self->wrap_page($page->{body_html}, $page->{title});
 }
 
 =head2 view_page_collected
