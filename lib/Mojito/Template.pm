@@ -20,7 +20,25 @@ has 'page_id' => (
     is => 'rw',
 );
 
+# Allow Template to receive a db attribute upon construction
+# currently it's passed to the $mojito->tmpl handler
+has 'db' => ( is => 'ro', lazy => 1);
+
 has 'base_url' => ( is => 'rw', );
+
+has linker => (
+    is      => 'ro',
+    isa     => sub { die "Need a Link Model object.  Have ref($_[0]) instead." unless $_[0]->isa('Mojito::Model::Link') },
+    lazy    => 1,
+    handles => {
+        recent_links_view            => 'get_recent_links',
+        collection_page_view         => 'view_collection_page',
+        select_collection_pages_view => 'view_selectable_page_list',
+        sort_collection_pages_view   => 'view_sortable_page_list',
+        collections_index_view       => 'view_collections_index',
+    },
+    writer => '_set_linker',
+);
 
 has 'home_page' => (
     is      => 'rw',
@@ -198,20 +216,17 @@ sub wrap_page {
 
 sub _build_collect_page_form {
     my $self = shift;
-    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_selectable_page_list);
+    return $self->wrap_page($self->select_collection_pages_view);
 }
 
 sub _build_collections_index {
     my $self = shift;
-    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_collections_index);
+    return $self->wrap_page($self->collections_index_view);
 }
 
 sub _build_recent_links {
     my $self = shift;
-    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->get_recent_links({want_delete_link => 1}));
+    return $self->wrap_page($self->recent_links_view({want_delete_link => 1}));
 }
 
 =head2 sort_collection_form
@@ -222,8 +237,7 @@ A form to sort a collection of pages.
 
 sub sort_collection_form {
     my ($self, $params) = (shift, shift);
-    my $list = Mojito::Model::Link->new(base_url => $self->base_url);
-    return $self->wrap_page($list->view_sortable_page_list({ collection_id => $params->{id} }));
+    return $self->wrap_page($self->sort_collection_pages_view({ collection_id => $params->{id} }));
 }
 
 =head2 collection_page
@@ -237,10 +251,9 @@ sub collection_page {
 
     my $base_url = $self->base_url;
     $base_url .= 'public/' if $params->{public};
-    my $list = Mojito::Model::Link->new(base_url => $base_url);
-    my $collector = Mojito::Collection::CRUD->new;
+    my $collector = Mojito::Collection::CRUD->new(db => $self->db);
     my $collection = $collector->read( $params->{id} );
-    return $self->wrap_page($list->view_collection_page({ collection_id => $params->{id} }), $collection->{collection_name});
+    return $self->wrap_page($self->collection_page_view({ collection_id => $params->{id} }), $collection->{collection_name});
 }
 
 sub _build_home_page {
@@ -367,4 +380,11 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
     return $output;
 }
 
+sub BUILD {
+    my $self                  = shift;
+    my $constructor_args_href = shift;
+
+    # pass the options into the delegatees
+    $self->_set_linker(Mojito::Model::Link->new($constructor_args_href));
+}
 1

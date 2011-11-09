@@ -258,7 +258,7 @@ EOH
 
 =head2 view_collections_index
 
-Get the links for the documents belonging to a particular feed.
+List the existing collections
 
 =cut
 

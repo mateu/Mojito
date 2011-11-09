@@ -232,14 +232,17 @@ use Data::Dumper::Concise;
         my ($orig, $self) = (shift, shift);
         my $app = $self->$orig(@_);
         my $auth = Mojito::Auth->new;
+        my $mojito = Mojito->new;
         builder {
             enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
               "Auth::Digest",
-              realm => "Mojito",
+              realm  => "Mojito",
               secret => $auth->_secret,
               password_hashed => 1,
               authenticator => $auth->digest_authen_cb;
-            enable "+Mojito::Middleware", config => Mojito::Model::Config->new->config;
+            enable "+Mojito::Middleware", 
+              config => $mojito->config,
+              db     => $mojito->db;
             enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
             $app;
         };

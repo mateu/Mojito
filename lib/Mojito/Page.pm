@@ -66,6 +66,7 @@ has editer => (
             read
             update
             delete
+            db
           )
     ],
     writer => '_build_edit',

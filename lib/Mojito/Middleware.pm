@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Middleware;
 use parent qw(Plack::Middleware);
-use Plack::Util::Accessor qw/config/;
+use Plack::Util::Accessor qw/config db/;
 use Mojito;
 
 sub call {
@@ -12,6 +12,7 @@ sub call {
         base_url => $base_url, 
         username => $env->{REMOTE_USER},
         config   => $self->config, 
+        db       => $self->db, 
     );
     $self->app->($env);
 }
