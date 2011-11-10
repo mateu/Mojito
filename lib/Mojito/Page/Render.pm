@@ -6,7 +6,7 @@ use Mojito::Template;
 use Mojito::Filter::Shortcuts;
 use Mojito::Filter::MojoMojo::Converter;
 use Text::Textile;
-use Text::Markdown;
+use Text::MultiMarkdown;
 use Text::WikiCreole;
 use Pod::Simple::XHTML;
 use HTML::Strip;
@@ -29,7 +29,7 @@ has textile => (
 has markdown => (
     is => 'ro',
     lazy => 1,
-    'default' => sub { return Text::Markdown->new }
+    'default' => sub { return Text::MultiMarkdown->new }
 );
 
 has base_url => ( is => 'rw', );
