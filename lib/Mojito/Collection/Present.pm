@@ -5,6 +5,8 @@ use MooX::Types::MooseLike qw(:all);
 use Mojito::Collection::CRUD;
 use List::MoreUtils qw/ first_index /;
 
+has db => (is => 'ro', lazy => 1);
+
 has 'collection' => (
     is => 'ro',
     isa => HashRef,
@@ -14,7 +16,7 @@ has 'collection' => (
 sub _build_collection {
     my $self = shift;
     die "Must have collection id" if !$self->collection_id;
-    return Mojito::Collection::CRUD->new->read($self->collection_id);
+    return Mojito::Collection::CRUD->new(db => $self->db)->read($self->collection_id);
 }
 
 has 'collection_id' => (

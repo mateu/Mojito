@@ -13,6 +13,8 @@ has name_of_page_collection => (
     is => 'rw',
 );
 
+has db => (is => 'ro', lazy => 1);
+
 has doc => (
     is      => 'ro',
     isa     => sub { die "Need a Doc Model object.  Have ref($_[0]) instead." unless $_[0]->isa('Mojito::Model::Doc') },
@@ -357,7 +359,8 @@ sub view_collection_nav {
     my ($self, $params) = @_;
     
     # Obtain focus point.
-    my $presenter = Mojito::Collection::Present->new( 
+    my $presenter = Mojito::Collection::Present->new(
+        db            => $self->db, 
         collection_id => $params->{collection_id}, 
         focus_page_id => $params->{page_id},
     );
