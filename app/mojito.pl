@@ -27,10 +27,6 @@ sub dispatch_request {
         config   => $env->{mojito}->config,
         db       => $self->my_db,
     );
-#    my $max = 0;
-#    for (1 .. $max) {
-#        my $mj = Mojito->new;
-#    }
 
     # A Benchmark URI
     sub (GET + /bench ) {

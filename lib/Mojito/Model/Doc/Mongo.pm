@@ -80,10 +80,6 @@ sub get_collection_pages {
    return ($collection->{collection_name}, \@pages); 
 }
 
-sub BUILD {
-   # warn "Doc::Mongo Args: ", Dumper $_[1];
-}
-
 1
 
 __END__
