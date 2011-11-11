@@ -12,11 +12,11 @@ has 'conn' => (
 has 'db_name' => (
     is => 'rw',
     lazy => 1,
-    default => sub { 'mojito' },
+    default => sub { $ENV{RELEASE_TESTING} ? 'mojito_test' : 'mojito' },
     clearer => 'clear_db_name',
 );
 has 'db' => (
-    is => 'ro',
+    is => 'rw',
     lazy => 1,
     builder => '_build_db',
     clearer => 'clear_db',
@@ -44,6 +44,10 @@ sub _build_conn {
 }
 
 sub _build_db  {
+    warn "BUILD MONGO DB CONNECTION" if $ENV{MOJITO_DEBUG};
+#    use Devel::StackTrace;
+#    my $trace = Devel::StackTrace->new;
+#    warn $trace->as_string;
     my $self = shift;
     my $db_name = $self->db_name;
     $self->conn->${db_name};
@@ -54,16 +58,4 @@ sub _build_collection  {
     $self->db->${collection_name};
 }
 
-=head1 Methods
-
-=head2 BUILD
-
-Set a test DB when RELEASE_TESTING
-
-=cut
-
-sub BUILD {
-    my ($self) = (shift);
-    $self->db_name('mojito_test') if $ENV{RELEASE_TESTING};
-}
 1;

@@ -30,7 +30,7 @@ Config file is looked for in three locations:
 
 sub _build_config {
     my ($self) = @_;
-
+    warn "BUILD CONFIG" if $ENV{MOJITO_DEBUG};
     my $conf_file       = abs_path(__DIR__ . '/../conf/mojito.conf');
     my $local_conf_file = abs_path(__DIR__ . '/../conf/mojito_local.conf');
     my $env_conf_file   = $ENV{MOJITO_CONFIG};

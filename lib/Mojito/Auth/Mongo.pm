@@ -1,8 +1,9 @@
 use strictures 1;
 package Mojito::Auth::Mongo;
 use Moo;
+use Data::Dumper::Concise;
 
-extends 'Mojito::Auth::Base';
+with('Mojito::Role::DB::Mongo');
 
 =head1 Methods
 
@@ -19,6 +20,7 @@ sub add_user {
     my $digest_input       = join ':', map { $self->$_ } @digest_input_parts;
     my $HA1                = Digest::MD5::md5_hex($digest_input);
     my $md5_password       = Digest::MD5::md5_hex( $self->password );
+    
     my $id                 = $self->collection->insert(
         {
             first_name => $self->first_name,
@@ -44,6 +46,21 @@ sub get_user {
     $username //= $self->username;
     return if !$username;
     return $self->collection->find_one( { username => $username } );
+}
+
+with('Mojito::Auth::Role');
+
+=head2 BUILD
+
+Set some things post object construction, pre object use.
+
+=cut
+
+sub BUILD {
+    my $self = shift;
+
+    # We use the users collection for Auth stuff
+    $self->collection_name('users');
 }
 
 1

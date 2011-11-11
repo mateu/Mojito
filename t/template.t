@@ -1,8 +1,10 @@
 use Test::More;
 use Mojito::Template;
-use 5.010;
+use Mojito::Model::Config;
 
-my $temple = Mojito::Template->new;
+# Need config as a constructor arg for Template
+my $config = Mojito::Model::Config->new->config;
+my $temple = Mojito::Template->new(config => $config);
 isa_ok($temple, 'Mojito::Template');
 
 

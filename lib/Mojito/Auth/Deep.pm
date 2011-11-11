@@ -4,7 +4,7 @@ use Moo;
 use Mojito::Page::CRUD::Deep;
 use List::Util qw/first/;
 
-extends 'Mojito::Auth::Base';
+with('Mojito::Role::DB::Deep');
 
 has editer => (
     is => 'ro',
@@ -58,6 +58,22 @@ sub get_user {
     my @users = values %{$collection};
     my $user = first {$_->{username} eq $username} @users;
     return $user;
+}
+
+# Apply the role after the (role) required interface is defined (get_user, add_user)
+with('Mojito::Auth::Role');
+
+=head2 BUILD
+
+Set some things post object construction, pre object use.
+
+=cut
+
+sub BUILD {
+    my $self = shift;
+
+    # We use the users collection for Auth stuff
+    $self->collection_name('users');
 }
 
 1;

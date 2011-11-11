@@ -360,6 +360,7 @@ sub view_collection_nav {
     
     # Obtain focus point.
     my $presenter = Mojito::Collection::Present->new(
+        config        => $self->config,
         db            => $self->db, 
         collection_id => $params->{collection_id}, 
         focus_page_id => $params->{page_id},

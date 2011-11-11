@@ -13,6 +13,8 @@ set 'access_log'  => 1;
 #set 'warnings'    => 1;
 
 # Provide a shortcut to the mojito object
+# TODO: Persist config and db as attributes of this app 
+#       like has been done with Web::Simple version
 my ($mojito);
 before sub {
     $mojito = request->env->{mojito};
@@ -144,14 +146,15 @@ get '/public/feed/:feed' => sub {
 };
 
 builder {
-    my $auth = Mojito::Auth->new;
+    my $config = Mojito::Model::Config->new->config;
+    my $auth   = Mojito::Auth->new(config => $config);
     enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
       "Auth::Digest",
       realm => "Mojito",
       secret => $auth->_secret,
       password_hashed => 1,
       authenticator => $auth->digest_authen_cb;
-    enable "+Mojito::Middleware", config => Mojito::Model::Config->new->config;
+    enable "+Mojito::Middleware", config => $config; 
     enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
 
     dance;

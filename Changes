@@ -5,6 +5,7 @@
               document_storage  => 'Deep',
               dbm_deep_filepath => '/path/to/your/mojito-deep.db',
           [Refinements]
+          - 
           - make default wiki language configurable with 
             default_wiki_language => $my_choice. 
             Choices are: textile, markdown, creole and html

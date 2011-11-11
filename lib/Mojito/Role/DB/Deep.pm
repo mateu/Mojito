@@ -14,7 +14,7 @@ has 'db_name' => (
     clearer => 'clear_db_name',
 );
 has 'db' => (
-    is => 'ro',
+    is => 'rw',
     lazy => 1,
     builder => '_build_db',
     clearer => 'clear_db',
@@ -38,6 +38,7 @@ has 'db_host' => (
 );
 
 sub _build_db  {
+    warn "BUILD DEEP DB CONNECTION" if $ENV{MOJITO_DEBUG};
     return DBM::Deep->new($_[0]->db_name);
 }
 sub _build_collection  {

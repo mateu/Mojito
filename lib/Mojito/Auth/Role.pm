@@ -1,12 +1,11 @@
 use strictures 1;
-package Mojito::Auth::Base;
-use Moo;
+package Mojito::Auth::Role;
+use Moo::Role;
 use Digest::MD5;
 use MooX::Types::MooseLike qw(:all);
 
+requires 'get_user', 'add_user';
 use Data::Dumper::Concise;
-
-with 'Mojito::Role::DB';
 
 =head1 Attributes
 
@@ -105,7 +104,7 @@ Provide the username, realm (default Mojito) and password.
 
 =cut
 
-sub add_user { 'OVERRIDE add_user() in a Sub-Class' }
+#sub add_user { 'OVERRIDE add_user() in a Sub-Class' }
 
 =head2 get_user
 
@@ -113,7 +112,7 @@ Get a user from the database.
 
 =cut
 
-sub get_user {'OVERRIDE get_user() in a Sub-Class' }
+#sub get_user {'OVERRIDE get_user() in a Sub-Class' }
 
 =head2 secret
 
@@ -125,17 +124,5 @@ sub _secret () {    ## no critic
     'més_vi_si_us_plau';
 }
 
-=head2 BUILD
-
-Set some things post object construction, pre object use.
-
-=cut
-
-sub BUILD {
-    my $self = shift;
-
-    # We use the users collection for Auth stuff
-    $self->collection_name('users');
-}
 
 1

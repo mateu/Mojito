@@ -1,8 +1,10 @@
 use strictures 1;
 use Term::Prompt;
 use Mojito::Auth;
+use Mojito::Model::Config;
 use 5.010;
 
+my $config = Mojito::Model::Config->new->config;
 my $realm = 'Mojito';
 my ( $first_name, $last_name, $email, $username, $password_1, $password_2 );
 USERNAME_PROMPT:
@@ -10,7 +12,7 @@ USERNAME_PROMPT:
 
     #realm = prompt( 'x', 'realm:',    '', 'Mojito' );
     $username   = prompt( 'x', "\nusername:",         '', '' );
-    my $mojito_auth = Mojito::Auth->new;
+    my $mojito_auth = Mojito::Auth->new(config => $config);
     if ($mojito_auth->get_user($username)) {
         say "Username '$username' already taken!";
         goto USERNAME_PROMPT;
@@ -30,6 +32,7 @@ $last_name  = prompt( 'x', "\nlast name:",        '', '' );
 $email      = prompt( 'x', "\nemail:",            '', '' );
     
 my $mojito_auth = Mojito::Auth->new(
+    config     => $config,
     first_name => $first_name,
     last_name  => $last_name,
     email      => $email,

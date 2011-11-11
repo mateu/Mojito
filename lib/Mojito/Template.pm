@@ -1,6 +1,7 @@
 use strictures 1;
 package Mojito::Template;
 use Moo;
+use 5.010;
 use MooX::Types::MooseLike qw(:all);
 use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
@@ -210,7 +211,8 @@ Wrap a page body with start and end HTML.
 
 sub wrap_page {
     my ($self, $page_body, $title) = @_;
-    $title ||= 'Mojito page';
+    $title //= 'Mojito page';
+    $page_body //= 'Empty page';
     return ($self->page_wrap_start($title) . $page_body . $self->page_wrap_end);
 }
 
@@ -251,7 +253,7 @@ sub collection_page {
 
     my $base_url = $self->base_url;
     $base_url .= 'public/' if $params->{public};
-    my $collector = Mojito::Collection::CRUD->new(db => $self->db);
+    my $collector = Mojito::Collection::CRUD->new(config => $self->config, db => $self->db);
     my $collection = $collector->read( $params->{id} );
     return $self->wrap_page($self->collection_page_view({ collection_id => $params->{id} }), $collection->{collection_name});
 }

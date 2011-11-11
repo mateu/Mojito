@@ -1,6 +1,7 @@
 use strictures 1;
 use Test::More;
 use Mojito::Auth;
+use Mojito::Model::Config;
 use Data::Dumper::Concise;
 BEGIN {
     if (!$ENV{RELEASE_TESTING}) {
@@ -9,7 +10,10 @@ BEGIN {
     }
 }
 
+# Need config as a constructor arg for Auth
+my $config = Mojito::Model::Config->new->config;
 my $mojito_auth = Mojito::Auth->new(
+    config => $config,
     first_name => 'xavi',
     last_name  => 'exemple',
     email      => 'xavi@somewhere.org',

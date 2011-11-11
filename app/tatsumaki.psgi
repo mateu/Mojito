@@ -316,14 +316,15 @@ my $app = Tatsumaki::Application->new(
 );
 
 builder {
-    my $auth = Mojito::Auth->new;
+    my $config = Mojito::Model::Config->new->config;
+    my $auth   = Mojito::Auth->new(config => $config);
     enable_if { $_[0]->{PATH_INFO} !~ m/^\/(?:public|favicon.ico)/ }
     "Auth::Digest",
       realm           => "Mojito",
       secret          => $auth->_secret,
       password_hashed => 1,
       authenticator   => $auth->digest_authen_cb;
-    enable "+Mojito::Middleware", config => Mojito::Model::Config->new->config;
+    enable "+Mojito::Middleware", config => $config;
     enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
 
     $app;
