@@ -4,15 +4,21 @@
             To enable it, add the following to your configuration:
               document_storage  => 'Deep',
               dbm_deep_filepath => '/path/to/your/mojito-deep.db',
+
           [Refinements]
-          - make default wiki language configurable with 
+          - Make default wiki language configurable with 
             default_wiki_language => $my_choice. 
             Choices are: textile, markdown, creole and html
+          - Add metacpan module and author URL shortcuts
+
+          [Remedies]
+          - Ensure username is unique when add_user() is called
 
 0.14      2011-10-29 16:19:49 America/Denver
           [Refinements]
           - Config read only once on app startup now
           - Configs merged with a precedence
+
           [Remedies]
           - require verison 0.02 of MooX::Types::MooseLike
 
