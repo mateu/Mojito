@@ -3,9 +3,9 @@ package Mojito::Auth::Role;
 use Moo::Role;
 use Digest::MD5;
 use MooX::Types::MooseLike qw(:all);
-
-requires 'get_user', 'add_user';
 use Data::Dumper::Concise;
+
+requires 'get_user', 'add_user', 'remove_user';
 
 =head1 Attributes
 
@@ -97,22 +97,6 @@ sub get_HA1_for {
     my $user = $self->get_user($username);
     return $user->{HA1};
 }
-
-=head2 add_user
-
-Provide the username, realm (default Mojito) and password.
-
-=cut
-
-#sub add_user { 'OVERRIDE add_user() in a Sub-Class' }
-
-=head2 get_user
-
-Get a user from the database.
-
-=cut
-
-#sub get_user {'OVERRIDE get_user() in a Sub-Class' }
 
 =head2 secret
 

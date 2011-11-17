@@ -14,8 +14,13 @@ Provide the username, realm (default Mojito) and password.
 =cut
 
 sub add_user {
-    my ($self) = @_;
-
+    my ($self, $args) = @_;
+    
+    my $username = $args->{username} || $self->username;
+    if ($self->get_user($username)) {
+        warn "Username '$username' already taken!";
+        return;
+    }
     my @digest_input_parts = qw/ username realm password /;
     my $digest_input       = join ':', map { $self->$_ } @digest_input_parts;
     my $HA1                = Digest::MD5::md5_hex($digest_input);
@@ -48,6 +53,21 @@ sub get_user {
     return $self->collection->find_one( { username => $username } );
 }
 
+=head2 remove_user
+
+Remove a user from the database.
+
+=cut
+
+sub remove_user {
+    my ( $self, $username ) = @_;
+
+    $username //= $self->username;
+    return if !$username;
+    return $self->collection->remove({ username => $username });
+}
+
+# We compose the role AFTER the required methods are defined.
 with('Mojito::Auth::Role');
 
 =head2 BUILD

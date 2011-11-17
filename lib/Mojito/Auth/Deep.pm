@@ -19,8 +19,13 @@ Provide the username, realm (default Mojito) and password.
 =cut
 
 sub add_user {
-    my ($self) = @_;
+    my ($self, $args) = @_;
 
+    my $username = $args->{username} || $self->username;
+    if ($self->get_user($username)) {
+        warn "Username '$username' already taken!";
+        return;
+    }
     my @digest_input_parts = qw/ username realm password /;
     my $digest_input       = join ':', map { $self->$_ } @digest_input_parts;
     my $HA1                = Digest::MD5::md5_hex($digest_input);
@@ -58,6 +63,29 @@ sub get_user {
     my @users = values %{$collection};
     my $user = first {$_->{username} eq $username} @users;
     return $user;
+}
+
+=head2 remove_user
+
+Remove a user from the database.
+
+=cut
+
+sub remove_user {
+    my ( $self, $username ) = @_;
+    $username //= $self->username;
+    return if !$username;
+    # Just in case we have multiple occurrences of the same user
+    my $collection = $self->editer->collection->export;
+    my @users = values %{$collection};
+    my @wanted_users = grep {$_->{username} eq $username} @users;
+    my @wanted_ids = map {$_->{id} } @wanted_users;
+    my $users_deleted = 0;
+    foreach my $id (@wanted_ids) {
+        delete $self->editer->collection->{$id};
+        $users_deleted++;
+    }
+    return $users_deleted;
 }
 
 # Apply the role after the (role) required interface is defined (get_user, add_user)

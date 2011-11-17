@@ -23,12 +23,13 @@ my $mojito_auth = Mojito::Auth->new(
 );
 $mojito_auth->clear_db_name;
 $mojito_auth->db_name('mojito_test');
-my $id = $mojito_auth->add_user;
+ok(my $id = $mojito_auth->add_user, 'Add user');
 
 my $user = $mojito_auth->get_user('xavi');
 my $name = $user->{first_name}. ' '.$user->{last_name};
 my $email = $user->{email};
 is($email, 'xavi@somewhere.org', 'email');
 is($name, 'xavi exemple', 'name');
+ok($mojito_auth->remove_user('xavi'), 'Remove user');
 
 done_testing();

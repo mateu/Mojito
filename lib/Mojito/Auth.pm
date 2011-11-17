@@ -9,7 +9,7 @@ has 'auth' => (
     is => 'ro',
     lazy => 1,
     writer => '_set_auth',
-    handles =>  [ qw( digest_authen_cb _secret get_user add_user username realm password clear_db_name db_name) ],
+    handles =>  [ qw( digest_authen_cb _secret get_user add_user remove_user username realm password clear_db_name db_name) ],
 );
 
 sub BUILD {
