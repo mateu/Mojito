@@ -15,7 +15,7 @@ has shortcuts => (
 );
 sub _build_shortcuts {
     my $self = shift;
-    my @shortcuts = ('cpan_URL');
+    my @shortcuts = qw( cpan_URL metacpan_module_URL metacpan_author_URL);
     push @shortcuts, 'fonality_ticket' if ($self->config->{fonality_ticket_url});
     return \@shortcuts;
 }
@@ -49,6 +49,30 @@ sub cpan_URL {
     return $content;
 }
 
+=head2 metacpan_module_URL
+
+Expand the cpan abbreviated shortcut.
+
+=cut
+
+sub metacpan_module_URL {
+    my ($self, $content) = @_;
+    return if !$content;
+    $content =~ s|{{modmeta\s+([^}]*)}}|<a href="http://metacpan.org/module/$1">$1</a>|sig;
+    return $content;
+}
+=head2 metacpan_module_URL
+
+Expand the cpan abbreviated shortcut.
+
+=cut
+
+sub metacpan_author_URL {
+    my ($self, $content) = @_;
+    return if !$content;
+    $content =~ s|{{authmeta\s+([^}]*)}}|<a href="http://metacpan.org/author/$1">$1</a>|sig;
+    return $content;
+}
 =head2 fonality_ticket
 
 Expand the fonality ticket abbreviated shortcut.
