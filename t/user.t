@@ -21,8 +21,6 @@ my $mojito_auth = Mojito::Auth->new(
     realm      => 'mojito',
     password   => 'top_secret',
 );
-$mojito_auth->clear_db_name;
-$mojito_auth->db_name('mojito_test');
 ok(my $id = $mojito_auth->add_user, 'Add user');
 
 my $user = $mojito_auth->get_user('xavi');

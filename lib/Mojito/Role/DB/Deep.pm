@@ -10,7 +10,12 @@ with('Mojito::Role::DB::OID');
 has 'db_name' => (
     is => 'rw',
     lazy => 1,
-    default => sub { Mojito::Model::Config->new->config->{dbm_deep_filepath} },
+    # Set a test DB when RELEASE_TESTING
+    default => sub { 
+        $ENV{RELEASE_TESTING} 
+          ?  '/home/hunter/mojito_test.db' 
+          : Mojito::Model::Config->new->config->{dbm_deep_filepath}; 
+    },
     clearer => 'clear_db_name',
 );
 has 'db' => (
@@ -38,7 +43,10 @@ has 'db_host' => (
 );
 
 sub _build_db  {
-    warn "BUILD DEEP DB CONNECTION" if $ENV{MOJITO_DEBUG};
+    warn "BUILD DEEP DB CONNECTION for ", $_[0]->db_name if $ENV{MOJITO_DEBUG};
+#    use Devel::StackTrace;
+#    my $trace = Devel::StackTrace->new;
+#    warn $trace->as_string;
     return DBM::Deep->new($_[0]->db_name);
 }
 sub _build_collection  {
@@ -47,18 +55,5 @@ sub _build_collection  {
     $self->db->{$collection_name};
 }
 
-=head1 Methods
-
-=head2 BUILD
-
-Set a test DB when RELEASE_TESTING
-
-=cut
-
-sub BUILD {
-    my ($self) = (shift);
-    my $test_db = '/home/hunter/mojito_test.db';
-    $self->db_name($test_db) if $ENV{RELEASE_TESTING};
-}
 
 1;

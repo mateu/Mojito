@@ -58,8 +58,11 @@ sub get_user {
     my ( $self, $username ) = @_;
     $username //= $self->username;
     return if !$username;
+    # If we don't have any users yet, the be somewhat graceful about it
+    return if !$self->collection;
+
     # Get collection
-    my $collection = $self->editer->collection->export;
+    my $collection = $self->collection->export;
     my @users = values %{$collection};
     my $user = first {$_->{username} eq $username} @users;
     return $user;
@@ -76,13 +79,13 @@ sub remove_user {
     $username //= $self->username;
     return if !$username;
     # Just in case we have multiple occurrences of the same user
-    my $collection = $self->editer->collection->export;
+    my $collection = $self->collection->export;
     my @users = values %{$collection};
     my @wanted_users = grep {$_->{username} eq $username} @users;
     my @wanted_ids = map {$_->{id} } @wanted_users;
     my $users_deleted = 0;
     foreach my $id (@wanted_ids) {
-        delete $self->editer->collection->{$id};
+        delete $self->collection->{$id};
         $users_deleted++;
     }
     return $users_deleted;

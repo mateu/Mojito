@@ -27,6 +27,10 @@ sub create {
     # Is this sucker used ja?
     # TODO: Seek out another when generated one is already used.
     die "oid: $oid is already in use" if ($self->collection && $self->collection->exists($oid));
+    # If the collection does not exist yet let's initialize it.
+    if (!$self->collection) {
+        $self->db->{$self->collection_name} = {};
+    }
     $self->collection->{$oid} = $page_struct;
     
     return $oid;
