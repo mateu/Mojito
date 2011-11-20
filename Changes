@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+0.15      2011-11-20 11:51:53 America/Denver
           [Enchantments]
           - New document storage option of DBM::Deep
             To enable it, add the following to your configuration:
@@ -9,6 +11,7 @@
           - Make default wiki language configurable with 
             default_wiki_language => $my_choice. 
             Choices are: textile, markdown, creole and html
+          - Added POD page format option
           - Add metacpan module and author URL shortcuts
 
           [Remedies]
