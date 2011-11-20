@@ -3,6 +3,7 @@ package Mojito::Auth::Role;
 use Moo::Role;
 use Digest::MD5;
 use MooX::Types::MooseLike qw(:all);
+use utf8;
 use Data::Dumper::Concise;
 
 requires 'get_user', 'add_user', 'remove_user';

@@ -156,7 +156,7 @@ sub _build_wiki_language_selection {
     
     my $selection;
     my $default_wiki_language =$self->config->{default_wiki_language}||'markdown';
-    foreach my $language (qw/textile markdown creole html/) {
+    foreach my $language (qw/textile markdown creole html pod/) {
         if ($language =~ m/$default_wiki_language/) {
             $selection .= qq{<input type="radio" id="$language"  name="wiki_language" value="$language" checked="checked" /><label for="$language">$language</label>};
         }
