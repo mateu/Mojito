@@ -20,9 +20,14 @@ Create a page in the database.
 sub create {
     my ( $self, $page_struct ) = @_;
 
-    # add save time as last_modified and created
-    $page_struct->{last_modified} = $page_struct->{created} = time();
+    # Add created (and last_modified) timestamps
+    # If page struct has a created let's use that instead
+    # under the assumption we're loading outside data. e.g. from MojoMojo
+    my $now = time();
+    $page_struct->{created} //= $now;
+    $page_struct->{last_modified} //= $now;
     my $id = $self->collection->insert($page_struct);
+
     return $id->value;
 }
 
