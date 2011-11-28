@@ -3,7 +3,6 @@ package Mojito::Page::Render;
 use 5.010;
 use Moo;
 use Mojito::Template;
-use Mojito::Filter::Shortcuts;
 use Mojito::Filter::MojoMojo::Converter;
 use Text::Textile;
 use Text::MultiMarkdown;
@@ -204,6 +203,9 @@ sub format_for_web {
         }
         when (/^diff$/i) {
             $formatted_content = "<pre class='sh_diff'>$content</pre>";
+        }
+        when (/^(haskell|hs)$/i) {
+            $formatted_content = "<pre class='sh_haskell'>$content</pre>";
         }
         when (/^sh_html$/i) {
             $formatted_content = "<pre class='sh_html'>$content</pre>";
