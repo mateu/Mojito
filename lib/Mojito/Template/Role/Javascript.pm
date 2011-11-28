@@ -30,6 +30,7 @@ sub _build_javascripts {
           'SHJS/sh_sql.min.js',
           'SHJS/sh_sh.min.js',
           'SHJS/sh_diff.min.js',
+          'SHJS/sh_haskell.min.js',
        ];
 }
 
