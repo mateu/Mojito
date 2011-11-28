@@ -1,8 +1,12 @@
 pre.sh_sourceCode {
-  background-color: #ffffff;
+  background-color: #f3f3f3;
+  display: inline-block;
   color: #121b28;
   font-weight: normal;
   font-style: normal;
+  padding: 5px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
 }
 
 pre.sh_sourceCode .sh_keyword {
