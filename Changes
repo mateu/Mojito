@@ -1,4 +1,9 @@
 {{$NEXT}}
+          [Enchantments]
+          - Enable internal links of the [[URI|title]] format
+		  - {{synopsis $Module}} shortcut to show a $Module's synopsis
+		  - {{recent_synopses 10}} shortcut to show the 10 most
+		    recently released module synopses
 
 0.15      2011-11-20 11:51:53 America/Denver
           [Enchantments]

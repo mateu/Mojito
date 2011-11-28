@@ -2,6 +2,7 @@ use strictures 1;
 package Mojito::Filter::Shortcuts;
 use Moo::Role;
 use MooX::Types::MooseLike qw(:all);
+use Mojito::Model::MetaCPAN;
 use 5.010;
 use Data::Dumper::Concise;
 
@@ -15,7 +16,7 @@ has shortcuts => (
 );
 sub _build_shortcuts {
     my $self = shift;
-    my @shortcuts = qw( cpan_URL metacpan_module_URL metacpan_author_URL internal_URL);
+    my @shortcuts = qw( cpan_URL metacpan_module_URL metacpan_author_URL internal_URL cpan_recent_synopses cpan_synopsis);
     push @shortcuts, 'fonality_ticket' if ($self->config->{fonality_ticket_url});
     return \@shortcuts;
 }
@@ -49,6 +50,39 @@ sub cpan_URL {
     return $content;
 }
 
+has metacpan => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { Mojito::Model::MetaCPAN->new },
+);
+
+=head2 cpan_synopsis
+
+Show the CPAN SYNOPSIS for a Perl Module
+
+=cut
+
+sub cpan_synopsis {
+    my ($self, $content) = @_;
+    return if !$content;
+    $content =~ s/{{synopsis\s+([^}]*)}}/$self->metacpan->get_synopsis_formatted($1, 'presentation')/esig;
+    return $content;
+}
+
+=head2 cpan_recent_synopses
+
+Show the synopses of the CPAN recent releases
+
+NOTE: This needs to run before cpan_synopsis since it expands into cpan synopses.
+
+=cut
+
+sub cpan_recent_synopses {
+    my ($self, $content) = @_;
+    return if !$content;
+    $content =~ s/{{\s*recent_synopses\s*(\d+)\s*}}/$self->metacpan->get_recent_synopses($1)/esig;
+    return $content;
+}
 =head2 metacpan_module_URL
 
 Expand the cpan abbreviated shortcut.
