@@ -20,8 +20,8 @@ has http_client => (
 );
 
 has metacpan => (
-    is => 'ro',
-    lazy => 1,
+    is      => 'ro',
+    lazy    => 1,
     default => sub { MetaCPAN::API->new },
 );
 
@@ -29,8 +29,8 @@ has cache => (
     is      => 'rw',
     default => sub {
         CHI->new(
-            driver   => 'Memory',
-            global   => 1
+            driver => 'Memory',
+            global => 1
         );
     },
 );
@@ -129,7 +129,7 @@ sub get_synopsis_formatted {
             return $no_synopsis_message if not scalar @synopsis_lines;
 
             # Comment out lines that don't start with a comment
-            # and are not indented (i.e. not code) 
+            # and are not indented (i.e. not code)
             # because we'd like the Synopsis to be runnable (in theory)
             my ($whitespace) = $synopsis_lines[0] =~ m/^(\s*)/;
             @synopsis_lines = map { s/^(\w)/# $1/; $_; } @synopsis_lines;
@@ -138,7 +138,7 @@ sub get_synopsis_formatted {
             @synopsis_lines = map { s/^$whitespace//; $_; } @synopsis_lines;
 
             # pre wrapper for syntax highlight
-            unshift @synopsis_lines, '<pre class="sh_perl">';
+            unshift @synopsis_lines, "<pre class='prettyprint'>";
             push @synopsis_lines, '</pre>';
 
             # section title
@@ -165,26 +165,22 @@ sub get_synopsis_formatted {
      and the values are: Module Versions
 
 =cut
-   
 
 sub get_recent_releases_from_metacpan {
     my ($self, $how_many) = @_;
     $how_many ||= 10;
-    
-    my $result = $self->metacpan->release(
+
+    my @fields        = qw/distribution version download_url/;
+    my $fields_string = join ',', @fields;
+    my $result        = $self->metacpan->release(
         search => {
             sort   => "date:desc",
-            fields => "name",
+            fields => $fields_string,
             size   => $how_many,
         },
     );
-    my @recent_releases =
-      map { $_->{fields}->{name} } @{ $result->{hits}->{hits} };
-    my %recent_releases = map { s/\-([^\-]*)$//; $_ => $1; } @recent_releases;
-    %recent_releases =
-      map { my $org = $_; s/\-/\:\:/g; $_ => $recent_releases{$org}; }
-      keys %recent_releases;
-    return %recent_releases;
+
+    return map { $_->{fields} } @{ $result->{hits}->{hits} };
 }
 
 =head2 get_recent_synopses
@@ -196,13 +192,18 @@ sub get_recent_releases_from_metacpan {
 sub get_recent_synopses {
     my ($self, $how_many) = @_;
     $how_many ||= 10;
-        
+
     my $cache_key = "CPAN_RECENT_SYNOPSES:${how_many}";
     my $synopses  = $self->cache->get($cache_key);
     if (not $synopses) {
         warn "GET Recent Release from CPAN" if $ENV{MOJITO_DEBUG};
-        my %releases = $self->get_recent_releases_from_metacpan($how_many);
-        my @recent_synopses = map { "{{synopsis ${_}}}" } keys %releases;
+        my @releases = $self->get_recent_releases_from_metacpan($how_many);
+        my @recent_synopses = map { "{{synopsis $_}}" } 
+        map {
+            my $dist = $_->{distribution}; 
+            $dist =~ s/\-/::/g;
+            $dist;
+        } @releases;
         $synopses = join "\n", @recent_synopses;
         $self->cache->set($cache_key, $synopses, '30 seconds');
     }

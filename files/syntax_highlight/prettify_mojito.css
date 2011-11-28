@@ -14,7 +14,7 @@
 pre.prettyprint { 
 	padding: 7px; 
 	background-color: ivory;
-	border: 1px solid sienna; 
+	border: 1px solid rgba(160, 82, 45, 0.25); /* sienna */ 
 	-moz-border-radius: 10px;
     border-radius: 10px;
     /* andale mono, lucidatypewriter, courier new,  */
