@@ -183,7 +183,9 @@ like the view_page() method is setup for public pages
 sub view_page_public {
     my ( $self, $params ) = @_;
     my $page          = $self->read( $params->{id} );
-    return $self->wrap_page($page->{body_html}, $page->{title});
+# TODO: Use body_html unless otherwise specified
+#    return $self->wrap_page($page->{body_html}, $page->{title});
+    return $self->wrap_page($self->render_body($page), $page->{title});
 }
 
 =head2 view_page_collected

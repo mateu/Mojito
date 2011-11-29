@@ -4,6 +4,7 @@ package Mojito::Model::MetaCPAN;
 use Moo;
 use HTTP::Tiny;
 use MetaCPAN::API;
+use Text::MultiMarkdown;
 use CHI;
 use Data::Dumper::Concise;
 
@@ -35,6 +36,12 @@ has cache => (
     },
 );
 
+has markdown => (
+    is => 'ro',
+    lazy => 1,
+    'default' => sub { return Text::MultiMarkdown->new }
+);
+
 =head1 Methods
 
 =head2 get_synopsis
@@ -52,7 +59,8 @@ sub get_synopsis {
     my $synopsis  = $self->cache->get($cache_key);
     if (not $synopsis) {
         warn "GET $Module from CPAN" if $ENV{MOJITO_DEBUG};
-        $synopsis = $self->get_synopsis_from_metacpan($Module);
+        my ($descripton, $synopsis) = $self->get_synopsis_from_metacpan($Module);
+        $synopsis = join "\n", @{$synopsis};
         $self->cache->set($cache_key, $synopsis, '1 day');
     }
 
@@ -70,9 +78,9 @@ sub get_synopsis_from_metacpan {
         return;
     }
     my $content        = $response->{content}; # if length $response->{content};
-    my @synopsis_lines = ();
-    my $seen_synopsis  = 0;
-    my $seen_synopsis_end = 0;
+    my (@synopsis_lines, @description_lines) = ((), ());
+    my ($seen_synopsis, $seen_description)  = (0,0); 
+    my ($seen_synopsis_end, $seen_description_end) = (0,0);
     my @content_lines = split '\n', $content;
 
     foreach (@content_lines) {
@@ -87,8 +95,20 @@ sub get_synopsis_from_metacpan {
         if ($seen_synopsis && not $seen_synopsis_end) {
             push @synopsis_lines, $_;
         }
+        
+        # Are we starting the section after the Synopsis?
+        if ($seen_description && m/^#\s/) {
+            $seen_description_end = 1;
+        }
+        if (m/^#\s+DESCRIPTION/i) {
+            $seen_description = 1;
+        }
+        if ($seen_description && not $seen_description_end) {
+            push @description_lines, $_;
+        }
     }
-    return wantarray ? @synopsis_lines : join "\n", @synopsis_lines;
+#    return wantarray ? @synopsis_lines : join "\n", @synopsis_lines;
+    return (\@description_lines, \@synopsis_lines); 
 }
 
 =head2 get_synopsis_formatted
@@ -101,53 +121,48 @@ sub get_synopsis_from_metacpan {
 sub get_synopsis_formatted {
     my ($self, $Module, $format) = @_;
 
-    my $no_synopsis_message =
-      "<div style='font-size: 1.33em;'>SYNOPSIS Not Found for 
-    <strong><a href='http://metacpan.org/module/${Module}'>${Module}</a></strong></div>";
+
 
     # Just have the presentation format for starters.
     my $dispatch_table = {
         presentation => sub {
 
-            my @synopsis_lines = $self->get_synopsis_from_metacpan($Module);
-            return $no_synopsis_message if not scalar @synopsis_lines;
-
-            # Get rid of first line and any blank line directly after
-            # We'll rewrite the first line and are making the results more
-            # compact by removing the blank lines.
-            shift @synopsis_lines;
-            return $no_synopsis_message if not scalar @synopsis_lines;
-            while ($synopsis_lines[0] =~ m/^\s*?$/) {
-                shift @synopsis_lines;
+            my ($description_lines, $synopsis_lines) = $self->get_synopsis_from_metacpan($Module);
+            my @synopsis_lines = $self->trim_lines(@{$synopsis_lines});
+            if (not scalar @synopsis_lines) {
+                return "<div style='font-size: 1.33em;'> SYNOPSIS Not Found for <strong>
+                <a href='http://metacpan.org/module/${Module}'>${Module}</a></strong></div>";
             }
-            return $no_synopsis_message if not scalar @synopsis_lines;
-
-            # Do same for tail
-            while ($synopsis_lines[-1] =~ m/^\s*?$/) {
-                pop @synopsis_lines;
+            my @description_lines = $self->trim_lines(@{$description_lines});
+            my $description;
+            if (not scalar @description_lines) {
+                $description = "<div style='font-size: 1.33em;'> DESCRIPTION Not Found for <strong>
+                <a href='http://metacpan.org/module/${Module}'>${Module}</a></strong></div>";
             }
-            return $no_synopsis_message if not scalar @synopsis_lines;
-
+            else {
+                $description =  $self->markdown->markdown(join "\n", @description_lines);
+            }
+            
             # Comment out lines that don't start with a comment
             # and are not indented (i.e. not code)
             # because we'd like the Synopsis to be runnable (in theory)
             my ($whitespace) = $synopsis_lines[0] =~ m/^(\s*)/;
-            @synopsis_lines = map { s/^(\w)/# $1/; $_; } @synopsis_lines;
+            @synopsis_lines = map { s/^(\w)/&#35; $1/; $_; } @synopsis_lines;
 
             # Trim off leading whitespace (usually 2 or 4)
             @synopsis_lines = map { s/^$whitespace//; $_; } @synopsis_lines;
+            my $synopsis = join "\n", @synopsis_lines;
 
             # pre wrapper for syntax highlight
-            unshift @synopsis_lines, "<pre class='prettyprint'>";
-            push @synopsis_lines, '</pre>';
+            $synopsis = "<pre class='prettyprint'>\n" . $synopsis . "</pre>\n";
 
-            # section title
-            unshift @synopsis_lines,
-"<h2 class='Module'><a href='http://metacpan.org/module/${Module}'>${Module}</a></h2>";
-
-            return join "\n", @synopsis_lines;
+            $synopsis = "<h2 class='Module'><a href='http://metacpan.org/module/${Module}'>${Module}</a></h2>". $synopsis;
+            $description = "<h2 class='Module'>Description</h2>\n<section style='display:none;'>$description</section>";
+            #return $synopsis . "\n" . $description;
+            return $synopsis;
           }
     };
+
     my $cache_key = "${Module}:SYNOPSIS:${format}";
     my $synopsis  = $self->cache->get($cache_key);
     if (not $synopsis) {
@@ -158,6 +173,35 @@ sub get_synopsis_formatted {
     return $synopsis;
 }
 
+=head2 trim_lines
+
+Remove first line
+Remove leading and trailing blank lines
+
+=cut
+
+sub trim_lines {
+    my ($self, @lines) = @_;
+
+    return if not scalar @lines;
+
+    # Get rid of first line and any blank line directly after
+    # We'll rewrite the first line and are making the results more
+    # compact by removing the blank lines.
+    shift @lines;
+    return if not scalar @lines;
+    while ($lines[0] =~ m/^\s*?$/) {
+        shift @lines;
+    }
+    return if not scalar @lines;
+
+    # Do same for tail
+    while ($lines[-1] =~ m/^\s*?$/) {
+        pop @lines;
+    }
+    return if not scalar @lines;
+    return @lines;
+}
 =head2 get_recent_releases_from_metacpan
 
     Get a Hash of the most recent CPAN releases
@@ -205,7 +249,7 @@ sub get_recent_synopses {
             $dist;
         } @releases;
         $synopses = join "\n", @recent_synopses;
-        $self->cache->set($cache_key, $synopses, '30 seconds');
+        $self->cache->set($cache_key, $synopses, '1 minute');
     }
     return $synopses;
 }
