@@ -65,7 +65,7 @@ Show the CPAN SYNOPSIS for a Perl Module
 sub cpan_synopsis {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s/{{synopsis\s+([^}]*)}}/$self->metacpan->get_synopsis_formatted($1, 'presentation')/esig;
+    $content =~ s/{{cpan.synopsis\s+([^}]*)}}/$self->metacpan->get_synopsis_formatted($1, 'presentation')/esig;
     return $content;
 }
 
@@ -73,14 +73,12 @@ sub cpan_synopsis {
 
 Show the synopses of the CPAN recent releases
 
-NOTE: This needs to run before cpan_synopsis since it expands into cpan synopses.
-
 =cut
 
 sub cpan_recent_synopses {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s/{{\s*recent_synopses\s*(\d+)\s*}}/$self->metacpan->get_recent_synopses($1)/esig;
+    $content =~ s/{{\s*cpan.synopses.recent\s*(\d+)\s*}}/$self->metacpan->get_recent_synopses($1)/esig;
     return $content;
 }
 =head2 metacpan_module_URL

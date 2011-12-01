@@ -31,7 +31,9 @@ has cache => (
     default => sub {
         CHI->new(
             driver => 'Memory',
-            global => 1
+            global => 1,
+#            driver   => 'File',
+#            root_dir => '/tmp/chi_cache',
         );
     },
 );
@@ -120,8 +122,7 @@ sub get_synopsis_from_metacpan {
 
 sub get_synopsis_formatted {
     my ($self, $Module, $format) = @_;
-
-
+	$format ||= 'presentation';
 
     # Just have the presentation format for starters.
     my $dispatch_table = {
@@ -227,13 +228,19 @@ sub get_recent_releases_from_metacpan {
     return map { $_->{fields} } @{ $result->{hits}->{hits} };
 }
 
-=head2 get_recent_synopses
+=head2 recent_synopses_shortcut
 
-    Get the synopses of the most recently released distribution to CPAN.
+    Create the Mojito shortcut that gets the synopses of the most 
+    recently released CPAN distributions.  Looks like:
+    
+    {{synopsis Module1}}
+    {{synopsis Module2}}
+    ...
+    {{synopsis Modulen}}
     
 =cut
 
-sub get_recent_synopses {
+sub recent_synopses_shortcut {
     my ($self, $how_many) = @_;
     $how_many ||= 10;
 
@@ -242,7 +249,7 @@ sub get_recent_synopses {
     if (not $synopses) {
         warn "GET Recent Release from CPAN" if $ENV{MOJITO_DEBUG};
         my @releases = $self->get_recent_releases_from_metacpan($how_many);
-        my @recent_synopses = map { "{{synopsis $_}}" } 
+        my @recent_synopses = map { "{{cpan.synopsis $_}}" } 
         map {
             my $dist = $_->{distribution}; 
             $dist =~ s/\-/::/g;
@@ -252,4 +259,48 @@ sub get_recent_synopses {
         $self->cache->set($cache_key, $synopses, '1 minute');
     }
     return $synopses;
+}
+
+=head2 get_recent_releases
+
+Get the most recent releases (as module names)
+    
+=cut
+
+sub get_recent_releases {
+    my ($self, $how_many) = @_;
+    $how_many ||= 10;
+
+    my $cache_key = "CPAN_RECENT_RELEASES:${how_many}";
+    my $releases  = $self->cache->get($cache_key);
+    if (not $releases) {
+        warn "GET Recent Releases from CPAN" if $ENV{MOJITO_DEBUG};
+        my @releases =
+        map {
+            my $dist = $_->{distribution}; 
+            $dist =~ s/\-/::/g;
+            $dist;
+        }  $self->get_recent_releases_from_metacpan($how_many);;
+        $releases = \@releases;
+        $self->cache->set($cache_key, $releases, '1 minute');
+    }
+    return $releases;
+}
+
+=head2 get_recent_synopses
+
+Get the most recent synopses from CPAN
+    
+=cut
+
+sub get_recent_synopses {
+    my ($self, $how_many) = @_;
+    $how_many ||= 10;
+
+	my $html;
+	my $releases = $self->get_recent_releases($how_many);
+	foreach my $release (@{$releases}) {
+		$html .= "\n" . $self->get_synopsis_formatted($release, 'presentation');	
+	}
+	return $html;
 }
