@@ -466,7 +466,9 @@ sub calendar_for_month {
 			# Just process the digits found.
 			next if ($data[$i] !~ m/^\d+$/);
 			foreach my $ref (@{ $monthly_docs{ $data[$i] } }) {
-				$calendar .=
+                            # Make srue we have some type of title
+                            $ref->{title} ||= 'No title found';
+                            $calendar .=
 "<div class='calendar_note'><a href='${base_url}page/$ref->{id}'>* $ref->{title}</a></div>";
 			}
 			$calendar .= "</td>\n";
