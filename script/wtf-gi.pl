@@ -172,6 +172,14 @@ my $messages = [
         status_code    => 200,
     },
     {
+        name           => 'CalendarMonth',
+        route          => '/calendar/year/:year/month/:month',
+        request_method => 'get',
+        response       => '$mojito->calendar_month_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
         name           => 'MergeCollection',
         route          => '/collection/:collection_id/merge',
         request_method => 'get',
@@ -246,7 +254,7 @@ sub transform_mojo {
     my $message = shift;
 
     my $message_response = $message->{response};
-    $message_response =~ s/\$/\$self->/;
+    #$message_response =~ s/\$/\$self->/;
     my $response;
     if ( $message->{response_type} eq 'html' ) {
         $response = '$self->render( text => $self->' . $message_response . ' )';
@@ -258,17 +266,12 @@ sub transform_mojo {
         $response = '$self->render( json => $self' . $message_response . ' )';
     }
     my $place_holders;
-    if ( my @holders = $message->{route} =~ m/\/\:(\w+)/ ) {
+    my @place_holders;
+    if ( my @holders = $message->{route} =~ m/\/\:(\w+)/g ) {
         foreach my $holder (@holders) {
-            $place_holders .=
-                '$params->{' 
-              . $holder
-              . '} = $self->param(\''
-              . $holder . "');\n";
+            push @place_holders, '$params->{' . $holder . '} = $self->param(\'' . $holder . q|');|;
+            $place_holders = join "\n    ", @place_holders;
         }
-
-        #       print Dumper \@holders;
-        #       print $place_holders;
     }
     if ($place_holders) {
         chomp($place_holders);

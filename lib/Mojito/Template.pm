@@ -37,6 +37,7 @@ has linker => (
         select_collection_pages_view => 'view_selectable_page_list',
         sort_collection_pages_view   => 'view_sortable_page_list',
         collections_index_view       => 'view_collections_index',
+        get_docs_for_month           => 'get_docs_for_month',
     },
     writer => '_set_linker',
 );
@@ -177,7 +178,7 @@ sub page_wrap_start {
 <html>
 <head>
   <meta charset=utf-8>
-  <meta http-equiv="powered by" content="Mojito $mojito_version" />
+  <meta name="application-name" content="Mojito $mojito_version" />
   <title>$title</title>
 $js_css
 <script></script>
@@ -190,6 +191,28 @@ START_HTML
 
     return $page_start;
 }
+
+sub page_wrap_start_vanilla {
+    my ($self, $title) = @_;
+    my $mojito_version = $self->config->{VERSION};
+    my $static_url = $self->config->{static_url};
+    my $page_start = <<"START_HTML";
+<!doctype html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <meta name="application-name" content="Mojito $mojito_version" />
+  <title>$title</title>
+  <link href=${static_url}css/mojito.css type=text/css rel=stylesheet />
+</head>
+<body class="html_body">
+<section id="message_area"></section>
+<article id="body_wrapper">
+START_HTML
+
+    return $page_start;
+}
+
 sub _build_page_wrap_end {
     my $self = shift;
 
@@ -214,6 +237,19 @@ sub wrap_page {
     $title //= 'Mojito page';
     $page_body //= 'Empty page';
     return ($self->page_wrap_start($title) . $page_body . $self->page_wrap_end);
+}
+
+=head2 wrap_page_vanilla
+
+Wrap a page body with start and end HTML, and NO Javascript or CSS links
+
+=cut
+
+sub wrap_page_vanilla {
+    my ($self, $page_body, $title) = @_;
+    $title //= 'Mojito page';
+    $page_body //= 'Empty page';
+    return ($self->page_wrap_start_vanilla($title) . $page_body . $self->page_wrap_end);
 }
 
 sub _build_collect_page_form {
@@ -269,7 +305,7 @@ sub _build_home_page {
 <html>
 <head>
   <meta charset=utf-8>
-  <meta http-equiv="powered by" content="Mojito $mojito_version" />
+  <meta name="application-name" content="Mojito $mojito_version" />
   <title>Mojito page</title>
 $js_css
 <script></script>
@@ -380,6 +416,100 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview'<\/script>
     $output =~ s/<body.*?>/<body>/si;
 
     return $output;
+}
+
+sub calendar_for_month {
+	my $self = shift;
+	my %args = ref($_[0]) ? %{ $_[0] } : @_;
+	my ($month, $year, $title) = @args{qw/month year title/};
+    my $base_url = $self->base_url;
+	#$title ||= 'Monthly Notes';
+	my %monthly_docs = $self->get_docs_for_month($month, $year);
+	my ($m_j, $m_k, $y_j, $y_k) = next_and_previous_month_year($month, $year);
+	my $calendar = "<section id='calendar_month'>\n";
+	$calendar .= "<h1>${title}</h1>\n" if $title;
+	$calendar .= "<table class='monthly_calendar'>";
+
+# Got to turn off highlight of current day else we'd have to strip the \b's around it.
+# TODO: Allow variable path to cal
+	open(CAL, "/usr/bin/cal -h $month $year |")
+	  || die "Can't open /usr/bin/cal\n";
+	while (<CAL>) {
+
+		last if /^\s+$/;    ## ignore cal's terminating blank line
+		s/^\s*(.*?)\s*$/$1/;    ## trim whitespace
+
+		if ($. == 1) {
+			$calendar .=
+"<tr><th class='previous' colspan='3'><a href='${base_url}calendar/year/${y_j}/month/${m_j}'>Previous Month</a></th>
+     <th class='calendar_month' colspan='1'>$_</th>
+     <th class='next' colspan='3'><a href='${base_url}calendar/year/${y_k}/month/${m_k}'>Next Month</a></th></tr>\n";
+			next;
+		}
+
+		my $tag;
+		if ($. == 2) {
+			$tag = "th class='weekdays'";
+		}
+		else { $tag = "td" }
+
+		## make a row, padding first week of the month as necessary
+		my @data = ();
+		@data = split(/\s+/, $_);
+		$calendar .= "<tr>\n";
+		if ($. == 3) {
+			for my $i (1 .. 6 - $#data) { $calendar .= "<td> </td>\n"; }
+		}
+		for my $i (0 .. $#data) {
+			$calendar .= "<$tag>$data[$i]";
+
+			# Just process the digits found.
+			next if ($data[$i] !~ m/^\d+$/);
+			foreach my $ref (@{ $monthly_docs{ $data[$i] } }) {
+				$calendar .=
+"<div class='calendar_note'><a href='${base_url}page/$ref->{id}'>* $ref->{title}</a></div>";
+			}
+			$calendar .= "</td>\n";
+		}
+		$calendar .= "</tr>\n";
+	}
+	close(CAL);
+	$calendar .= "</table>\n</section>\n";
+
+	return $calendar;
+}
+
+sub calendar_month_page {
+	my $self = shift;
+	my %args = ref($_[0]) ? %{ $_[0] } : @_;
+	my ($month, $year, $title) = @args{qw/month year title/};
+	$title ||= "Notes Calendar for $month/$year";
+	return $self->wrap_page_vanilla($self->calendar_for_month(\%args), $title);
+}
+
+sub next_and_previous_month_year {
+	my ($month, $year) = @_;
+## Set up for previous and next month link
+	my ($m_j, $m_k, $y_j, $y_k);
+	if ($month == 12) {
+		$m_j = 11;
+		$m_k = 1;
+		$y_j = $year;
+		$y_k = $year + 1;
+	}
+	elsif ($month == 1) {
+		$m_j = 12;
+		$m_k = 2;
+		$y_j = $year - 1;
+		$y_k = $year;
+	}
+	else {
+		$m_j = $month - 1;
+		$m_k = $month + 1;
+		$y_j = $year;
+		$y_k = $year;
+	}
+	return ($m_j, $m_k, $y_j, $y_k);
 }
 
 sub BUILD {

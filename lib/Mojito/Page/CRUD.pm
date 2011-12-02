@@ -8,7 +8,7 @@ has 'editer' => (
     is => 'ro',
     lazy => 1,
     writer => '_set_editer',
-    handles =>  [ qw( create read update delete db get_all ) ],
+    handles =>  [ qw( create read update delete db collection get_all ) ],
 );
 
 has 'config' => ( is => 'ro', required => 1);

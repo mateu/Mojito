@@ -201,3 +201,34 @@ div.note {
     border-radius: 5px;
     font-size: 1.08em;
 }
+
+table.monthly_calendar {
+  border: 0px solid #cccccc;
+  width: 95%;
+  border-collapse:collapse;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  margin-bottom: 1em;
+}    
+th.previous {
+     text-align:left;
+     font-size: 92%;
+}
+th.next {
+     text-align:right;
+     font-size: 92%;
+}
+th.calendar_month {
+    font-size: 108%;
+}
+th.weekdays {
+    width: 80px;
+    text-align: center;
+    border: 1px solid #dddddd;
+    background-color: wheat
+}
+table.monthly_calendar td {
+   height:80px;
+   vertical-align:top;
+   border: 1px solid #dddddd;
+}

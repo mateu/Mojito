@@ -25,6 +25,7 @@ has doc => (
           get_feed_docs
           get_collections
           get_collection_pages
+          get_docs_for_month
           )
     ],
     writer => '_build_doc',

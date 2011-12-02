@@ -3,6 +3,7 @@ use strictures 1;
 package Mojito::Page::Publish;
 use Moo;
 use WWW::Mechanize;
+use Data::Dumper::Concise;
 
 =pod
 
@@ -55,13 +56,12 @@ has mech => (
 
 sub _build_mech {
     my ( $self, )  = @_;
-    my $mech       = WWW::Mechanize->new;
+    my $mech       = WWW::Mechanize->new(ssl_opts => { verify_hostname => 0 });
     my $base_url   = $self->target_base_url;
     my $login_page = $base_url . '.login';
     $mech->get($login_page);
     $mech->submit_form(
-        form_number => 1,
-        fields      => {
+        with_fields      => {
             login => $self->user,
             pass  => $self->password,
         }

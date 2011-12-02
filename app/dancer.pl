@@ -16,7 +16,7 @@ set 'access_log'  => 1;
 # TODO: Persist config and db as attributes of this app 
 #       like has been done with Web::Simple version
 my ($mojito);
-before sub {
+hook 'before' => sub {
     $mojito = request->env->{mojito};
     var mojito => $mojito;
 };
@@ -135,6 +135,10 @@ get '/collection/:collection_id/epub' => sub {
 
 post '/publish' => sub {
     to_json( $mojito->publish_page(scalar params) );
+};
+
+get '/calendar/year/:year/month/:month' => sub {
+    return $mojito->calendar_month_page(scalar params);
 };
 
 get '/' => sub {

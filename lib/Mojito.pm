@@ -8,6 +8,20 @@ use Data::Dumper::Concise;
 
 extends 'Mojito::Page';
 
+=head1 Name
+
+Mojito - a web document engine
+
+=head1 Synopsis
+
+  use Mojito::Model::Config;
+  my $mojito = Mojito->new(config => Mojito::Model::Config->new->config);
+  my $page_id = '123456781234567812345678';
+  my $rendered_page = $mojito->view_page({id => $page_id};
+
+  # You might want to checkout one of the applications in app/
+  # For example: 'plackup -Ilib app/mojito.pl' starts up a Web::Simple instance of Mojito
+
 =head1 Attributes
 
 =head2 base_url

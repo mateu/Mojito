@@ -59,13 +59,15 @@ sub get_synopsis {
 
     my $cache_key = "${Module}:SYNOPSIS";
     my $synopsis  = $self->cache->get($cache_key);
+    my $description;
     if (not $synopsis) {
         warn "GET $Module from CPAN" if $ENV{MOJITO_DEBUG};
-        my ($descripton, $synopsis) = $self->get_synopsis_from_metacpan($Module);
+        ($description, $synopsis) = $self->get_synopsis_from_metacpan($Module);
         $synopsis = join "\n", @{$synopsis};
         $self->cache->set($cache_key, $synopsis, '1 day');
     }
 
+	return if not $synopsis;
     return wantarray ? split "\n", $synopsis : $synopsis;
 }
 

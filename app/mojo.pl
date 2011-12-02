@@ -190,6 +190,15 @@ post '/publish' => sub {
     $self->render( json => $self->mojito->publish_page($self->req->params->to_hash) );
 };
 
+get '/calendar/year/:year/month/:month' => sub {
+	my ($self) = @_;
+    my $params = {
+    	year  => $self->param('year'),
+    	month => $self->param('month'),
+    };
+    $self->render( text => $self->mojito->calendar_month_page($params) );
+};
+
 get '/recent' => sub {
     $_[0]->render( text => $_[0]->mojito->recent_links );
 };

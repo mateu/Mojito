@@ -1,5 +1,7 @@
 {{$NEXT}}
           [Enchantments]
+		  - montly calendar view of notes.  For example,
+		      /calendar/year/2011/month/12
           - Enable internal links of the [[URI|title]] format
           - {{synopsis $Module}} shortcut to show a $Module's synopsis
           - {{recent_synopses 10}} shortcut to show the 10 most

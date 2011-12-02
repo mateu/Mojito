@@ -67,6 +67,7 @@ has editer => (
             update
             delete
             db
+            collection
           )
     ],
     writer => '_build_edit',
@@ -93,6 +94,7 @@ has tmpl => (
           sort_collection_form
           fillin_create_page
           fillin_edit_page
+          calendar_month_page
           wrap_page
           )
     ],
