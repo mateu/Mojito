@@ -30,9 +30,9 @@ Expand the available shortcuts into the content.
 =cut
 
 sub expand_shortcuts {
-    my ($self, $content) = (shift, shift);
+    my ($self, $content, $base_url) = @_;
     foreach my $shortcut ( @{$self->shortcuts} ) {
-        $content = $self->${shortcut}(${content});
+        $content = $self->${shortcut}(${content}, $base_url);
     }
     return $content;
 }
@@ -114,9 +114,16 @@ Expand an internal URL
 =cut
 
 sub internal_URL {
-    my ($self, $content) = @_;
+    my ($self, $content, $base_url) = @_;
     return if !$content;
-    $content =~ s/\[\[([^\|]*)\|([^\]]*)\]\]/<a href="$1">$2<\/a>/sig;
+    my $add_link = sub {
+        my ($link, $title) = @_;
+        # Strip ending slash as we only append the base_url to link starting with a slash
+        $base_url =~ s|/$||;
+        $base_url = ($link =~ m|^/|) ? $base_url : '';
+        return "<a href='${base_url}${link}'>${title}</a>";
+    };        
+    $content =~ s/\[\[([^\|]*)\|([^\]]*)\]\]/$add_link->($1,$2)/esig;
     return $content;
 }
 

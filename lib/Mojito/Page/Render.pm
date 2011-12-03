@@ -122,7 +122,7 @@ sub render_body {
     my $rendered_sections = $self->render_sections($doc);
     my $rendered_body = join "\n", @{$rendered_sections};
 
-    $rendered_body = $self->expand_shortcuts($rendered_body);
+    $rendered_body = $self->expand_shortcuts($rendered_body, $self->base_url);
     # Convert MojoMojo content if needed
     if ($self->config->{convert_mojomojo}) {
        $rendered_body = Mojito::Filter::MojoMojo::Converter->new( content => $rendered_body )->convert_content;
