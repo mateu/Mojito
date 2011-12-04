@@ -78,6 +78,15 @@ h1 {
     border-radius: 10px; */
 }
 
+#calendar_area {
+    float: right;
+    border-bottom: 1px dotted #888;
+    border-left: 1px dotted #888;
+    border-top: 1px dotted #888;
+    padding-left: 0.5em;
+    width: 100%;
+}
+
 #selectable_page_list .ui-selecting {
     background: #FECA40;
 }
