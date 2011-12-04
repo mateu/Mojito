@@ -2,6 +2,9 @@
     background-color: #87a865;
     margin: 5px;
 }
+.vanilla_body {
+    background-color: sienna;
+}
 
 #wiki_language {
     font-size: 66.7%;
@@ -17,13 +20,23 @@ h1 {
 }
 
 #body_wrapper {
-    float: left;
+    float: left; 
     width: 98%;
     margin: auto;
-    padding-left: 1em;
+    left-padding: 0.5em;
     background-color: white;
     -moz-border-radius: 10px;
     border-radius: 10px;
+}
+
+#body_wrapper_vanilla {
+    width: 99%;
+    margin: auto;
+    padding: 0.2em;
+    background-color: white;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border: 0px solid #f3f3f3;
 }
 
 #edit_area {
@@ -204,7 +217,8 @@ div.note {
 
 table.monthly_calendar {
   border: 0px solid #cccccc;
-  width: 95%;
+  width: 100%;
+  margin: auto;
   border-collapse:collapse;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -225,10 +239,15 @@ th.weekdays {
     width: 80px;
     text-align: center;
     border: 1px solid #dddddd;
-    background-color: wheat
+    background-color: #FEC0A3; /* wheat */
 }
 table.monthly_calendar td {
    height:80px;
    vertical-align:top;
    border: 1px solid #dddddd;
+}
+
+table.header {
+    width: 100%;
+    border-collapse:collapse;
 }

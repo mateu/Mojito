@@ -139,6 +139,7 @@ $js_css
 </section><br />
 <section id="publish_area">$publish_form</section>
 <section id="collections_area"></section>
+<section id="calendar_area"><a href="${base_url}calendar">Calendar</a></section>
 <section id="recent_area"></section>
 </nav>
 </article>
@@ -206,9 +207,8 @@ sub page_wrap_start_vanilla {
   <title>$title</title>
   <link href=${static_url}css/mojito.css type=text/css rel=stylesheet />
 </head>
-<body class="html_body">
-<section id="message_area"></section>
-<article id="body_wrapper">
+<body class="vanilla_body">
+<article id="body_wrapper_vanilla">
 START_HTML
 
     return $page_start;
@@ -472,7 +472,7 @@ sub calendar_for_month {
 "<div class='calendar_note'><a href='${base_url}page/$ref->{id}'>* $ref->{title}</a></div>";
             }
             $calendar .= "</td>\n";
-        }
+        }     
         $calendar .= "</tr>\n";
     }
     close($CAL);
