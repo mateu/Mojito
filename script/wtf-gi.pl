@@ -180,6 +180,14 @@ my $messages = [
         status_code    => 200,
     },
     {
+        name           => 'DefaultCalendarMonth',
+        route          => '/calendar',
+        request_method => 'get',
+        response       => '$mojito->calendar_month_page',
+        response_type  => 'html',
+        status_code    => 200,
+    },
+    {
         name           => 'MergeCollection',
         route          => '/collection/:collection_id/merge',
         request_method => 'get',
@@ -254,7 +262,7 @@ sub transform_mojo {
     my $message = shift;
 
     my $message_response = $message->{response};
-    #$message_response =~ s/\$/\$self->/;
+    $message_response =~ s/\$mojito->/mojito->/;
     my $response;
     if ( $message->{response_type} eq 'html' ) {
         $response = '$self->render( text => $self->' . $message_response . ' )';
@@ -268,6 +276,7 @@ sub transform_mojo {
     my $place_holders;
     my @place_holders;
     if ( my @holders = $message->{route} =~ m/\/\:(\w+)/g ) {
+        unshift @place_holders, 'my $params;';
         foreach my $holder (@holders) {
             push @place_holders, '$params->{' . $holder . '} = $self->param(\'' . $holder . q|');|;
             $place_holders = join "\n    ", @place_holders;
@@ -277,13 +286,12 @@ sub transform_mojo {
         chomp($place_holders);
     }
     else {
-        $place_holders = "# no place holders";
+        $place_holders = '# no place holders';
     }
 
     my $route_body = <<"END_BODY";
 $message->{request_method} '$message->{route}' => sub {
     my (\$self) = (shift);
-    my \$params;
     $place_holders
     $response;
 };
@@ -390,19 +398,22 @@ END_BODY
 sub route_handler {
     my ( $route, $framework ) = ( shift, shift );
 
-    my ( $args, $params );
+    my ( $args, $params ) = ('', '');
     given ($framework) {
         when (/simple|tatsumaki/i) {
 
             # find placeholders
-            my @place_holders = $route =~ m/\:(\w+)/ig;
-            my @args = map { '$' . $_ } @place_holders;
-            $args = join ', ', @args;
-            my @params =
-              map { '$params->{' . $_ . '} = $' . $_ . ';' } @place_holders;
-            $params = join "\n    ", @params;
-
-            #say "args: $args; params: $params";
+            if (my @place_holders = $route =~ m/\:(\w+)/ig) {
+                my @args = map { '$' . $_ } @place_holders;
+                $args = join ', ', @args;
+                my @params =
+                  map { '$params->{' . $_ . '} = $' . $_ . ';' } @place_holders;
+                unshift @params, 'my $params;';
+                $params = join "\n    ", @params;
+            }
+            else {
+                $params = '# no place holders';
+            }
         }
     }
     return ( $args, $params );
