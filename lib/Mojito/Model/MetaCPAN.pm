@@ -67,7 +67,7 @@ sub get_synopsis {
         $self->cache->set($cache_key, $synopsis, '1 day');
     }
 
-	return if not $synopsis;
+    return if not $synopsis;
     return wantarray ? split "\n", $synopsis : $synopsis;
 }
 
@@ -124,7 +124,7 @@ sub get_synopsis_from_metacpan {
 
 sub get_synopsis_formatted {
     my ($self, $Module, $format) = @_;
-	$format ||= 'presentation';
+    $format ||= 'presentation';
 
     # Just have the presentation format for starters.
     my $dispatch_table = {
@@ -299,10 +299,10 @@ sub get_recent_synopses {
     my ($self, $how_many) = @_;
     $how_many ||= 10;
 
-	my $html;
-	my $releases = $self->get_recent_releases($how_many);
-	foreach my $release (@{$releases}) {
-		$html .= "\n" . $self->get_synopsis_formatted($release, 'presentation');	
-	}
-	return $html;
+    my $html;
+    my $releases = $self->get_recent_releases($how_many);
+    foreach my $release (@{$releases}) {
+        $html .= "\n" . $self->get_synopsis_formatted($release, 'presentation');    
+    }
+    return $html;
 }

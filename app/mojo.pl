@@ -191,10 +191,10 @@ post '/publish' => sub {
 };
 
 get '/calendar/year/:year/month/:month' => sub {
-	my ($self) = @_;
+    my ($self) = @_;
     my $params = {
-    	year  => $self->param('year'),
-    	month => $self->param('month'),
+        year  => $self->param('year'),
+        month => $self->param('month'),
     };
     $self->render( text => $self->mojito->calendar_month_page($params) );
 };
