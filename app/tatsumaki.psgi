@@ -279,6 +279,26 @@ sub post {
     $self->write($json);
 }
 
+package CalendarMonth;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self, $year, $month ) = @_;
+    my $params;
+    $params->{year} = $year;
+    $params->{month} = $month;
+    $self->write($self->request->env->{'mojito'}->calendar_month_page($params));
+}
+
+package DefaultCalendarMonth;
+use parent qw(Tatsumaki::Handler);
+
+sub get {
+    my ( $self,  ) = @_;
+    my $params;
+    $self->write($self->request->env->{'mojito'}->calendar_month_page);
+}
+
 package main;
 use Plack::Builder;
 use Mojito;
@@ -312,6 +332,8 @@ my $app = Tatsumaki::Application->new(
         '/collections'                 => 'CollectionsIndex',
         '/collect'                     => 'CollectPage',
         '/publish'                     => 'PublishPage',
+        '/calendar/year/(\d+)/month/(\d+)' => 'CalendarMonth',
+        '/calendar'                    => 'DefaultCalendarMonth',
     ]
 );
 

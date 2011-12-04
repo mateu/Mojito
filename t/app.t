@@ -66,6 +66,11 @@ foreach my $app_file (@app_files) {
           [ content => "h1. Perl Rocks", wiki_language => 'textile' ];
         $response = $client_cb->($request);
         like $response->code, qr/^(?:301|302)$/, 'post create page redirect';
+        
+        $request = HTTP::Request->new( GET => '/calendar' );
+        $response = $client_cb->($request);
+        is $response->code,      200,            'calendar page status';
+        like $response->content, qr/Previous Month/, 'calendar page navigation content';
 
         $request = HTTP::Request->new( GET => '/recent' );
         $response = $client_cb->($request);

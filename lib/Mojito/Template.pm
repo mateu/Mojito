@@ -7,6 +7,7 @@ use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
 use Mojito::Page::Publish;
 use Data::Dumper::Concise;
+use DateTime;
 
 with('Mojito::Template::Role::Javascript');
 with('Mojito::Template::Role::CSS');
@@ -483,9 +484,16 @@ sub calendar_for_month {
 sub calendar_month_page {
     my $self = shift;
     my %args = ref($_[0]) ? %{ $_[0] } : @_;
+    @args{qw/month year/} = get_current_month_year() 
+      if not($args{month} && $args{year});
     my ($month, $year, $title) = @args{qw/month year title/};
     $title ||= "Notes Calendar for $month/$year";
     return $self->wrap_page_vanilla($self->calendar_for_month(\%args), $title);
+}
+
+sub get_current_month_year {
+    my $now = DateTime->now;
+    return ($now->month, $now->year);
 }
 
 sub next_and_previous_month_year {

@@ -199,6 +199,11 @@ get '/calendar/year/:year/month/:month' => sub {
     $self->render( text => $self->mojito->calendar_month_page($params) );
 };
 
+get '/calendar' => sub {
+    my ($self) = (shift);
+    $self->render( text => $self->mojito->calendar_month_page );
+};
+
 get '/recent' => sub {
     $_[0]->render( text => $_[0]->mojito->recent_links );
 };

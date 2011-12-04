@@ -141,9 +141,9 @@ get '/calendar/year/:year/month/:month' => sub {
     return $mojito->calendar_month_page(scalar params);
 };
 
-get '/' => sub {
-    return $mojito->view_home_page;
-};
+get '/calendar' => sub { return $mojito->calendar_month_page };
+
+get '/' => sub { return $mojito->view_home_page };
 
 get '/public/feed/:feed' => sub {
     return $mojito->get_feed_links(params->{feed});
