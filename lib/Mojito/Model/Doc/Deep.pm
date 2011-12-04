@@ -103,4 +103,36 @@ sub get_collection_pages {
    return ($collection->{collection_name}, \@pages); 
 }
 
+sub get_docs_for_month {
+    my ($self, $month, $year) = @_;
+
+    my %monthly_data = ();
+    my $start_epoch  = DateTime->new(
+        year   => $year,
+        month  => $month,
+        day    => 1,
+        hour   => 0,
+        minute => 0,
+        second => 0,
+    )->epoch;
+    my $next_month         = ($month == 12) ? 1         : $month + 1;
+    my $year_of_next_month = ($month == 12) ? $year + 1 : $year;
+    my $end_epoch          = DateTime->new(
+        year   => $year_of_next_month,
+        month  => $next_month,
+        day    => 1,
+        hour   => 0,
+        minute => 0,
+        second => 0,
+    )->epoch;
+    my $docs = $self->collection->export;
+    my @docs = grep { ($_->{last_modified} >= $start_epoch) && ($_->{last_modified} <= $end_epoch) } values %{$docs};
+    foreach my $doc (@docs) {
+        my $day = DateTime->from_epoch(epoch => $doc->{last_modified})->day;
+        push @{ $monthly_data{$day} },
+          { id => $doc->{id}, title => $doc->{title} };
+    }
+    return %monthly_data;
+}
+
 1;
