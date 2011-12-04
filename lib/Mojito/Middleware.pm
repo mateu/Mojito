@@ -4,18 +4,23 @@ use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw/config/;
 use Mojito;
 
+# Let's gather some stuff from the environment
+# that we'd like to have access to in our app.
 sub call {
     my ( $self, $env ) = @_;
+
+    my $config = $self->config;
     my $base_url = $env->{SCRIPT_NAME} || '/';
     $base_url =~ s/([^\/])$/$1\//;
-    # TODO: Just use a hash instead of an object
-    # and don't pass in stuff that we'll just be passing back
-    # unless there's a justificaton (e.g. construct only once)
+    $config->{base_url} = $base_url;
+    my @my_env = qw/REMOTE_USER PATH_INFO URI_REQUEST HTTP_REFERER HTTP_HOST/;
+    @{$config}{qw/username PATH_INFO URI_REQUEST HTTP_REFERER HTTP_HOST/} = @{$env}{@my_env};
+    # TODO?: Just use a hash instead of an object
     $env->{"mojito"} = Mojito->new( 
-        base_url => $base_url, 
-        username => $env->{REMOTE_USER},
-        config   => $self->config, 
+        base_url    => $base_url, 
+        config      => $config, 
     );
+
     $self->app->($env);
 }
 

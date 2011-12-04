@@ -150,10 +150,10 @@ sub get_synopsis_formatted {
             # and are not indented (i.e. not code)
             # because we'd like the Synopsis to be runnable (in theory)
             my ($whitespace) = $synopsis_lines[0] =~ m/^(\s*)/;
-            @synopsis_lines = map { s/^(\w)/&#35; $1/; $_; } @synopsis_lines;
+            @synopsis_lines = map { my $line = $_; $line =~ s/^(\w)/&#35; $1/; $line; } @synopsis_lines;
 
             # Trim off leading whitespace (usually 2 or 4)
-            @synopsis_lines = map { s/^$whitespace//; $_; } @synopsis_lines;
+            @synopsis_lines = map { my $line = $_; $line =~ s/^$whitespace//; $line; } @synopsis_lines;
             my $synopsis = join "\n", @synopsis_lines;
 
             # pre wrapper for syntax highlight

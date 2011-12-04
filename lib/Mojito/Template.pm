@@ -432,9 +432,9 @@ sub calendar_for_month {
 
 # Got to turn off highlight of current day else we'd have to strip the \b's around it.
 # TODO: Allow variable path to cal
-	open(CAL, "/usr/bin/cal -h $month $year |")
+	open(my $CAL, '-|', "/usr/bin/cal -h $month $year")
 	  || die "Can't open /usr/bin/cal\n";
-	while (<CAL>) {
+	while (<$CAL>) {
 
 		last if /^\s+$/;    ## ignore cal's terminating blank line
 		s/^\s*(.*?)\s*$/$1/;    ## trim whitespace
@@ -475,7 +475,7 @@ sub calendar_for_month {
 		}
 		$calendar .= "</tr>\n";
 	}
-	close(CAL);
+	close($CAL);
 	$calendar .= "</table>\n</section>\n";
 
 	return $calendar;

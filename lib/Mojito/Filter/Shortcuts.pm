@@ -30,9 +30,9 @@ Expand the available shortcuts into the content.
 =cut
 
 sub expand_shortcuts {
-    my ($self, $content, $base_url) = @_;
+    my ($self, $content) = @_;
     foreach my $shortcut ( @{$self->shortcuts} ) {
-        $content = $self->${shortcut}(${content}, $base_url);
+        $content = $self->${shortcut}(${content});
     }
     return $content;
 }
@@ -114,15 +114,25 @@ Expand an internal URL
 =cut
 
 sub internal_URL {
-    my ($self, $content, $base_url) = @_;
+    my ($self, $content) = @_;
     return if !$content;
+    my ($base_url, $path_info, $http_referer, $http_host) = @{$self->config}{qw/base_url PATH_INFO HTTP_REFERER HTTP_HOST/};
     my $add_link = sub {
         my ($link, $title) = @_;
         # Strip ending slash as we only append the base_url to link starting with a slash
         $base_url =~ s|/$||;
-        $base_url = ($link =~ m|^/|) ? $base_url : '';
+        if ($link !~ m|^/|) {
+            # If we have a path_info of /preview then we want to use the
+            # referred instead as the path_info.
+            if ($path_info eq '/preview') {
+                # create path info from where the post came
+                ($path_info) = $http_referer =~ m|${http_host}${base_url}(.*)/edit$|;
+            } 
+            $path_info = ($path_info =~ m|/$|) ? $path_info : $path_info . '/'; 
+            $base_url .= $path_info;
+        }
         return "<a href='${base_url}${link}'>${title}</a>";
-    };        
+    };
     $content =~ s/\[\[([^\|]*)\|([^\]]*)\]\]/$add_link->($1,$2)/esig;
     return $content;
 }
