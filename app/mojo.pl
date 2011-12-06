@@ -227,7 +227,6 @@ builder {
       password_hashed => 1,
       authenticator   => $auth->digest_authen_cb;
     enable "+Mojito::Middleware", config => $config;
-    enable_if { $ENV{RELEASE_TESTING}; } "+Mojito::Middleware::TestDB";
 
     app->start;
 };
