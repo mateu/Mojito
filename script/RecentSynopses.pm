@@ -1,14 +1,12 @@
-use strictures 1;
-
 package RecentSynopses;
+use strictures 1;
 use Web::Simple;
 use Mojito::Model::MetaCPAN;
 use Mojito::Template;
-use Mojito::Model::Config;
 use Mojito::Filter::MojoMojo::Converter;
-use Time::HiRes qw/ time /;
 
 with('Mojito::Role::Config');
+
 has converter => (
     is   => 'ro',
     lazy => 1,
@@ -26,7 +24,7 @@ has tmpl => (
     is   => 'ro',
     lazy => 1,
     default =>
-      sub { my $self = shift; Mojito::Template->new(config => $self->config) },
+      sub { Mojito::Template->new(config => $_[0]->config) },
 );
 
 sub dispatch_request {
@@ -43,7 +41,7 @@ sub dispatch_request {
         $self->converter->content($body);
         $self->converter->toc;
         my $html =
-          $self->tmpl->wrap_page($self->converter->content, 'Recent Synapses');
+          $self->tmpl->wrap_page_vanilla($self->converter->content, 'Recent Synapses');
         [ 200, [ 'Content-type', 'text/html' ], [$html] ];
       },
 
