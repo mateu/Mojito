@@ -9,6 +9,10 @@ with('Mojito::Role::DB::Mongo');
 
 has base_url => ( is => 'rw', );
 
+=head1 Name
+
+Mojito::Page::CRUD::Mongo - MongoDB CRUD
+
 =head1 Methods
 
 =head2 create

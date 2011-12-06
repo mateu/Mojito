@@ -3,7 +3,12 @@ package Mojito::Auth;
 use Mojito::Auth::Mongo;
 use Mojito::Auth::Deep;
 use Moo;
-use Data::Dumper::Concise;
+
+=head1 Name
+
+Mojito::Auth - authentication delegator class
+
+=cut
 
 has 'auth' => (
     is => 'ro',

@@ -65,7 +65,6 @@ sub get_synopsis {
 
     my $cache_key = "${Module}:SYNOPSIS";
     my $synopsis  = $self->cache->get($cache_key);
-    my $description;
     if (not $synopsis) {
         warn "GET $Module from CPAN" if $ENV{MOJITO_DEBUG};
         $synopsis = $self->get_synopsis_from_metacpan($Module);
@@ -328,7 +327,7 @@ sub get_recent_synopses {
         else {
             $html .= $synopsis;
         }
-        $have_seen{$main_module} = 1;
+        $have_seen{$main_module}++; 
     }
     return $html;
 }

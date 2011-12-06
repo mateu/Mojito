@@ -14,6 +14,12 @@ use Data::Dumper::Concise;
 with('Mojito::Filter::Shortcuts');
 with('Mojito::Role::Config');
 
+=head1 Name
+
+Mojito::Page::Render - turn a parsed page into html
+
+=cut
+
 has tmpl => (
     is => 'ro',
     lazy => 1,

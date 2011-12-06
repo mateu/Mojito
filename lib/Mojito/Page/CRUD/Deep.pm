@@ -8,6 +8,10 @@ with('Mojito::Role::DB::Deep');
 
 has base_url => ( is => 'rw', );
 
+=head1 Name
+
+Mojito::Page::CRUD::Deep - DBM::Deep CRUD
+
 =head1 Methods
 
 =head2 create

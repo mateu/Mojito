@@ -3,6 +3,10 @@ package Mojito::Page;
 use Moo;
 use Sub::Quote qw(quote_sub);
 
+=head1 Name
+
+Mojito::Page - the page delegator class
+
 =head1 Description
 
 An object to delegate to the Page family of objects.

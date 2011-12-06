@@ -4,6 +4,12 @@ use Moo::Role;
 use MooX::Types::MooseLike qw(:all);
 use Data::Dumper::Concise;
 
+=head1 Name
+
+Mojito::Template::Role::Javascript - a class for Javascript resources
+
+=cut
+
 with('Mojito::Role::Config');
 
 has javascripts => (

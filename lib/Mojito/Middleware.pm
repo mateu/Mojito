@@ -4,6 +4,12 @@ use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw/config/;
 use Mojito;
 
+=head1 Name
+
+Mojito::Middleware - gather some environment variables
+
+=cut
+
 # Let's gather some stuff from the environment
 # that we'd like to have access to in our app.
 sub call {

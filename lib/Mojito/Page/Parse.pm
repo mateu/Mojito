@@ -6,6 +6,12 @@ use MooX::Types::MooseLike qw(:all);
 
 use Data::Dumper::Concise;
 
+=head1 Name
+
+Mojito::Page::Parse - turn page source into a page structure
+
+=cut
+
 # This is the page source
 has 'page' => (
     is       => 'rw',

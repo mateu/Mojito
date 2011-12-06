@@ -12,6 +12,12 @@ use DateTime;
 with('Mojito::Template::Role::Javascript');
 with('Mojito::Template::Role::CSS');
 
+=head1 Name
+
+Mojito::Template - the main HTML class
+
+=cut
+
 has 'template' => (
     is      => 'rw',
     lazy    => 1,
