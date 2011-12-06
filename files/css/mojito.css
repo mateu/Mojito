@@ -23,7 +23,7 @@ h1 {
     float: left; 
     width: 98%;
     margin: auto;
-    left-padding: 0.5em;
+    padding: 0.25em;
     background-color: white;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -259,4 +259,12 @@ table.monthly_calendar td {
 table.header {
     width: 100%;
     border-collapse:collapse;
+}
+
+section.released {
+    margin: 0.5em;
+}
+
+section.developer {
+    margin: 0.5em;
 }

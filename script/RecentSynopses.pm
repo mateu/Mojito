@@ -58,7 +58,7 @@ sub BUILD {
         # code executed only by the child ...
         while (1) {
             $self->metacpan->get_recent_synopses;
-            sleep 29;
+            sleep 60;
         }
     }
     else {
