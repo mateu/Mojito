@@ -7,6 +7,12 @@ use Mojito::Filter::MojoMojo::Converter;
 
 with('Mojito::Role::Config');
 
+=head1 Name
+
+RecentSynopses - a mini-app that show recent CPAN synopses
+
+=cut
+
 has converter => (
     is   => 'ro',
     lazy => 1,
@@ -41,7 +47,7 @@ sub dispatch_request {
         $self->converter->content($body);
         $self->converter->toc;
         my $html =
-          $self->tmpl->wrap_page_vanilla($self->converter->content, 'Recent Synapses');
+          $self->tmpl->wrap_page($self->converter->content, 'Recent CPAN Synapses');
         [ 200, [ 'Content-type', 'text/html' ], [$html] ];
       },
 

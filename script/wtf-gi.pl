@@ -3,6 +3,10 @@ use 5.010;
 use Getopt::Long;
 use Data::Dumper::Concise;
 
+=head1 Name
+
+wtf-gi.pl - a script to generate dispatcher subs
+
 =head1 Usage
 
     perl -Ilib script/wtf-gi.pl --name PublishPage --transform web_simple

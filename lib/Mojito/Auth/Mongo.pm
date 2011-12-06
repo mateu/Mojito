@@ -5,6 +5,10 @@ use Data::Dumper::Concise;
 
 with('Mojito::Role::DB::Mongo');
 
+=head1 Name
+
+Mojito::Auth::Deep - authentication delegatee class for MongoDB
+
 =head1 Methods
 
 =head2 add_user

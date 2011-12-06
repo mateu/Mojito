@@ -8,6 +8,17 @@ use Data::Dumper::Concise;
 
 requires 'get_user', 'add_user', 'remove_user';
 
+=head1 Name
+
+Mojito::Auth::Deep - common auth parts
+
+=head1 Methods
+
+=head2 add_user
+
+Provide the username, realm (default Mojito) and password.
+
+
 =head1 Attributes
 
 =cut

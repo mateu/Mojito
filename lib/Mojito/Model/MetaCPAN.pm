@@ -30,10 +30,10 @@ has cache => (
     is      => 'rw',
     default => sub {
         CHI->new(
-            driver => 'Memory',
+#            driver => 'Memory',
             global => 1,
-#            driver   => 'File',
-#            root_dir => '/tmp/chi_cache',
+            driver   => 'File',
+            root_dir => '/tmp/chi_cache',
         );
     },
 );
@@ -282,7 +282,7 @@ sub get_recent_releases {
     my $cache_key = "CPAN_RECENT_RELEASES:${how_many}";
     my $releases  = $self->cache->get($cache_key);
     if (not $releases) {
-        warn "GET Recent Releases from CPAN" if $ENV{MOJITO_DEBUG};
+        warn "GET Recent Releases from CPAN\n" if $ENV{MOJITO_DEBUG};
         $releases = $self->get_recent_releases_from_metacpan($how_many);
         $self->cache->set($cache_key, $releases, '1 minute');
     }

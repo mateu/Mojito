@@ -7,6 +7,12 @@ use Time::HiRes qw/ time /;
 
 with ('Mojito::Role::Config');
 
+=head1 Name
+
+RenderMojoMojo - a mini-app to render MojoMojo pages
+
+=cut
+
 sub dispatch_request {
     my $begin = time();
 
