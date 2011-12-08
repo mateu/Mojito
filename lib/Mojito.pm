@@ -8,11 +8,11 @@ use Data::Dumper::Concise;
 
 extends 'Mojito::Page';
 
-=head1 Name
+=head1 NAME
 
 Mojito - A Web Document System
 
-=head1 Synopsis
+=head1 SYNOPSIS
 
   use Mojito::Model::Config;
   my $mojito = Mojito->new(config => Mojito::Model::Config->new->config);
@@ -22,7 +22,7 @@ Mojito - A Web Document System
   # You might want to checkout one of the applications in app/
   # For example: 'plackup -Ilib app/mojito.pl' starts up a Web::Simple instance of Mojito
 
-=head1 Description
+=head1 DESCRIPTION
 
 Mojito is a web document system that enables individuals to easily author 
 HTML5 compliant documents.  It provides a source editor for various
