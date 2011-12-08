@@ -2,8 +2,9 @@ use strictures 1;
 package RenderMojoMojo;
 use Web::Simple;
 use MojoMojo::Schema;
-use Mojito::Page::Render;
+use Mojito;
 use Time::HiRes qw/ time /;
+use Data::Dumper::Concise;
 
 with ('Mojito::Role::Config');
 
@@ -18,12 +19,13 @@ sub dispatch_request {
 
     sub (GET + /**) {
         my ($self, $path) = @_;
-
+        
         my @parts = split '/', $path;
         my $page_name = $parts[-1];
         my $page_struct = $self->build_page_struct($page_name);
-        my $output = $self->render->render_page($page_struct);
-        warn "dispatch time: ", time - $begin if $ENV{DEBUG};
+        my $body = $self->mojito->render_body($page_struct);
+        my $output = $self->mojito->wrap_page($body, $page_struct->{title});
+        warn "dispatch time: ", time - $begin if $ENV{MOJITO_DEBUG};
         [ 200, [ 'Content-type', 'text/html' ], [$output] ];
       },
        sub () {
@@ -103,12 +105,12 @@ sub _build_wiki_format {
     return lc $format;
 }
 
-has render => (
+has mojito => (
     is => 'ro',
     lazy => 1,
     default => sub {
         my ($self) = @_;
-        Mojito::Page::Render->new(
+        Mojito->new(
             config   => $self->config,
             base_url => '/'
         );
