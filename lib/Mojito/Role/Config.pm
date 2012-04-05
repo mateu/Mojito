@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Role::Config;
 use Moo::Role;
-use MooX::Types::MooseLike 0.02 qw(HashRef);
+use MooX::Types::MooseLike::Base 0.03 qw(HashRef);
 use Cwd qw/ abs_path /;
 use Dir::Self;
 

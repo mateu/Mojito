@@ -2,7 +2,7 @@ use strictures 1;
 package Mojito::Page::Parse;
 use 5.010;
 use Moo;
-use MooX::Types::MooseLike qw(:all);
+use MooX::Types::MooseLike::Base 0.03 qw(:all);
 
 use Data::Dumper::Concise;
 

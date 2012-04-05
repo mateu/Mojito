@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Collection::Present;
 use Moo;
-use MooX::Types::MooseLike qw(:all);
+use MooX::Types::MooseLike::Base 0.03 qw(:all);
 use Mojito::Collection::CRUD;
 use List::MoreUtils qw/ first_index /;
 
