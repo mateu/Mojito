@@ -26,7 +26,6 @@ sub _build_javascripts {
           'javascript/style.js',
           'javascript/publish.js',
           'syntax_highlight/prettify.js',
-          'jquery/autoresize_min.js',
           'jquery/jquery-ui.custom.min.js',
           'SHJS/sh_main.min.js',
           'SHJS/sh_perl.min.js',
