@@ -23,6 +23,10 @@ $(document).ready(function() {
 //	    extraSpace : 60
 //    }).trigger('change');
 	
+	// Recall edit view state
+	if ($.cookie('mojito.toggle_view') == 'off') {
+	    toggle_view_off();
+	}
 	toggle_view();
 	prettyPrint();
 	sh_highlightDocument();
@@ -142,17 +146,27 @@ function toggle_view() {
     $( "#toggle_view" ).button();
     $( "#toggle_view" ).click(
         function() {
-            $('.view_area_edit_mode').toggle();
             var edit_width = $('#edit_area').css('width');
             var edit_width_digits = edit_width.match(/^\d+/);
             // Assumption: if #edit_area width is more than half the 
             // total window then we are toggling from width to narrow
             if( edit_width_digits > (.50 * $(window).width()) ) {
-                $('#edit_area').css('width', '46%');
+                toggle_view_on();
             }
             else {
-                $('#edit_area').css('width', '100%');
+                toggle_view_off();
             };
         }
     );
+}
+
+function toggle_view_on() {
+    $('.view_area_edit_mode').show();
+    $('#edit_area').css('width', '46%');
+    $.cookie('mojito.toggle_view', 'on', { expires: 7, path: '/' });
+}
+function toggle_view_off() {
+    $('.view_area_edit_mode').hide();
+    $('#edit_area').css('width', '100%');
+    $.cookie('mojito.toggle_view', 'off', { expires: 7, path: '/' });
 }

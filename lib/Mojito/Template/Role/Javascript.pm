@@ -27,6 +27,7 @@ sub _build_javascripts {
           'javascript/publish.js',
           'syntax_highlight/prettify.js',
           'jquery/jquery-ui.custom.min.js',
+          'jquery/jquery.cookie.js',
           'SHJS/sh_main.min.js',
           'SHJS/sh_perl.min.js',
           'SHJS/sh_javascript.min.js',
