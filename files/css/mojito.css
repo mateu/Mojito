@@ -58,6 +58,10 @@ h1 {
     background-color: white;
 }
 
+#toggle_view {
+	font-size: 66.7%;
+}
+
 #recent_area {
     float: right;
     border-left: 1px dotted #888;

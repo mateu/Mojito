@@ -23,6 +23,7 @@ $(document).ready(function() {
 //	    extraSpace : 60
 //    }).trigger('change');
 	
+	toggle_view();
 	prettyPrint();
 	sh_highlightDocument();
 	$('#content').keyup(function() {
@@ -107,13 +108,11 @@ fetchPreview = function(extra_action) {
 function resizeEditArea() {
 	// Check that we have an edit_area first.
 	if ( $('#edit_area').length ) {
-		mojito.edit_area_width_fraction = 0.46;
-		mojito.edit_width = Math.floor( $(window).width() * mojito.edit_area_width_fraction);
 		mojito.edit_area_height_fraction = 0.80;
 		mojito.edit_height = Math.floor( $(window).height() * mojito.edit_area_height_fraction);
 		//console.log('resizing edit area width to: ' + mojito.edit_width);
 		//console.log('resizing edit area height to: ' + mojito.edit_height);
-		$('textarea#content').css('width', mojito.edit_width + 'px');
+		$('textarea#content').css('width', '100%');
 		$('textarea#content').css('height', mojito.edit_height + 'px');
 	}
 }
@@ -137,3 +136,23 @@ Function.prototype.only_every = function(millisecond_delay) {
 		}, millisecond_delay);
 	}
 };
+
+// Toggle the View Area (only while in Edit mode)
+function toggle_view() {
+    $( "#toggle_view" ).button();
+    $( "#toggle_view" ).click(
+        function() {
+            $('.view_area_edit_mode').toggle();
+            var edit_width = $('#edit_area').css('width');
+            var edit_width_digits = edit_width.match(/^\d+/);
+            // Assumption: if #edit_area width is more than half the 
+            // total window then we are toggling from width to narrow
+            if( edit_width_digits > (.50 * $(window).width()) ) {
+                $('#edit_area').css('width', '46%');
+            }
+            else {
+                $('#edit_area').css('width', '100%');
+            };
+        }
+    );
+}

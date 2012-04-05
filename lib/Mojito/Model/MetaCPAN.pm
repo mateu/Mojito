@@ -30,9 +30,9 @@ has cache => (
     is      => 'rw',
     default => sub {
         CHI->new(
-#            driver => 'Memory',
+            driver => 'Memory',
             global => 1,
-            driver   => 'File',
+#            driver   => 'File',
             root_dir => '/tmp/mojito/cache',
         );
     },
@@ -60,23 +60,30 @@ has markdown => (
 =cut
 
 sub get_synopsis_from_metacpan {
-    my ($self, $main_module_path, $main_module) = @_;
+    my ($self, $main_module, $pod_url) = @_;
 
-    my $pod_url_used = 'main_module_path';
-    my $pod_url = "http://api.metacpan.org${main_module_path}?content-type=text/x-markdown";
-    my $response = $self->http_client->get($pod_url);
-    if (not $response->{success}) {
-        warn "Could not find POD at $pod_url trying /pod/${main_module}..";
+    my $pod_url_used = 'release';
+    # Use markdown format (easy to parse out SYNOPSIS)
+    my $format = '?content-type=text/x-markdown';
+    my $secondary_pod_url = "http://api.metacpan.org/pod/${main_module}${format}";
+    if (not $pod_url) {
+        $pod_url = $secondary_pod_url;
         $pod_url_used = 'main_module';
-        $pod_url = "http://api.metacpan.org/pod/${main_module}?content-type=text/x-markdown";
-        $response = $self->http_client->get($pod_url);
-        if (not $response->{success}) {
-            warn "Could not find POD at $pod_url";
-            return $self->not_found_string;
-        }        
     }
+    else {
+        $pod_url .= $format;
+    }
+    my $response = $self->http_client->get($pod_url);
+    if (not $response->{success} && ($pod_url_used = 'release')) {
+        warn "Could not find POD at $pod_url. Trying: $secondary_pod_url..";
+        $response = $self->http_client->get($secondary_pod_url);
+        if (not $response->{success}) {
+            warn "Could not find POD at $secondary_pod_url";
+            return $self->not_found_string;
+        }
+    }        
     my $content = $response->{content}; # if length $response->{content};
-    my @synopsis_lines = ($pod_url_used);
+    my @synopsis_lines = ();
     my $seen_synopsis = my $seen_synopsis_end = 0;
     my @content_lines = split '\n', $content;
 
@@ -137,18 +144,14 @@ sub get_synopsis_formatted {
     my ($self, $release, $format) = @_;
     $format ||= 'presentation';
     
-     my $main_module_path = my $main_module = $release->{distribution};
+     my $main_module_pod_url = my $main_module = $release->{distribution};
      $main_module =~ s|-|::|g;
-     $main_module_path =~ s|-|/|g;
-     $main_module_path = "lib/${main_module_path}.pm";
-     $main_module_path = "/pod/$release->{author}/$release->{name}/${main_module_path}";
+     $main_module_pod_url =~ s|-|/|g;
+     $main_module_pod_url = "http://api.metacpan.org/pod/$release->{author}/$release->{name}/lib/${main_module_pod_url}.pm";
     # Just have the presentation format for starters.
     my $dispatch_table = {
         presentation => sub {
-            my ($main_module_path) = @_;
-            my @synopsis_lines = $self->get_synopsis_from_metacpan($main_module_path, $main_module);
-            # Pop of url used
-            my $pod_url_used = shift @synopsis_lines;
+            my @synopsis_lines = $self->get_synopsis_from_metacpan($main_module, $main_module_pod_url);
             @synopsis_lines = $self->trim_lines(@synopsis_lines);
             if (not scalar @synopsis_lines) {
                 return $self->not_found_string;
@@ -167,25 +170,17 @@ sub get_synopsis_formatted {
 
             # pre wrapper for syntax highlight
             $synopsis = "${abstract}<pre class='prettyprint'>\n" . $synopsis . "</pre>\n";
-
-#            if ($pod_url_used eq 'main_module') {
-#                $synopsis = "<h2 class='Module'><a href='https://metacpan.org/module/${main_module}\#SYNOPSIS'>${main_module}</a></h2>". $synopsis;
-#            } 
-#            elsif ($pod_url_used eq 'main_module_path') {
-#                $synopsis = "<h2 class='Module'><a href='http://api.metacpan.org${main_module_path}\#SYNOPSIS'>${main_module}</a></h2>". $synopsis;
-#            }
             $synopsis = "<h2 class='Module'><a href='https://metacpan.org/release/$release->{author}/$release->{name}'>$release->{distribution}</a></h2>" . $synopsis;
             
             return $synopsis;
           }
     };
 
-    
     my $cache_key = "$release->{name}:SYNOPSIS:${format}";
     my $synopsis  = $self->cache->get($cache_key);
     if (not $synopsis) {
         warn "GET $main_module SYNOPSIS from CPAN" if $ENV{MOJITO_DEBUG};
-        $synopsis = $dispatch_table->{$format}->($main_module_path);
+        $synopsis = $dispatch_table->{$format}->($main_module_pod_url);
         $self->cache->set($cache_key, $synopsis, '3 days');
     }
     return $synopsis;

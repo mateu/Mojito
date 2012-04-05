@@ -1,4 +1,6 @@
-{{{$NEXT}}}
+{{$NEXT}}
+          [Enchantments]
+          - Toggle view during edit
 
 0.17      2011-12-06 07:23:54 America/Denver
           [Remedies]
@@ -13,8 +15,8 @@
           - monthly calendar view of notes.  For example,
               /calendar/year/2011/month/12
           - Enable internal links of the [[URI|title]] format
-          - {{cpan.synopsis $Module}} shortcut to show a $Module's synopsis
-          - {{cpan.synopses.recent 10}} shortcut to show the 10 most
+          - cpan.synopsis $Module shortcut to show a $Module's synopsis
+          - cpan.synopses.recent 10 shortcut to show the 10 most
             recently released module synopses
 
 0.15      2011-11-20 11:51:53 America/Denver

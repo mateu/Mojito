@@ -130,7 +130,7 @@ $js_css
     <input id="mongo_id" name="mongo_id" type="hidden" form="editForm" value="" />
     <input id="wiki_language" name="wiki_language" type="hidden" form="editForm" value="" />
     <input id="page_title" name="page_title" type="hidden" form="editForm" value="" />
-    <textarea id="content"  name="content" rows=32 required="required"/></textarea>
+    <textarea id="content" name="content" rows="32" required="required"/></textarea>
     <input id="commit_message" name="commit_message" value="commit message" onclick="this.value == 'commit message' ? this.value = '' : true"/>
     <input id="submit_save" name="submit" type="submit" value="Save" style="font-size: 66.7%;" />
     <input id="submit_view" name="submit" type="submit" value="Done" style="font-size: 66.7%;" />
@@ -372,6 +372,7 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
     $output =~ s/<nav id="side">.*?<\/nav>//si;
 #    $output =~ s/<section id="recent_area".*?><\/section>//si;
     $output =~ s/<div id="wiki_language".*?>.*?<\/div>//si;
+    $output =~ s|(</header>)|<button id="toggle_view">Toggle View</button>\n$1|si;
 
     # Remove edit and new links
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;

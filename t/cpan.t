@@ -12,7 +12,7 @@ BEGIN {
 }
 
 my $api = Mojito::Model::MetaCPAN->new;
-my @synopsis = $api->get_synopsis('Moose');
+my @synopsis = $api->get_synopsis_from_metacpan('Moose');
 ok(first { m/package\s+Point/ } @synopsis, 'Moose synopsis line found');
 
 done_testing();
