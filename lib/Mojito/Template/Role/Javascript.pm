@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Template::Role::Javascript;
 use Moo::Role;
-use MooX::Types::MooseLike qw(:all);
+use MooX::Types::MooseLike::Base 0.03 qw(:all);
 use Data::Dumper::Concise;
 
 =head1 Name
@@ -21,13 +21,13 @@ has javascripts => (
 
 sub _build_javascripts {
        [
-          'jquery/jquery_min.js',
+          'jquery/jquery.min.js',
           'javascript/render_page.js',
           'javascript/style.js',
           'javascript/publish.js',
           'syntax_highlight/prettify.js',
           'jquery/autoresize_min.js',
-          'jquery/jquery-ui-1.8.11.custom.min.js',
+          'jquery/jquery-ui.custom.min.js',
           'SHJS/sh_main.min.js',
           'SHJS/sh_perl.min.js',
           'SHJS/sh_javascript.min.js',

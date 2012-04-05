@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Template::Role::CSS;
 use Moo::Role;
-use MooX::Types::MooseLike qw(:all);
+use MooX::Types::MooseLike::Base 0.03 qw(:all);
 
 =head1 Name
 
@@ -20,7 +20,7 @@ has css => (
 
 sub _build_css {
     [
-      'css/ui-lightness/jquery-ui-1.8.11.custom.css',
+      'css/ui-lightness/jquery-ui.custom.css',
       'syntax_highlight/prettify_mojito.css',
       'SHJS/sh_mojito.css',
       'css/mojito.css',
