@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Template::Role::Javascript;
 use Moo::Role;
-use MooX::Types::MooseLike::Base 0.03 qw(:all);
+use MooX::Types::MooseLike::Base qw(:all);
 use Data::Dumper::Concise;
 
 =head1 Name

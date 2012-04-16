@@ -2,7 +2,7 @@ use strictures 1;
 package Mojito::Template;
 use Moo;
 use 5.010;
-use MooX::Types::MooseLike::Base 0.03 qw(:all);
+use MooX::Types::MooseLike::Base qw(:all);
 use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
 use Mojito::Page::Publish;

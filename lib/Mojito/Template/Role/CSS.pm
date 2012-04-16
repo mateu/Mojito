@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Template::Role::CSS;
 use Moo::Role;
-use MooX::Types::MooseLike::Base 0.03 qw(:all);
+use MooX::Types::MooseLike::Base qw(:all);
 
 =head1 Name
 

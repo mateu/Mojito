@@ -2,7 +2,7 @@ use strictures 1;
 package Mojito::Auth::Role;
 use Moo::Role;
 use Digest::MD5;
-use MooX::Types::MooseLike::Base 0.03 qw(:all);
+use MooX::Types::MooseLike::Base qw(:all);
 use utf8;
 use Data::Dumper::Concise;
 

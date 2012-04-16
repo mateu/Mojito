@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Model::Transform;
 use Moo;
-use MooX::Types::MooseLike::Base 0.03 qw/Object ArrayRef/;
+use MooX::Types::MooseLike::Base qw/Object ArrayRef/;
 use Mojito::Page::CRUD::Mongo;
 use Mojito::Model::Config;
 use DBM::Deep;

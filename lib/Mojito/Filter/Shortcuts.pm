@@ -1,7 +1,7 @@
 use strictures 1;
 package Mojito::Filter::Shortcuts;
 use Moo::Role;
-use MooX::Types::MooseLike::Base 0.03 qw(:all);
+use MooX::Types::MooseLike::Base qw(:all);
 use Mojito::Model::MetaCPAN;
 use 5.010;
 use Data::Dumper::Concise;
