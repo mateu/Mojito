@@ -2,8 +2,8 @@ use strictures 1;
 package Mojito::Role::Config;
 use Moo::Role;
 use MooX::Types::MooseLike::Base qw(HashRef);
-use Cwd qw/ abs_path /;
 use Dir::Self;
+use Path::Class qw(file);
 
 has 'config' => (
     is  => 'rw',
@@ -31,10 +31,14 @@ Config file is looked for in three locations:
 sub _build_config {
     my ($self) = @_;
     warn "BUILD CONFIG" if $ENV{MOJITO_DEBUG};
-    my $conf_file       = abs_path(__DIR__ . '/../conf/mojito.conf');
-    my $local_conf_file = abs_path(__DIR__ . '/../conf/mojito_local.conf');
+    my $conf_file       = file(__DIR__ . '/../conf/mojito.conf');
+    $conf_file->cleanup;
+    $conf_file->resolve;
+    my $local_conf_file = file(__DIR__ . '/../conf/mojito_local.conf');
+    $local_conf_file->cleanup;
+    $local_conf_file->resolve;
     my $env_conf_file   = $ENV{MOJITO_CONFIG};
-    warn "ENV CONFIG: $ENV{MOJITO_CONFIG}" if $ENV{MOJITO_DEBUG};
+    warn "ENV CONFIG: $ENV{MOJITO_CONFIG}" if ($ENV{MOJITO_DEBUG} and $ENV{MOJITO_CONFIG});
 
     my $conf       = $self->read_config($conf_file);
     my $local_conf = $self->read_config($local_conf_file);
