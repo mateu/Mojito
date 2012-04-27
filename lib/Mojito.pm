@@ -307,7 +307,11 @@ sub search {
 
     my $base_url = $self->base_url;
     my $hit_hashref= $self->search_word($params->{word});
-    return "No matches for: <b>" . $params->{word} . '</b>' if !scalar keys %{$hit_hashref};
+    if (not scalar keys %{$hit_hashref}) {
+        my $output = "No matches for: <b>" . $params->{word} . "</b><br />&nbsp;\n";
+        $output .= "<nav style='font-size:0.8em;'>Want a <a href='${base_url}page'>new page?</a></nav>";
+        return $output; 
+    }
     # Get the full page and extract the title for display.
     # Rework hit_has from HashRef to HashRef[HashRef] so we can store both hit counts and a title.
     my $link_data = {};
