@@ -199,6 +199,14 @@ my $messages = [
         response_type  => 'html',
         status_code    => 200,
     },
+    {
+        name           => 'Paste',
+        route          => '/paste',
+        request_method => 'get',
+        response       => '$mojito->get_paste_form($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },    
 ];
 
 sub get_messages_by_name {
