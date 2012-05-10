@@ -1,6 +1,6 @@
 .html_body {
     background-color: #87a865;
-    margin: 5px;
+    margin: 0em;
 }
 .vanilla_body {
     background-color: sienna;
@@ -23,7 +23,7 @@ h1 {
     float: left; 
     width: 98%;
     margin: auto;
-    padding: 0.25em;
+    padding-left: 0.10em;
     background-color: white;
     -moz-border-radius: 10px;
     border-radius: 10px;
@@ -32,7 +32,7 @@ h1 {
 #body_wrapper_vanilla {
     width: 99%;
     margin: auto;
-    padding: 0.2em;
+    padding: 0.10em;
     background-color: white;
     -moz-border-radius: 10px;
     border-radius: 10px;
