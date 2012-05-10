@@ -334,3 +334,4 @@ sub get_recent_synopses {
     return $html;
 }
 
+1
