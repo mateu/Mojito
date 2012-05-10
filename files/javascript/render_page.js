@@ -30,6 +30,8 @@ $(document).ready(function() {
 	toggle_view();
 	prettyPrint();
 	sh_highlightDocument();
+	scroll_edit_area();
+
 	$('#content').keyup(function() {
 		fetchPreview.only_every(on_change_refresh_rate);
 		oneshot_preview(fetchPreview, oneshot_pause);
@@ -169,4 +171,14 @@ function toggle_view_off() {
     $('.view_area_edit_mode').hide();
     $('#edit_area').css('width', '100%');
     $.cookie('mojito.toggle_view', 'off', { expires: 7, path: '/' });
+}
+
+function scroll_edit_area() {
+    // store the element so we don't have to traverse the DOM each time
+    var $edit_area = $("#edit_area");
+    $(window).scroll(function(){
+        $edit_area
+            .stop()
+            .animate({"marginTop": ($(window).scrollTop() + 0) + "px"}, 900 );
+    });
 }
