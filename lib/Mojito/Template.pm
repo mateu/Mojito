@@ -372,7 +372,7 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
     $output =~ s/<nav id="side">.*?<\/nav>//si;
 #    $output =~ s/<section id="recent_area".*?><\/section>//si;
     $output =~ s/<div id="wiki_language".*?>.*?<\/div>//si;
-    $output =~ s|(</header>)|<button id="toggle_view">Toggle View</button>\n$1|si;
+    $output =~ s|(<section id="edit_area">)|$1\n<button id="toggle_view">Toggle View</button>|si;
 
     # Remove edit and new links
     $output =~ s/<nav id="edit_link".*?><\/nav>//sig;
