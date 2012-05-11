@@ -1,6 +1,12 @@
 {{$NEXT}}
+
+0.19      2012-05-11 11:01:08 America/Denver
+          [Refinement]
+          - Edit area scrolls with you on long pages
+
           [Remedies]
           - Cross platform compatible config path
+          - Make sure Mojito::Model::MetaCPAN returns truth
 
 0.18      2012-04-16 11:48:01 America/Denver
           [Enchantments]
