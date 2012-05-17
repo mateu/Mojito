@@ -207,6 +207,14 @@ my $messages = [
         response_type  => 'html',
         status_code    => 200,
     },    
+    {
+        name           => 'Feed',
+        route          => '/feed/:feed_name',
+        request_method => 'get',
+        response       => '$mojito->feed_page($params)',
+        response_type  => 'html',
+        status_code    => 200,
+    },
 ];
 
 sub get_messages_by_name {
