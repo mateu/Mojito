@@ -137,6 +137,10 @@ $js_css
     <input id="commit_message" name="commit_message" value="commit message" onclick="this.value == 'commit message' ? this.value = '' : true"/>
     <input id="submit_save" name="submit" type="submit" value="Save" style="font-size: 66.7%;" />
     <input id="submit_view" name="submit" type="submit" value="Done" style="font-size: 66.7%;" />
+    <label style="font-size: 0.667em;" for="public" title="Check if you want a publicly viewable page" >
+      <input id="public" name="public" value="1" type="checkbox" style="font-size: 0.667em;" />
+       public
+    </label>
 </form>
 </section>
 <section id="view_area" class="view_area_edit_mode"></section>
@@ -357,6 +361,7 @@ sub fillin_edit_page {
     my $page_title    = $page->{title}||'no title';
     my @feeds         = @{$page->{feeds}} if (ref($page->{feeds}) eq 'ARRAY');
     my $feeds         = join ':', @feeds;
+    my $public        = $page->{public};
 
     my $output   = $self->template;
     my $base_url = $self->base_url;
@@ -367,6 +372,9 @@ s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script
     $output =~ s/(<input id="wiki_language".*?value=)""/$1"${wiki_language}"/si;
     $output =~ s/(<input id="page_title".*?value=)""/$1"${page_title}"/si;
     $output =~ s/(<input id="feeds".*?value=)""/$1"${feeds}"/si;
+    if ($public) {
+        $output =~ s/(<input id="public")/$1 checked="checked"/si;
+    }
     $output =~
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
     $output =~
