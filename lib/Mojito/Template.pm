@@ -123,6 +123,9 @@ $js_css
 <article id="body_wrapper">
 <input type="hidden" id ="page_id" name="page_id" value="$page_id" />
 <section id="edit_area">
+<span style="font-size: 0.82em;"><label id="feeds_label">feeds+</label>
+  <input id="feeds" name="feeds" form="editForm" value="" size="12" style="font-size: 1.00em; display:none;" />
+</span>
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <div id="wiki_language">
         $wiki_language_selection
@@ -351,15 +354,19 @@ sub fillin_edit_page {
 
     my $page_source   = $page->{page_source}; 
     my $wiki_language = $page->{default_format}; 
-    my $page_title   = $page->{title}||'no title'; 
+    my $page_title    = $page->{title}||'no title';
+    my @feeds         = @{$page->{feeds}} if (ref($page->{feeds}) eq 'ARRAY');
+    my $feeds         = join ':', @feeds;
 
     my $output   = $self->template;
     my $base_url = $self->base_url;
     $output =~
 s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
+    # Set some form values
     $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
     $output =~ s/(<input id="wiki_language".*?value=)""/$1"${wiki_language}"/si;
     $output =~ s/(<input id="page_title".*?value=)""/$1"${page_title}"/si;
+    $output =~ s/(<input id="feeds".*?value=)""/$1"${feeds}"/si;
     $output =~
 s/(<textarea\s+id="content"[^>]*>)<\/textarea>/$1${page_source}<\/textarea>/si;
     $output =~
@@ -385,8 +392,7 @@ s/(<section\s+id="view_area"[^>]*>)<\/section>/$1${page_view}<\/section>/si;
     if ($page_title) {
        $output =~ s/<title>.*?<\/title>/<title>${page_title}<\/title>/si;
     }
-
-    return $output;
+    return $output; 
 }
 
 =head2 fillin_create_page
