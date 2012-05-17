@@ -114,6 +114,7 @@ has linker => (
             get_feed_links
             view_collections_index
             view_collection_nav
+            get_atom_feed
           )
     ],
     writer => '_build_link',

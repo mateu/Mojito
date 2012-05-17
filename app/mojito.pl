@@ -250,6 +250,19 @@ sub dispatch_request {
         [ 200, [ 'Content-type', 'text/html' ], [ $mojito->view_home_page ] ];
       },
 
+      sub ( GET + /public/feed/*/format/* ) {
+        my ($self, $feed_name, $feed_format) = @_;
+        my $params;
+        $params->{feed_name} = $feed_name;
+        $params->{feed_format} = $feed_format;
+        if (my $output = $mojito->feed_page($params)) {
+            return [ 200, [ 'Content-type' => 'application/atom+xml' ], [$output] ];
+        }
+        else {
+            return [ 200, [ 'Content-type' => 'text/html' ], ['No Feed Found'] ];
+        }
+      },
+
       sub (GET + /public/feed/*) {
         my ($self, $feed) = @_;
         [

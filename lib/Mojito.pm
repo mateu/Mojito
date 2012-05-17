@@ -500,6 +500,21 @@ sub publish_page {
      my $response_href = { redirect_url => $redirect_url, result => $result };
 }
 
+=head 2 feed_page
+
+Get a feed in a particular format
+
+=cut
+
+sub feed_page {
+    my ( $self, $params ) = @_;
+    my ($feed, $format) = @{$params}{qw/feed_name feed_format/};
+    if ($format eq 'atom') {
+        return $self->get_atom_feed($feed);
+    }
+    return;
+}
+
 =head2 bench
 
 A path for benchmarking to get an basic idea of performance.

@@ -3,6 +3,7 @@ package Mojito::Model::Link;
 use Moo;
 use Mojito::Model::Doc;
 use Mojito::Collection::Present;
+use DateTime;
 use Data::Dumper::Concise;
 
 with('Mojito::Role::Config');
@@ -57,6 +58,34 @@ sub get_feed_link_data {
     my ($self, $feed) = @_;
     my $cursor = $self->get_feed_docs($feed);
     return $self->get_link_data($cursor);
+}
+
+=head2 get_atom_feed
+
+Get the data to create links for a particular feed.
+
+=cut
+
+sub get_atom_feed {
+    my ($self, $feed) = @_;
+    my $cursor = $self->get_feed_docs($feed);
+    use XML::Atom::SimpleFeed;
+    my $atom = XML::Atom::SimpleFeed->new(title => $feed, id => $feed);
+    while (my $doc = $cursor->next) {
+        my $link = $self->base_url . 'public/page/' . $doc->{'_id'}->value;
+        my $author = $doc->{author} || $self->config->{default_author} || 'Anonymous';
+        my $dt = DateTime->from_epoch( epoch => $doc->{last_modified} );
+        $dt->set_time_zone($self->config->{local_timezone});
+        my $updated = $dt->mdy('/') . ' ' . $dt->hms;
+        $atom->add_entry(
+            title => $doc->{title},
+            'link', => $link,
+            author => $author,
+            id => $doc->{'_id'}->value,
+            updated => $updated,
+        );
+    }
+    return $atom->as_string;
 }
 
 =head2 get_collections_index_link_data

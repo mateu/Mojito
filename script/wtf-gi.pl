@@ -208,8 +208,8 @@ my $messages = [
         status_code    => 200,
     },    
     {
-        name           => 'Feed',
-        route          => '/feed/:feed_name',
+        name           => 'FeedPage',
+        route          => '/public/feed/:feed_name/format/:feed_format',
         request_method => 'get',
         response       => '$mojito->feed_page($params)',
         response_type  => 'html',
