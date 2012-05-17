@@ -3,6 +3,7 @@ package Mojito::Middleware;
 use parent qw(Plack::Middleware);
 use Plack::Util::Accessor qw/config/;
 use Mojito;
+use DateTime::TimeZone;
 
 =head1 Name
 
