@@ -4,6 +4,7 @@ use Moo;
 use Mojito::Model::Doc;
 use Mojito::Collection::Present;
 use DateTime;
+use XML::Atom::SimpleFeed;
 use Data::Dumper::Concise;
 
 with('Mojito::Role::Config');
@@ -69,8 +70,9 @@ Get the data to create links for a particular feed.
 sub get_atom_feed {
     my ($self, $feed) = @_;
     my $cursor = $self->get_feed_docs($feed);
-    use XML::Atom::SimpleFeed;
-    my $atom = XML::Atom::SimpleFeed->new(title => $feed, id => $feed);
+    my @feed_title = split /_/, $feed;
+    my $feed_title = join ' ', map { ucfirst($_) } @feed_title;
+    my $atom = XML::Atom::SimpleFeed->new(title => $feed_title, id => $feed);
     while (my $doc = $cursor->next) {
         my $link = $self->base_url . 'public/page/' . $doc->{'_id'}->value;
         my $author = $doc->{author} || $self->config->{default_author} || 'Anonymous';
@@ -173,7 +175,9 @@ sub get_feed_links {
     my ($self, $feed) = @_;
 
     my $link_data = $self->get_feed_link_data($feed);
-    my $title = ucfirst($feed) . ' Articles';
+    my @feed_title = split /_/, $feed;
+    my $feed_title = join ' ', map { ucfirst($_) } @feed_title;
+    my $title = $feed_title . ' Feed';
     my $link_title = "<span class='feeds' style='font-weight: bold;'>$title</span><br />";
     my $links = $self->create_list_of_links($link_data, {want_public_link => 1});
     if ($links) {
