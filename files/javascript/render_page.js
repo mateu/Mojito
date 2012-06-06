@@ -59,6 +59,10 @@ $(document).ready(function() {
     $('#feeds_label').click(function() {
         $('#feeds').toggle(100, function() { });
     });
+    $('#collection_label').css( 'cursor', 'pointer' );
+    $('#collection_label').click(function() {
+        $('#collection_select').toggle(100, function() { });
+    });
 
 });
 

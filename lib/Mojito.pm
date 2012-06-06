@@ -146,13 +146,16 @@ sub update_page {
     }
     my $collection_ids = $params->{collections_for_page};
     # Have we assigned the page to at least one collection?
-    if ($collection_ids->[0]) {
+    if (defined $collection_ids->[0]) {
         my $cursor = $self->db->collection->find({collected_page_ids => $params->{mongo_id}});
         my %HAVE;
         while (my $collection = $cursor->next) {
             $HAVE{$collection->{_id}} = 1;
         }
         my %WANT = map { $_ => 1 } @{$collection_ids};
+        # collection_id of zero in this case means we don't want to assign
+        # the page to any collection
+        %WANT = () if not $collection_ids->[0];
         foreach my $collection_id (keys %WANT) {
             if (not $HAVE{$collection_id}) {
             # add page_id to the collection

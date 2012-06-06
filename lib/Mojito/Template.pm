@@ -115,7 +115,7 @@ sub _build_template {
     my $collection_list = $self->get_collection_list;
     my $collection_size = scalar @{$collection_list} + 1;
     my $collection_options = "<select id='collection_select' name='collection_select' 
-    multiple='multiple' size='${collection_size}' form='editForm' >\n";
+    multiple='multiple' size='${collection_size}' form='editForm' style='font-size: 1.00em; display:none;' >\n";
     $collection_options .= "<option value='0'>- No Collection -</option>\n";
     foreach my $collection (@{$collection_list}) {
         my $title = $collection->{title};
@@ -399,7 +399,7 @@ sub fillin_edit_page {
 s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
     # Set some form values
     $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
-    $output =~ s/(<input .*? id ="page_id" .*? value=)""/$1"${mongo_id}"/si;
+#    $output =~ s/(<input .*? id ="page_id" .*? value=)""/$1"${mongo_id}"/si;
     $output =~ s/(<input id="wiki_language".*?value=)""/$1"${wiki_language}"/si;
     $output =~ s/(<input id="page_title".*?value=)""/$1"${page_title}"/si;
     $output =~ s/(<input id="feeds".*?value=)""/$1"${feeds}"/si;
