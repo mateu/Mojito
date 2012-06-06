@@ -112,7 +112,7 @@ sub _build_template {
     my $publish_form = '';
     $publish_form = $publisher->publish_form||'' if $page_id;
     my @collections_for_page = $self->collector->editer->collections_for_page($page_id);
-    my $collection_list = $self->get_collection_list;
+    my $collection_list = $self->get_collection_list||[];
     my $collection_size = scalar @{$collection_list} + 1;
     my $collection_options = "<select id='collection_select' name='collection_select' 
     multiple='multiple' size='${collection_size}' form='editForm' style='font-size: 1.00em; display:none;' >\n";
