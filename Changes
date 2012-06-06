@@ -1,6 +1,11 @@
 {{$NEXT}}
-          - Add the ability to mark a page as part of a feed
-          - Add the ability to mark a page as publicly viewable (no auth needed)
+          [Enchantments]
+          - Option to mark a page as part of a feed
+          - Atom feed support
+          - Option to mark a page as publicly viewable (no auth needed)
+
+          [Refinements]
+          - Option to mark a page as part of a collection
 
 0.19      2012-05-11 11:01:08 America/Denver
           [Refinement]
