@@ -271,6 +271,7 @@ sub view_page_collected {
     $rendered_page =~ s/<section id="publish_area">.*?<\/section>//si;
     $rendered_page =~ s/<section id="collections_area"><\/section>//si;
     $rendered_page =~ s/<section id="search_area">.*?<\/section>//si;
+    $rendered_page =~ s/<section id="calendar_area">.*?<\/section>//si;
     # Fill-in collection navigation area
     my $collection_nav = $self->view_collection_nav( $params );
     $rendered_page =~ s/(<section\s+id="collection_nav_area".*?>)<\/section>/$1${collection_nav}<\/section>/si;
