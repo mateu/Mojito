@@ -533,7 +533,7 @@ sub publish_page {
      my $response_href = { redirect_url => $redirect_url, result => $result };
 }
 
-=head 2 feed_page
+=head2 feed_page
 
 Get a feed in a particular format
 
