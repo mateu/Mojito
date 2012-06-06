@@ -6,8 +6,9 @@ use MooX::Types::MooseLike::Base qw(:all);
 use Mojito::Model::Link;
 use Mojito::Collection::CRUD;
 use Mojito::Page::Publish;
-use Data::Dumper::Concise;
 use DateTime;
+use Syntax::Keyword::Junction qw/ any /;
+use Data::Dumper::Concise;
 
 with('Mojito::Template::Role::Javascript');
 with('Mojito::Template::Role::CSS');
@@ -45,8 +46,16 @@ has linker => (
         sort_collection_pages_view   => 'view_sortable_page_list',
         collections_index_view       => 'view_collections_index',
         get_docs_for_month           => 'get_docs_for_month',
+        get_collection_list         => 'get_collections_index_link_data',
     },
     writer => '_set_linker',
+);
+
+has collector => (
+    is      => 'ro',
+    isa     => sub { die "Need a Collection::CRUD object" unless $_[0]->isa('Mojito::Collection::CRUD') },
+    'default' => sub { my $self = shift; return Mojito::Collection::CRUD->new(config => $self->config, db => $self->db) },
+    lazy => 1,
 );
 
 has 'home_page' => (
@@ -102,6 +111,21 @@ sub _build_template {
     my $publisher = Mojito::Page::Publish->new(config => $self->config);
     my $publish_form = '';
     $publish_form = $publisher->publish_form||'' if $page_id;
+    my @collections_for_page = $self->collector->editer->collections_for_page($page_id);
+    my $collection_list = $self->get_collection_list;
+    my $collection_size = scalar @{$collection_list} + 1;
+    my $collection_options = "<select id='collection_select' name='collection_select' 
+    multiple='multiple' size='${collection_size}' form='editForm' >\n";
+    $collection_options .= "<option value='0'>- No Collection -</option>\n";
+    foreach my $collection (@{$collection_list}) {
+        my $title = $collection->{title};
+        $collection_options .= "<option value='$collection->{id}'";
+        if ($collection->{id} eq any(@collections_for_page)) {
+            $collection_options .= " selected='selected' ";
+        }
+        $collection_options .= ">$collection->{title}</option>\n";
+    }
+    $collection_options .= "</select>\n";
     my $edit_page = <<"END_HTML";
 <!doctype html>
 <html>
@@ -125,6 +149,10 @@ $js_css
 <section id="edit_area">
 <span style="font-size: 0.82em;"><label id="feeds_label">feeds+</label>
   <input id="feeds" name="feeds" form="editForm" value="" size="12" style="font-size: 1.00em; display:none;" />
+</span>
+<span style="font-size: 0.82em;">
+<label id="collection_label">collections+</label>
+$collection_options
 </span>
 <form id="editForm" action="" accept-charset="UTF-8" method="post">
     <div id="wiki_language">
@@ -363,12 +391,15 @@ sub fillin_edit_page {
     my $feeds         = join ':', @feeds;
     my $public        = $page->{public};
 
+    # Set page_id for the template
+    $self->page_id($mongo_id);
     my $output   = $self->template;
     my $base_url = $self->base_url;
     $output =~
 s/<script><\/script>/<script>mojito.preview_url = '${base_url}preview';<\/script>/s;
     # Set some form values
     $output =~ s/(<input id="mongo_id".*?value=)""/$1"${mongo_id}"/si;
+    $output =~ s/(<input .*? id ="page_id" .*? value=)""/$1"${mongo_id}"/si;
     $output =~ s/(<input id="wiki_language".*?value=)""/$1"${wiki_language}"/si;
     $output =~ s/(<input id="page_title".*?value=)""/$1"${page_title}"/si;
     $output =~ s/(<input id="feeds".*?value=)""/$1"${feeds}"/si;

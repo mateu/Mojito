@@ -3,7 +3,7 @@ package Mojito;
 use Moo;
 use Path::Class;
 use File::Spec;
-
+use 5.010;
 use Data::Dumper::Concise;
 
 extends 'Mojito::Page';
@@ -143,6 +143,35 @@ sub update_page {
         $page->{feeds} = [@feeds];
         # A document that is part of a feed is considered public by default
         $page->{public} = 1;
+    }
+    my $collection_ids = $params->{collections_for_page};
+    # Have we assigned the page to at least one collection?
+    if ($collection_ids->[0]) {
+        my $cursor = $self->db->collection->find({collected_page_ids => $params->{mongo_id}});
+        my %HAVE;
+        while (my $collection = $cursor->next) {
+            $HAVE{$collection->{_id}} = 1;
+        }
+        my %WANT = map { $_ => 1 } @{$collection_ids};
+        foreach my $collection_id (keys %WANT) {
+            if (not $HAVE{$collection_id}) {
+            # add page_id to the collection
+                my $collection = $self->collector->read($collection_id);
+                push @{$collection->{collected_page_ids}}, $params->{mongo_id};
+                my $oid = MongoDB::OID->new( value => $collection_id );
+                $self->db->collection->update({_id => $oid}, $collection);
+            }
+        }
+        foreach my $collection_id (keys %HAVE) {
+            if (not $WANT{$collection_id}) {
+            # remove the page_id from the collection
+                my $oid = MongoDB::OID->new( value => $collection_id );
+                $self->db->collection->update(
+                    { _id => $oid },
+                    { '$pull' => {collected_page_ids => $params->{mongo_id} } },
+                );
+            }
+        }
     }
 
     # Save page to db

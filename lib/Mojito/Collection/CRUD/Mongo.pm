@@ -3,6 +3,7 @@ package Mojito::Collection::CRUD::Mongo;
 use MongoDB::OID;
 use 5.010;
 use Moo;
+use Syntax::Keyword::Junction qw/ any /;
 use Data::Dumper::Concise;
 
 with('Mojito::Role::DB::Mongo');
@@ -103,6 +104,30 @@ Returns a MongoDB cursor one can iterate over.
 sub get_all {
     my $self = shift;
     return $self->collection->find;
+}
+
+=head2 collection_for_page
+
+Get all the collection ids for which this page is a member of.
+
+=cut
+
+sub collections_for_page {
+    my ($self, $page_id) = @_;
+        warn "page id: $page_id";
+
+    # NOTE: For some yet to be determined reason I could not
+    # pass {collected_page_ids => $page_id} to $self->collection->find();
+    my $collections = $self->get_all; 
+    my @collection_ids;
+    while (my $doc = $collections->next) {
+        my @collected_pages = @{$doc->{collected_page_ids}};
+        if ($page_id eq any(@collected_pages)) {
+            push @collection_ids, $doc->{_id}->value ;
+        }
+    }
+
+    return @collection_ids;
 }
 
 =head2 BUILD
