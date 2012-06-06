@@ -120,7 +120,6 @@ sub collections_for_page {
     my ( $self, $page_id ) = @_;
 
     $page_id //= '';
-    my @collections = @{$self->get_all};
     my @collection_ids = ();
     foreach my $collection (@{$self->get_all}) {
         if ($page_id eq any(@{$collection->{collected_page_ids}})) {

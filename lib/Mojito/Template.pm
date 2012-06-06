@@ -118,7 +118,6 @@ sub _build_template {
     multiple='multiple' size='${collection_size}' form='editForm' style='font-size: 1.00em; display:none;' >\n";
     $collection_options .= "<option value='0'>- No Collection -</option>\n";
     foreach my $collection (@{$collection_list}) {
-        my $title = $collection->{title};
         $collection_options .= "<option value='$collection->{id}'";
         if ($collection->{id} eq any(@collections_for_page)) {
             $collection_options .= " selected='selected' ";
@@ -387,7 +386,10 @@ sub fillin_edit_page {
     my $page_source   = $page->{page_source}; 
     my $wiki_language = $page->{default_format}; 
     my $page_title    = $page->{title}||'no title';
-    my @feeds         = @{$page->{feeds}} if (ref($page->{feeds}) eq 'ARRAY');
+    my @feeds = ();
+    if (ref($page->{feeds}) eq 'ARRAY') {
+        @feeds = @{$page->{feeds}}; 
+    }
     my $feeds         = join ':', @feeds;
     my $public        = $page->{public};
 
