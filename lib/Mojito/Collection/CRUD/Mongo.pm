@@ -114,7 +114,6 @@ Get all the collection ids for which this page is a member of.
 
 sub collections_for_page {
     my ($self, $page_id) = @_;
-        warn "page id: $page_id";
 
     # NOTE: For some yet to be determined reason I could not
     # pass {collected_page_ids => $page_id} to $self->collection->find();
