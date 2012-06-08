@@ -265,7 +265,9 @@ sub view_page_collected {
 
     # Strip out Edit and New links (even though they are Auth::Digest Protected)
     # Remove edit, new links and the recent area
-    $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
+    if(not $self->config->{username}) {
+        $rendered_page =~ s/<nav id="edit_link".*?><\/nav>//sig;
+    }
     $rendered_page =~ s/<nav id="new_link".*?>.*?<\/nav>//sig;
     $rendered_page =~ s/<section id="recent_area".*?><\/section>//si;
     $rendered_page =~ s/<section id="publish_area">.*?<\/section>//si;
