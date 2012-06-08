@@ -144,7 +144,12 @@ sub update_page {
         # A document that is part of a feed is considered public by default
         $page->{public} = 1;
     }
-    my $collection_ids = $params->{collections_for_page};
+    my $collection_ids = $params->{collection_select};
+    # Want to coerce (single select) SCALAR into an ArrayRef (happens w/ Dancer params)
+    if (ref($collection_ids) ne 'ARRAY') {
+        warn "Coercing collection select params into an ArrefRef" if $ENV{MOJITO_DEBUG};
+        $collection_ids = [$collection_ids];
+    }
     # Have we assigned the page to at least one collection?
     if (defined $collection_ids->[0]) {
         my $cursor = $self->db->collection->find({collected_page_ids => $params->{mongo_id}});

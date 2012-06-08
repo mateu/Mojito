@@ -91,8 +91,8 @@ sub dispatch_request {
 
       # UPDATE a Page
       sub (POST + /page/*/edit + %@collection_select~&*) {
-        my ($self, $id, $collections_for_page, $params) = @_;
-        $params->{collections_for_page} = $collections_for_page;
+        my ($self, $id, $collection_select, $params) = @_;
+        $params->{collection_select} = $collection_select;
         $params->{id} = $id;
         my $redirect_url = $mojito->update_page($params);
 
