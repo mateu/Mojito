@@ -1,7 +1,9 @@
 {{$NEXT}}
+
+0.20      2012-06-08 16:38:15 America/Denver
           [Enchantments]
-          - Option to mark a page as part of a feed
           - Atom feed support
+          - Option to mark a page as part of a feed
           - Option to mark a page as publicly viewable (no auth needed)
 
           [Refinements]
