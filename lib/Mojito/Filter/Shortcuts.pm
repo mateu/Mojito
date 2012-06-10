@@ -66,7 +66,6 @@ Expand the gist.github.com abbreviated shortcut.
 sub gist_URL {
     my ($self, $content) = @_;
     return if !$content;
-    warn "GIST";
     $content =~ s/{{gist\s+([^}]*)}}/<script src="https:\/\/gist.github.com\/$1.js"><\/script>/sig;
     return $content;
 }
