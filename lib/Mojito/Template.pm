@@ -8,6 +8,7 @@ use Mojito::Collection::CRUD;
 use Mojito::Page::Publish;
 use DateTime;
 use Syntax::Keyword::Junction qw/ any /;
+use HTML::Entities;
 use Data::Dumper::Concise;
 
 with('Mojito::Template::Role::Javascript');
@@ -383,7 +384,8 @@ Get the contents of the edit page proper given the starting template and some da
 sub fillin_edit_page {
     my ( $self, $page, $page_view, $mongo_id ) = @_;
 
-    my $page_source   = $page->{page_source}; 
+    # Encode source content with HTML entities since it will be displayed in a textarea
+    my $page_source   = encode_entities($page->{page_source}); 
     my $wiki_language = $page->{default_format}; 
     my $page_title    = $page->{title}||'no title';
     my @feeds = ();
