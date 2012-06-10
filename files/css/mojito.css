@@ -1,6 +1,7 @@
 .html_body {
     background-color: #87a865;
-    margin: 0em;
+    margin-left: 0.25em;
+    margin-bottom: 0.25em;
 }
 .vanilla_body {
     background-color: sienna;
@@ -283,4 +284,8 @@ section.developer {
 .Module {
     padding: 0px;
     margin-bottom: 0em;
+}
+
+#footer_area {
+    clear:left;
 }
