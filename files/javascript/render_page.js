@@ -63,6 +63,7 @@ $(document).ready(function() {
     $('#collection_label').click(function() {
         $('#collection_select').toggle(100, function() { });
     });
+    $('.sublime').effect("pulsate", { times:2 }, 5400);
 
 });
 
