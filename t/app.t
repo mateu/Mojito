@@ -27,7 +27,7 @@ BEGIN {
 
 }
 my %framework_scripts = (
-    web_simple => 'mojito.pl',
+    web_simple => '../app.psgi',
     dancer     => 'dancer.pl',
     mojo       => 'mojo.pl',
     tatsumaki  => 'tatsumaki.psgi'
