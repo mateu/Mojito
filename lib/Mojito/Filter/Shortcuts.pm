@@ -16,7 +16,14 @@ has shortcuts => (
 );
 sub _build_shortcuts {
     my $self = shift;
-    my @shortcuts = qw( cpan_URL metacpan_module_URL metacpan_author_URL internal_URL cpan_recent_synopses cpan_synopsis);
+    my @shortcuts = qw( 
+        cpan_URL
+        metacpan_module_URL
+        metacpan_author_URL
+        internal_URL
+        gist_URL
+        cpan_recent_synopses
+        cpan_synopsis);
     push @shortcuts, 'fonality_ticket' if ($self->config->{fonality_ticket_url});
     return \@shortcuts;
 }
@@ -47,6 +54,20 @@ sub cpan_URL {
     my ($self, $content) = @_;
     return if !$content;
     $content =~ s/{{cpan\s+([^}]*)}}/<a href="http:\/\/search.cpan.org\/perldoc?$1">$1<\/a>/sig;
+    return $content;
+}
+
+=head2 gist_URL
+
+Expand the gist.github.com abbreviated shortcut.
+
+=cut
+
+sub gist_URL {
+    my ($self, $content) = @_;
+    return if !$content;
+    warn "GIST";
+    $content =~ s/{{gist\s+([^}]*)}}/<script src="https:\/\/gist.github.com\/$1.js"><\/script>/sig;
     return $content;
 }
 
