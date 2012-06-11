@@ -363,7 +363,7 @@ $js_css
 <section id="recent_area"></section>
 </nav>
 </article>
-<footer>
+<footer id="footer_area">
 <nav id="new_link" class="new_link"> <a href=${base_url}page>New</a></nav>
 </footer>
 </body>
