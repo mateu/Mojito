@@ -4,7 +4,8 @@ use Mojito;
 use Mojito::Auth;
 use Mojito::Model::Config;
 use Mojito::Model::DB;
-use JSON;
+use JSON ();
+use Encode ();
 use Plack::Builder;
 use Data::Dumper::Concise;
 
@@ -52,24 +53,24 @@ sub dispatch_request {
       # VIEW a Page
       sub (GET + /page/* ) {
         my ($self, $id) = @_;
-        my $rendered_page = $mojito->view_page({ id => $id });
-        [ 200, [ 'Content-type', 'text/html' ], [$rendered_page] ];
+        my $rendered_page = Encode::encode_utf8($mojito->view_page({ id => $id }));
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$rendered_page] ];
       },
 
       sub (GET + /public/page/* ) {
         my ($self, $id) = @_;
         [
             200,
-            [ 'Content-type', 'text/html' ],
-            [ $mojito->view_page_public({ id => $id }) ]
+            [ 'Content-type', 'text/html; charset=utf-8' ],
+            [ Encode::encode_utf8($mojito->view_page_public({ id => $id })) ]
         ];
       },
 
       # LIST Pages in chrono order
       sub (GET + /recent ) {
         my ($self) = @_;
-        my $links = $mojito->recent_links;
-        [ 200, [ 'Content-type', 'text/html' ], [$links] ];
+        my $links = Encode::encode_utf8($mojito->recent_links);
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$links] ];
       },
 
       # PREVIEW Handler (and will save if save button is pushed).
@@ -79,14 +80,14 @@ sub dispatch_request {
         my $response_href = $mojito->preview_page($params);
         my $JSON_response = JSON::encode_json($response_href);
 
-        [ 200, [ 'Content-type', 'application/json' ], [$JSON_response] ];
+        [ 200, [ 'Content-type' => 'application/json; charset=utf-8' ], [$JSON_response] ];
       },
 
       # Present UPDATE Page Form
       sub (GET + /page/*/edit ) {
         my ($self, $id) = @_;
-        my $output = $mojito->edit_page_form({ id => $id });
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+        my $output = Encode::encode_utf8($mojito->edit_page_form({ id => $id }));
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$output] ];
       },
 
       # UPDATE a Page
@@ -109,16 +110,16 @@ sub dispatch_request {
       # e.g diff/3/1 would mean git diff HEAD^^^ HEAD^ $page_id
       sub (GET + /page/*/diff/*/* ) {
         my ($self, $id, $m, $n) = @_;
-
         my $output = $mojito->view_page_diff({ id => $id, m => $m, n => $n });
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+        $output = Encode::encode_utf8($output);
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$output] ];
       },
 
       # Single word search
       sub (GET + /search/* ) {
         my ($self, $word) = @_;
-        my $output = $mojito->search({ word => $word });
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+        my $output = Encode::encode_utf8($mojito->search({ word => $word }));
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$output] ];
       },
 
       sub ( POST + /search + %* ) {
@@ -129,8 +130,8 @@ sub dispatch_request {
 
       sub ( GET + /collect ) {
         my ($self,) = @_;
-        my $output = $mojito->collect_page_form();
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+        my $output = Encode::encode_utf8($mojito->collect_page_form());
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$output] ];
       },
 
       sub ( POST + /collect + %* ) {
@@ -141,19 +142,22 @@ sub dispatch_request {
 
       sub ( GET + /collections ) {
         my ($self, $params) = @_;
-        my $output = $mojito->collections_index();
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
-      }, sub ( GET + /collection/* ) {
+        my $output = Encode::encode_utf8($mojito->collections_index());
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [$output] ];
+      }, 
+
+      sub ( GET + /collection/* ) {
         my ($self, $collection_id) = @_;
         my $output = $mojito->collection_page({ id => $collection_id });
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+        [ 200, [ 'Content-type', 'text/html; charset=utf-8' ], [Encode::encode_utf8($output)] ];
       },
 
       sub ( GET + /public/collection/* ) {
         my ($self, $collection_id) = @_;
         my $output =
           $mojito->collection_page({ public => 1, id => $collection_id });
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+          
+        [ 200, [ 'Content-type' => 'text/html; charset=utf-8' ], [Encode::encode_utf8($output)] ];
       },
 
       sub ( GET + /collection/*/sort ) {
@@ -194,7 +198,8 @@ sub dispatch_request {
         my ($self, $collection_id) = @_;
         my $params = { collection_id => $collection_id, };
         my $output = $mojito->merge_collection($params);
-        [ 200, [ 'Content-type', 'text/html' ], [$output] ];
+        $output = Encode::encode_utf8($output);
+        [ 200, [ 'Content-type', 'text/html; charset=utf-8' ], [$output] ];
       },
 
       sub ( GET + /collection/*/delete ) {
@@ -228,7 +233,7 @@ sub dispatch_request {
       },
       
       sub ( GET + /calendar ) {
-        [ 200, ['Content-type', 'text/html'], [$mojito->calendar_month_page] ];
+        [ 200, ['Content-type' => 'text/html; charset=utf-8'], [Encode::encode_utf8($mojito->calendar_month_page)] ];
       },
 
       sub ( GET + /calendar/year/*/month/* ) {
@@ -237,7 +242,8 @@ sub dispatch_request {
         $params->{year} = $year;
         $params->{month} = $month;
         my $output = $mojito->calendar_month_page($params);
-        [ 200, ['Content-type', 'text/html'], [$output] ];
+        $output = Encode::encode_utf8($output);
+        [ 200, ['Content-type', 'text/html; charset=utf-8'], [$output] ];
       },
     
       sub (GET + /hola/* ) {
@@ -247,7 +253,7 @@ sub dispatch_request {
 
       sub (GET + /) {
         my ($self) = @_;
-        [ 200, [ 'Content-type', 'text/html' ], [ $mojito->view_home_page ] ];
+        [ 200, [ 'Content-type', 'text/html; charset=utf-8' ], [ Encode::encode_utf8($mojito->view_home_page) ] ];
       },
 
       sub ( GET + /public/feed/*/format/* ) {
@@ -267,8 +273,8 @@ sub dispatch_request {
         my ($self, $feed) = @_;
         [
             200,
-            [ 'Content-type', 'text/html' ],
-            [ $mojito->get_feed_links($feed) ]
+            [ 'Content-type' => 'text/html; charset=utf-8' ],
+            [ Encode::encode_utf8($mojito->get_feed_links($feed)) ]
         ];
       },
 
