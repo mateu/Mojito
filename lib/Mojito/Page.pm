@@ -46,6 +46,7 @@ has parser => (
           )
     ],
     writer => '_build_parse',
+    default => sub { Mojito::Page::Parse->new }
 );
 
 has render => (
