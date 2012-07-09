@@ -174,7 +174,7 @@ sub get_synopsis_formatted {
             my $synopsis = join "\n", @synopsis_lines;
 
             # pre wrapper for syntax highlight
-            $synopsis = "${abstract}<pre class='prettyprint'>\n" . $synopsis . "</pre>\n";
+            $synopsis = "${abstract}<pre class='sh_perl'>\n" . $synopsis . "</pre>\n";
             $synopsis = "<h2 class='Module'><a href='https://metacpan.org/release/$release->{author}/$release->{name}'>$release->{distribution}</a></h2>" . $synopsis;
             
             return $synopsis;
