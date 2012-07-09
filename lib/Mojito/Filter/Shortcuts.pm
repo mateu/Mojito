@@ -53,7 +53,7 @@ Expand the cpan abbreviated shortcut.
 sub cpan_URL {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s/{{cpan\s+([^}]*)}}/<a href="http:\/\/search.cpan.org\/perldoc?$1">$1<\/a>/sig;
+    $content =~ s/\{\{cpan\s+([^}]*)}}/<a href="http:\/\/search.cpan.org\/perldoc?$1">$1<\/a>/sig;
     return $content;
 }
 
@@ -66,7 +66,7 @@ Expand the gist.github.com abbreviated shortcut.
 sub gist_URL {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s/{{gist\s+([^}]*)}}/<script src="https:\/\/gist.github.com\/$1.js"><\/script>/sig;
+    $content =~ s/\{\{gist\s+([^}]*)}}/<script src="https:\/\/gist.github.com\/$1.js"><\/script>/sig;
     return $content;
 }
 
@@ -85,7 +85,7 @@ Show the CPAN SYNOPSIS for a Perl Module
 sub cpan_synopsis {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s/{{cpan.synopsis\s+([^}]*)}}/$self->metacpan->get_synopsis_formatted($1, 'presentation')/esig;
+    $content =~ s/\{\{cpan.synopsis\s+([^}]*)}}/$self->metacpan->get_synopsis_formatted($1, 'presentation')/esig;
     return $content;
 }
 
@@ -98,7 +98,7 @@ Show the synopses of the CPAN recent releases
 sub cpan_recent_synopses {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s/{{cpan.synopses.recent\s*(\d+)}}/$self->metacpan->get_recent_synopses($1)/esig;
+    $content =~ s/\{\{cpan.synopses.recent\s*(\d+)}}/$self->metacpan->get_recent_synopses($1)/esig;
     return $content;
 }
 =head2 metacpan_module_URL
@@ -110,7 +110,7 @@ Expand the cpan abbreviated shortcut.
 sub metacpan_module_URL {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s|{{metacpan\s+([^}]*)}}|<a href="http://metacpan.org/module/$1">$1</a>|sig;
+    $content =~ s|\{\{metacpan\s+([^}]*)}}|<a href="http://metacpan.org/module/$1">$1</a>|sig;
     return $content;
 }
 =head2 metacpan_module_URL
@@ -122,7 +122,7 @@ Expand the cpan abbreviated shortcut.
 sub metacpan_author_URL {
     my ($self, $content) = @_;
     return if !$content;
-    $content =~ s|{{metacpan.author\s+([^}]*)}}|<a href="http://metacpan.org/author/$1">$1</a>|sig;
+    $content =~ s|\{\{metacpan.author\s+([^}]*)}}|<a href="http://metacpan.org/author/$1">$1</a>|sig;
     return $content;
 }
 
@@ -154,20 +154,6 @@ sub internal_URL {
         return "<a href='${base_url}${link}'>${title}</a>";
     };
     $content =~ s/\[\[([^\|]*)\|([^\]]*)\]\]/$add_link->($1,$2)/esig;
-    return $content;
-}
-
-=head2 fonality_ticket
-
-Expand the fonality ticket abbreviated shortcut.
-
-=cut
-
-sub fonality_ticket {
-    my ($self, $content) = @_;
-    return if !($content && $self->config->{fonality_ticket_url});
-    my $url = $self->config->{fonality_ticket_url};
-    $content =~ s/{{fontic\s+(\d+)[^}]*}}/<a href="${url}${1}">${1}<\/a>/sig;
     return $content;
 }
 
