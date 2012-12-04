@@ -1,5 +1,15 @@
 {{$NEXT}}
 
+         [Refinements]
+         - better UTF-8 handling
+         - encode HTML entities displayed in textarea
+         - gist URL shortcut
+         - use SHJS for synopsis
+         - enable public page param on create/update
+
+         [Remedies]
+         - escape left brace in regex for perl 5.17
+
 0.20      2012-06-08 16:38:15 America/Denver
           [Enchantments]
           - Atom feed support
