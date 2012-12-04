@@ -72,6 +72,9 @@ sub create_page {
     $page_struct->{page_html} = $self->render_page($page_struct);
     $page_struct->{body_html} = $self->render_body($page_struct);
     $page_struct->{title}     = $self->intro_text( $page_struct->{body_html} );
+    if ($params->{public}) {
+        $page_struct->{public} = 1;
+    }
     my $id = $self->create($page_struct);
     $params->{id} = $id;
     # Put into repo
@@ -142,6 +145,9 @@ sub update_page {
         my @feeds = split ':', $feeds;
         $page->{feeds} = [@feeds];
         # A document that is part of a feed is considered public by default
+        $page->{public} = 1;
+    }
+    if ($params->{public}) {
         $page->{public} = 1;
     }
     my $collection_ids = $params->{collection_select};
