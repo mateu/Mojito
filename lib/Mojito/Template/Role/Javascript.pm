@@ -22,12 +22,12 @@ has javascripts => (
 sub _build_javascripts {
        [
 #          { uri => 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'},
+#          { uri => 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js'},
           'jquery/jquery.min.js',
           'javascript/render_page.js',
           'javascript/style.js',
           'javascript/publish.js',
           'syntax_highlight/prettify.js',
-#          {uri => 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js'},
           'jquery/jquery-ui.custom.min.js',
           'jquery/jquery.cookie.js',
 #          'SHJS/sh_main.min.js',
@@ -39,6 +39,7 @@ sub _build_javascripts {
 #          'SHJS/sh_sh.min.js',
 #          'SHJS/sh_diff.min.js',
 #          'SHJS/sh_haskell.min.js',
+#-concatenation fo the SHJS/sh_$language.js files
           'SHJS/sh_langs.min.js',
        ];
 }
