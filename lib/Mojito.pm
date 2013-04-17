@@ -20,7 +20,7 @@ Mojito - A Web Document System
   my $rendered_page = $mojito->view_page({id => $page_id});
 
   # You might want to checkout one of the applications in app/
-  # For example: 'plackup -Ilib app/mojito.pl' starts up a Web::Simple instance of Mojito
+  # For example: 'plackup -Ilib' starts up a Web::Simple instance of Mojito
 
 =head1 DESCRIPTION
 
@@ -378,7 +378,7 @@ sub search {
 
 Collect documents.  The id for each document submitted will be put into
 a list of document ids stored in the 'collection' collection.  Yeah, that
-may seem strange at first, but the idea is we want to put allow for arbitrary
+may seem strange at first, but the idea is we want to allow for arbitrary
 sets of documents from the notes collection.  We construct these sets by creating
 a list (array) of the corresponding document ids and inserting this "document"
 into the "collection" collection.  
