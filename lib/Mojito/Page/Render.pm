@@ -167,6 +167,8 @@ Given some content and its format, let's convert it to HTML.
 sub format_for_web {
     my ( $self, $content, $from_language ) = @_;
 
+    # smartmatch throws warnings on 5.18.0+, suppress them
+    no if $] >= 5.018000, warnings => qw(experimental::smartmatch); 
     my $formatted_content = $content;
     given ($from_language) {
         when (/^HTML$/i) {
