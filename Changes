@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+0.22      2013-05-28 11:05:16 MST7MDT
+         [Remedies]
+         - supress smartmatch warning in perl 5.18+
+         - use db/collection getters (MongoDB)
+
 0.21      2012-12-04 14:15:45 MST7MDT
 
          [Refinements]
