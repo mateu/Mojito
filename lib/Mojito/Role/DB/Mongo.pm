@@ -50,7 +50,7 @@ sub _build_db  {
 #    warn $trace->as_string;
     my $self = shift;
     my $db_name = $self->db_name;
-    return $self->conn->${db_name};
+    return $self->conn->get_database($db_name);
 }
 sub _build_collection  {
     my $self = shift;
@@ -60,7 +60,7 @@ sub _build_collection  {
     if (not defined $self->db) {
         $self->clear_db;
     }
-    $self->db->${collection_name};
+    $self->db->get_collection($collection_name);
 }
 
 1;
