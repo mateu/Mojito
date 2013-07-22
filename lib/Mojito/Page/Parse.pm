@@ -16,7 +16,6 @@ Mojito::Page::Parse - turn page source into a page structure
 has 'page' => (
     is       => 'rw',
     isa      => Value,
-#    required => 1,
 );
 has 'sections' => (
     is      => 'ro',
@@ -30,14 +29,6 @@ has 'page_structure' => (
     lazy    => 1,
     builder => 'build_page_structure',
 );
-#has 'title' => (
-#    is => 'ro',
-#
-#    #    isa     => 'Str',
-#    lazy => 1,
-#    default =>
-#      sub { return substr( $_[0]->stripper->parse( $_[0]->page ), 0, 24 ); },
-#);
 has 'default_format' => (
     is => 'rw',
     isa     => Value,
@@ -213,7 +204,6 @@ sub build_page_structure {
 
     my $return = {
         sections       => $self->sections,
-#        title          => $self->title,
         default_format => $self->default_format,
 
         #        created        => '1234567890',
