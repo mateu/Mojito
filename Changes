@@ -1,4 +1,7 @@
 {{$NEXT}}
+
+0.23      2013-07-22 09:28:33 MST7MDT
+         - update to jquery 2.0.3 and jquery ui 1.10.3
          - Use ArrayRef[HashRef] instead of AHRef
 
 0.22      2013-05-28 11:05:16 MST7MDT
