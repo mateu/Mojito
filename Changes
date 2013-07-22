@@ -1,4 +1,5 @@
 {{$NEXT}}
+         - Use ArrayRef[HashRef] instead of AHRef
 
 0.22      2013-05-28 11:05:16 MST7MDT
          [Remedies]
