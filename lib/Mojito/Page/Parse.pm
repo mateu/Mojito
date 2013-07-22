@@ -20,7 +20,7 @@ has 'page' => (
 );
 has 'sections' => (
     is      => 'ro',
-    isa     => AHRef,
+    isa     => ArrayRef[HashRef],
     lazy    => 1,
     builder => 'build_sections',
 );
