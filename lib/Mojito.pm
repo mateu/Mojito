@@ -150,43 +150,9 @@ sub update_page {
     if ($params->{public}) {
         $page->{public} = 1;
     }
-    my $collection_ids = $params->{collection_select};
-    # Want to coerce (single select) SCALAR into an ArrayRef (happens w/ Dancer params)
-    if (ref($collection_ids) ne 'ARRAY') {
-        warn "Coercing collection select params into an ArrefRef" if $ENV{MOJITO_DEBUG};
-        $collection_ids = [$collection_ids];
-    }
-    # Have we assigned the page to at least one collection?
-    if (defined $collection_ids->[0]) {
-        my $cursor = $self->db->collection->find({collected_page_ids => $params->{mongo_id}});
-        my %HAVE;
-        while (my $collection = $cursor->next) {
-            $HAVE{$collection->{_id}} = 1;
-        }
-        my %WANT = map { $_ => 1 } @{$collection_ids};
-        # collection_id of zero in this case means we don't want to assign
-        # the page to any collection
-        %WANT = () if not $collection_ids->[0];
-        foreach my $collection_id (keys %WANT) {
-            if (not $HAVE{$collection_id}) {
-            # add page_id to the collection
-                my $collection = $self->collector->read($collection_id);
-                push @{$collection->{collected_page_ids}}, $params->{mongo_id};
-                my $oid = MongoDB::OID->new( value => $collection_id );
-                $self->db->collection->update({_id => $oid}, $collection);
-            }
-        }
-        foreach my $collection_id (keys %HAVE) {
-            if (not $WANT{$collection_id}) {
-            # remove the page_id from the collection
-                my $oid = MongoDB::OID->new( value => $collection_id );
-                $self->db->collection->update(
-                    { _id => $oid },
-                    { '$pull' => {collected_page_ids => $params->{mongo_id} } },
-                );
-            }
-        }
-    }
+
+    # Update the list of collections to which this doc belongs
+    $self->collector->editer->update_collection_membership($params);
 
     # Save page to db
     $self->update( $params->{id}, $page );

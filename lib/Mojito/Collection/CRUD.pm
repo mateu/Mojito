@@ -2,6 +2,7 @@ use strictures 1;
 package Mojito::Collection::CRUD;
 use Mojito::Collection::CRUD::Mongo;
 use Mojito::Collection::CRUD::Deep;
+use Mojito::Collection::CRUD::Elasticsearch;
 use Moo;
 
 has 'editer' => (

@@ -2,6 +2,7 @@ use strictures 1;
 package Mojito::Model::Doc;
 use Mojito::Model::Doc::Mongo;
 use Mojito::Model::Doc::Deep;
+use Mojito::Model::Doc::Elasticsearch;
 use Moo;
 use Data::Dumper::Concise;
 

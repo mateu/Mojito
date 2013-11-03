@@ -2,6 +2,7 @@ use strictures 1;
 package Mojito::Auth;
 use Mojito::Auth::Mongo;
 use Mojito::Auth::Deep;
+use Mojito::Auth::Elasticsearch;
 use Moo;
 
 =head1 Name

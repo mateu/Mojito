@@ -2,6 +2,7 @@ use strictures 1;
 package Mojito::Page::CRUD;
 use Mojito::Page::CRUD::Mongo;
 use Mojito::Page::CRUD::Deep;
+use Mojito::Page::CRUD::Elasticsearch;
 use Moo;
 
 =head1 Name
