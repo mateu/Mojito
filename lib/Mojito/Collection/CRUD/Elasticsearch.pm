@@ -5,6 +5,7 @@ use 5.010;
 use Moo;
 use List::Util qw/first/;
 use Syntax::Keyword::Junction qw/ any /;
+use Elasticsearch::Scroll; 
 use Data::Dumper::Concise;
 
 with('Mojito::Role::DB::Elasticsearch');
@@ -82,9 +83,8 @@ Update a collection in the database.
 =cut
 
 sub update {
-    my ( $self, $params) = @_;
+    my ( $self, $id, $params) = @_;
 
-    my $id = $params->{id};
     $params->{last_modified} = time();
     $self->db->update(
         index => $self->db_name,
@@ -140,11 +140,48 @@ sub collections_for_page {
 
 sub update_collection_membership {
     my ($self, $params) = @_;
-    # Params need to include these values
-#    my $collection_ids = $params->{collection_select};
-#    my $find = {collected_page_ids => $params->{mongo_id}};
-    return;
 
+    my $collection_ids = $params->{collection_select};
+     # Want to coerce (single select) SCALAR into an ArrayRef (happens w/ Dancer params)
+    if (ref($collection_ids) ne 'ARRAY') {
+        warn "Coercing collection select params into an ArrefRef" if $ENV{MOJITO_DEBUG};
+        $collection_ids = [$collection_ids];
+    }
+
+    my $scroll = Elasticsearch::Scroll->new(
+        es => $self->db,
+        search_type => 'scan',
+        index => $self->db_name,
+        type  => $self->collection_name,
+        body => {query => {term => {collected_page_ids => $params->{mongo_id}}}},
+    );
+    my %HAVE;
+    while (my $collection = $scroll->next) {
+        $HAVE{$collection->{_source}{id}} = 1;
+    }
+    my %WANT = map { $_ => 1 } @{$collection_ids};
+    foreach my $collection_id (keys %WANT) {
+        if (not $HAVE{$collection_id}) {
+        # add page_id to the collection
+            my $collection = $self->read($collection_id);
+            push @{$collection->{collected_page_ids}}, $params->{mongo_id};
+            $self->update($collection_id, $collection);
+        }
+    }
+    foreach my $collection_id (keys %HAVE) {
+        if (not $WANT{$collection_id}) {
+            # remove the page_id from the collection
+            my $collection = $self->read($collection_id);
+            my @collected_page_ids = grep { $_ ne $params->{mongo_id} }
+              @{$collection->{collected_page_ids}};
+            $self->update(
+                $collection_id, 
+                {collected_page_ids => \@collected_page_ids},
+            );
+        }
+    }
+
+    return;
 }
 =head2 BUILD
 

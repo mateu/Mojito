@@ -40,7 +40,7 @@ sub add_user {
     # TODO - Make sure backend support unique user names
     # For Mongo we can ensure an index, but a general technique is 
     # to check for existence of a username before attempting to add it.
-    my $doc = $self->editer->create(
+    my $id = $self->editer->create(
         {
             first_name => $self->first_name,
             last_name  => $self->last_name,
@@ -52,7 +52,7 @@ sub add_user {
         }
     );
 
-    return $doc->{_id};
+    return $id;
 }
 
 =head2 get_user
@@ -87,13 +87,12 @@ sub remove_user {
     $username //= $self->username;
     return if !$username;
     # Just in case we have multiple occurrences of the same user
-    my $collection = $self->collection->export;
-    my @users = values %{$collection};
+    my @users = map { $_->{_source} } @{$self->collection->{hits}{hits}};
     my @wanted_users = grep {$_->{username} eq $username} @users;
     my @wanted_ids = map {$_->{id} } @wanted_users;
     my $users_deleted = 0;
     foreach my $id (@wanted_ids) {
-        delete $self->collection->{$id};
+        $self->editer->delete($id);
         $users_deleted++;
     }
     return $users_deleted;

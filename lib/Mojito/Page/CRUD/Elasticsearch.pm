@@ -101,6 +101,7 @@ sub delete {
         index => $self->db_name,
         type  => $self->collection_name,
         id    => $id,
+        refresh => 1,
     );
 }
 

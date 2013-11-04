@@ -1,4 +1,5 @@
-use strictures 1;
+use strict;
+use warnings;
 use Test::More;
 use Mojito::Auth;
 use Mojito::Model::Config;
@@ -12,7 +13,7 @@ BEGIN {
 
 # Need config as a constructor arg for Auth
 my $config = Mojito::Model::Config->new->config;
-my $mojito_auth = Mojito::Auth->new(
+my %constructor_args = (
     config => $config,
     first_name => 'xavi',
     last_name  => 'exemple',
@@ -21,8 +22,12 @@ my $mojito_auth = Mojito::Auth->new(
     realm      => 'mojito',
     password   => 'top_secret',
 );
+my $mojito_auth = Mojito::Auth->new(%constructor_args);
 ok(my $id = $mojito_auth->add_user, 'Add user');
-
+# Get a second object because elasticsearch may need a new connection to see
+# the newly added user.
+sleep 1;
+$mojito_auth = Mojito::Auth->new(%constructor_args);
 my $user = $mojito_auth->get_user('xavi');
 my $name = $user->{first_name}. ' '.$user->{last_name};
 my $email = $user->{email};
