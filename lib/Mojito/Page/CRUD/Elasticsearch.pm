@@ -21,19 +21,9 @@ Create a page in the database.
 
 sub create {
     my ( $self, $page_struct ) = @_;
-
-    # add save time as last_modified and created
     $page_struct->{last_modified} = $page_struct->{created} = time();
     my $oid = $self->generate_mongo_like_oid;
     $page_struct->{id} = $oid;
-
-    # Is this sucker used ja?
-    # TODO: Seek out another when generated one is already used.
-    #die "oid: $oid is already in use" if ($self->collection && $self->collection->exists($oid));
-    # If the collection does not exist yet let's initialize it.
-    #if (!$self->collection) {
-    #    $self->db->{$self->collection_name} = {};
-    #}
     $self->db->index(
         index => $self->db_name,
         type  => $self->collection_name,
