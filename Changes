@@ -1,5 +1,6 @@
 {{$NEXT}}
-         - Change to use Search::Elasticsearch
+         - Change from Elasticsearch to Search::Elasticsearch
+         - script to convert from mongo to elasticsearch backend
 
 0.24      2013-11-16 09:23:45 MST7MDT
          - Add Elasticsearch backend
