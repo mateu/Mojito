@@ -2,7 +2,7 @@ use strictures 1;
 package Mojito::Role::DB::Elasticsearch;
 use Moo::Role;
 use Mojito::Model::Config;
-use Elasticsearch;
+use Search::Elasticsearch;
 use Data::Dumper::Concise;
 
 with('Mojito::Role::DB::OID');
@@ -20,7 +20,7 @@ has 'db_name' => (
 );
 has 'db' => (
     is => 'lazy',
-    builder => sub { Elasticsearch->new(nodes => [$_[0]->db_host]) },
+    builder => sub { Search::Elasticsearch->new(nodes => [$_[0]->db_host]) },
     clearer => 'clear_db',
 );
 has 'collection' => (

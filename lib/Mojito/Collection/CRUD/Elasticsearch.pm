@@ -5,7 +5,7 @@ use 5.010;
 use Moo;
 use List::Util qw/first/;
 use Syntax::Keyword::Junction qw/ any /;
-use Elasticsearch::Scroll; 
+use Search::Elasticsearch::Scroll;
 use Data::Dumper::Concise;
 
 with('Mojito::Role::DB::Elasticsearch');
@@ -148,8 +148,7 @@ sub update_collection_membership {
         $collection_ids = [$collection_ids];
     }
 
-    my $scroll = Elasticsearch::Scroll->new(
-        es => $self->db,
+    my $scroll = $self->db->scroll_helper(
         search_type => 'scan',
         index => $self->db_name,
         type  => $self->collection_name,

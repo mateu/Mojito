@@ -8,7 +8,7 @@ with('Mojito::Role::DB::Elasticsearch');
 
 =head1 Name
 
-Mojito::Auth::ES - authentication delegatee class for Elasticsearch
+Mojito::Auth::Elasticsearch - authentication delegatee class for Elasticsearch
 
 =cut
 

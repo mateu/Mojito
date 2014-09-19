@@ -9,7 +9,7 @@ has base_url => ( is => 'rw', );
 
 =head1 Name
 
-Mojito::Page::CRUD::ES - Elasticsearch CRUD
+Mojito::Page::CRUD::Elasticsearch - Elasticsearch CRUD
 
 =head1 Methods
 
