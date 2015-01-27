@@ -1,16 +1,16 @@
 ---
 layout: default
 ---
-
-<div class="home">
-# Hola
-
 {:toc}
+
+# Hola
 
 ## Mon
 
 ## Amic
 
+
+<div class="home">
 
   <h1 class="page-heading">Posts</h1>
 
