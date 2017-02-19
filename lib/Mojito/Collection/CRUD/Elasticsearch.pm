@@ -148,7 +148,6 @@ sub update_collection_membership {
     }
 
     my $scroll = $self->db->scroll_helper(
-    #    search_type => 'scan',
         index => $self->db_name,
         type  => $self->collection_name,
         body => {query => {term => {collected_page_ids => $params->{mongo_id}}}},
