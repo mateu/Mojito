@@ -91,8 +91,8 @@ sub delete {
         index => $self->db_name,
         type  => $self->collection_name,
         id    => $id,
-        refresh => 1,
     );
+    $self->db->indices->refresh( index => $self->db_name );
 }
 
 =head2 get_all
