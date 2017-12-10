@@ -66,7 +66,7 @@ sub get_synopsis_from_metacpan {
     # Use markdown format (easy to parse out SYNOPSIS)
 #    my $format = '?content-type=text/x-markdown';
     my $format = '?content-type=text/plain';
-    my $secondary_pod_url = "http://api.metacpan.org/pod/${main_module}${format}";
+    my $secondary_pod_url = "https://fastapi.metacpan.org/pod/${main_module}${format}";
     if (not $pod_url) {
         $pod_url = $secondary_pod_url;
         $pod_url_used = 'main_module';
